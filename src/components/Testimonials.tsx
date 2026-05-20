@@ -30,7 +30,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-cream-200/40 py-24 md:py-32 dark:bg-ink-800/40">
+    <section className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">Kind Words</p>

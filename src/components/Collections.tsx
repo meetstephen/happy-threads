@@ -44,7 +44,7 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
   const allFilters: Filter[] = ['All', 'New Arrivals', ...categories, 'Favorites'];
 
   return (
-    <section id="collections" className="py-24 md:py-32">
+    <section id="collections" className="py-20 md:py-32">
       <div className="container-luxe">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">The Collection</p>
@@ -56,8 +56,11 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
           </p>
         </div>
 
-        {/* filter chips */}
-        <div id="favorites" className="mt-12 flex flex-wrap items-center justify-center gap-2.5 md:gap-3">
+        {/* filter chips — horizontal scroll on mobile, wrap on tablet+ */}
+        <div
+          id="favorites"
+          className="mt-10 -mx-5 flex snap-x snap-mandatory items-center gap-2.5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 md:mt-12 md:gap-3"
+        >
           {allFilters.map((f) => {
             const active = filter === f;
             const isFav = f === 'Favorites';
@@ -67,7 +70,7 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
                 type="button"
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] transition-all duration-300 ${
+                className={`flex shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] transition-all duration-300 sm:shrink sm:text-xs ${
                   active
                     ? 'border-ink-800 bg-ink-800 text-cream-100 dark:border-cream-100 dark:bg-cream-100 dark:text-ink-900'
                     : 'border-ink-800/20 text-ink-800/70 hover:border-ink-800 hover:text-ink-800 dark:border-cream-100/20 dark:text-cream-100/70 dark:hover:border-cream-100 dark:hover:text-cream-100'

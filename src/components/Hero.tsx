@@ -7,7 +7,7 @@ const HERO_IMAGE = pexels(30030552, 1200, 1500);
 
 export default function Hero() {
   return (
-    <section id="top" className="relative isolate overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
+    <section id="top" className="relative isolate overflow-hidden pt-28 pb-16 md:pt-40 md:pb-32">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-32 -top-32 h-[520px] w-[520px] rounded-full bg-bronze-400/20 blur-3xl"
@@ -76,24 +76,24 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="mt-12 flex items-center gap-8 text-sm text-ink-800/70 dark:text-cream-100/70"
+            className="mt-10 flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 md:mt-12 dark:text-cream-100/70"
           >
             <div>
-              <div className="font-display text-3xl text-ink-800 dark:text-cream-100">200+</div>
-              <div className="text-xs uppercase tracking-[0.25em]">Clients dressed</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">200+</div>
+              <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Clients dressed</div>
             </div>
-            <div className="h-10 w-px bg-ink-800/20 dark:bg-cream-100/20" />
+            <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />
             <div>
-              <div className="font-display text-3xl text-ink-800 dark:text-cream-100">7 yrs</div>
-              <div className="text-xs uppercase tracking-[0.25em]">Of craftsmanship</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">7 yrs</div>
+              <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Of craftsmanship</div>
             </div>
-            <div className="h-10 w-px bg-ink-800/20 dark:bg-cream-100/20" />
+            <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />
             <div>
-              <div className="inline-flex items-center gap-1.5 font-display text-3xl text-ink-800 dark:text-cream-100">
-                <Sparkles size={18} className="text-bronze-500" />
+              <div className="inline-flex items-center gap-1.5 font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">
+                <Sparkles size={16} className="text-bronze-500 sm:h-[18px] sm:w-[18px]" />
                 AI
               </div>
-              <div className="text-xs uppercase tracking-[0.25em]">Stylist on site</div>
+              <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Stylist on site</div>
             </div>
           </motion.div>
         </div>

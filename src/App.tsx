@@ -18,8 +18,8 @@ import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
 
-// Admin panel is rarely opened (passcode-protected) — load on demand
-// to keep the initial bundle small.
+// Admin panel is only opened via the hidden /#admin URL — load on demand
+// so the bundle stays small for the 99% of visitors who never see it.
 const AddDesignPanel = lazy(() => import('./components/AddDesignPanel'));
 
 export default function App() {
@@ -34,7 +34,9 @@ export default function App() {
     [customDesigns]
   );
 
-  // Open admin when URL hash is #admin
+  // Open admin only when URL hash is #admin (no UI surface — Happiness
+  // bookmarks the URL on her phone). This way visitors never see an
+  // admin entry point.
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') setAdminOpen(true);
@@ -72,7 +74,7 @@ export default function App() {
         <Newsletter />
         <Contact />
       </main>
-      <Footer onAdminClick={() => setAdminOpen(true)} />
+      <Footer />
       <FloatingWhatsApp />
       <Chatbot />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />

@@ -9,7 +9,7 @@ import {
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-24 md:py-32">
+    <section id="contact" className="py-20 md:py-32">
       <div className="container-luxe">
         <div className="overflow-hidden rounded-[2rem] bg-ink-800 px-8 py-16 text-cream-100 shadow-luxe md:px-16 md:py-20 dark:bg-cream-100 dark:text-ink-900">
           <div className="grid items-center gap-12 md:grid-cols-2">

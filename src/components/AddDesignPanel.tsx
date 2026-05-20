@@ -1,10 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Cloud, CloudOff, Lock, Plus, QrCode, Trash2, Upload, X } from 'lucide-react';
+import {
+  Cloud,
+  CloudOff,
+  Lock,
+  LogOut,
+  Plus,
+  QrCode,
+  ShieldCheck,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { categories, type DesignCategory } from '../data/designs';
 import { resizeImageFile } from '../utils/imageResize';
 import { uploadDesignImage } from '../services/designsService';
+import { hasAdminConfigured, useAdminAuth } from '../lib/auth';
+import { ADMIN_EMAIL, isSupabaseEnabled } from '../lib/supabase';
 import QrPanel from './QrPanel';
 
 interface Props {
@@ -12,18 +25,36 @@ interface Props {
   onClose: () => void;
 }
 
-const PASSCODE = 'happy2026';
+/**
+ * Local-only fallback passcode (used only when Supabase is not configured —
+ * in that mode there is no real auth, and design data only lives on the
+ * current device, so a soft passcode is fine).
+ */
+const LOCAL_PASSCODE = 'happy2026';
 
 type Tab = 'add' | 'qr';
 
 export default function AddDesignPanel({ open, onClose }: Props) {
   const { customDesigns, addDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
-  const [unlocked, setUnlocked] = useState(false);
+  const auth = useAdminAuth();
+
+  // Two parallel "unlocked" sources:
+  //  - cloud mode: unlocked === auth.admin !== null
+  //  - local mode: unlocked === passcode entered correctly
+  const [localUnlocked, setLocalUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('add');
 
-  // form state
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+
+  // Sign-in form state (cloud mode)
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authEmail, setAuthEmail] = useState(ADMIN_EMAIL ?? '');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authBusy, setAuthBusy] = useState(false);
+
+  // Form state for adding a design
   const [name, setName] = useState('');
   const [category, setCategory] = useState<DesignCategory>('Aso-Ebi & Owambe');
   const [description, setDescription] = useState('');
@@ -32,6 +63,9 @@ export default function AddDesignPanel({ open, onClose }: Props) {
   const [pendingPreview, setPendingPreview] = useState<string>('');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const cloudReady = isSupabaseEnabled && hasAdminConfigured();
+  const unlocked = cloudReady ? auth.admin !== null : localUnlocked;
 
   useEffect(() => {
     if (!open) return;
@@ -48,22 +82,53 @@ export default function AddDesignPanel({ open, onClose }: Props) {
 
   useEffect(() => {
     if (!open) {
-      setUnlocked(false);
+      setLocalUnlocked(false);
       setPasscodeInput('');
       setError(null);
+      setInfo(null);
       setTab('add');
     }
   }, [open]);
 
-  const tryUnlock = (e: React.FormEvent) => {
+  // ---- local passcode flow (Supabase not configured) ---------------------
+
+  const tryLocalUnlock = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcodeInput.trim() === PASSCODE) {
-      setUnlocked(true);
+    if (passcodeInput.trim() === LOCAL_PASSCODE) {
+      setLocalUnlocked(true);
       setError(null);
     } else {
       setError('Incorrect passcode.');
     }
   };
+
+  // ---- cloud auth flow (Supabase + admin email configured) --------------
+
+  const onAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setInfo(null);
+    setAuthBusy(true);
+    try {
+      if (authMode === 'signin') {
+        await auth.signIn(authEmail, authPassword);
+      } else {
+        const { needsConfirmation } = await auth.signUp(authEmail, authPassword);
+        if (needsConfirmation) {
+          setInfo('Account created. Check your email for the confirmation link, then come back and sign in.');
+        } else {
+          setInfo('Account created. You are signed in.');
+        }
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setAuthBusy(false);
+      setAuthPassword('');
+    }
+  };
+
+  // ---- design form ------------------------------------------------------
 
   const onFileChosen = async (file: File) => {
     if (!file) return;
@@ -72,6 +137,7 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     try {
       const resized = await resizeImageFile(file, 900, 0.82);
       setPendingFile(resized);
+      if (pendingPreview) URL.revokeObjectURL(pendingPreview);
       setPendingPreview(URL.createObjectURL(resized));
     } catch {
       setError('Could not read that image. Try a different one.');
@@ -104,7 +170,6 @@ export default function AddDesignPanel({ open, onClose }: Props) {
       if (cloudEnabled) {
         imageUrl = await uploadDesignImage(pendingFile);
       } else {
-        // localStorage path: store as base64
         imageUrl = await fileToBase64(pendingFile);
       }
 
@@ -134,6 +199,8 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     }
   };
 
+  // ----------------------------------------------------------------------
+
   return (
     <AnimatePresence>
       {open && (
@@ -162,48 +229,56 @@ export default function AddDesignPanel({ open, onClose }: Props) {
             </button>
 
             {!unlocked ? (
-              <div className="p-10 md:p-14">
-                <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500">
-                  <Lock size={20} />
-                </div>
-                <h3 className="display-3 mt-5">Atelier access</h3>
-                <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
-                  Enter the studio passcode to manage your collection.
-                </p>
-                <form onSubmit={tryUnlock} className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <input
-                    type="password"
-                    autoFocus
-                    value={passcodeInput}
-                    onChange={(e) => setPasscodeInput(e.target.value)}
-                    placeholder="Passcode"
-                    className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
-                  />
-                  <button type="submit" className="btn-primary">
-                    Unlock
-                  </button>
-                </form>
-                {error && <p className="mt-3 text-sm text-wine-500">{error}</p>}
-                <p className="mt-8 rounded-2xl bg-bronze-400/10 p-4 text-xs text-ink-800/70 dark:text-cream-100/70">
-                  <span className="font-medium text-bronze-500">For Happiness:</span> the default
-                  passcode is{' '}
-                  <code className="rounded bg-ink-800/10 px-2 py-0.5 font-mono dark:bg-cream-100/10">
-                    {PASSCODE}
-                  </code>
-                  . Change it in <code>src/components/AddDesignPanel.tsx</code>.
-                </p>
-              </div>
+              <UnlockScreen
+                cloudReady={cloudReady}
+                authBusy={authBusy}
+                authLoading={auth.loading}
+                authMode={authMode}
+                authEmail={authEmail}
+                authPassword={authPassword}
+                onChangeEmail={setAuthEmail}
+                onChangePassword={setAuthPassword}
+                onAuthSubmit={onAuthSubmit}
+                onSwitchMode={(m) => {
+                  setAuthMode(m);
+                  setError(null);
+                  setInfo(null);
+                }}
+                passcodeInput={passcodeInput}
+                onChangePasscode={setPasscodeInput}
+                onPasscodeSubmit={tryLocalUnlock}
+                error={error}
+                info={info}
+              />
             ) : (
               <div className="grid max-h-[88vh] grid-rows-[auto_auto_1fr] overflow-hidden">
-                <div className="flex items-center justify-between gap-4 border-b border-ink-800/10 p-6 pr-16 dark:border-cream-100/10">
+                <header className="flex items-center justify-between gap-4 border-b border-ink-800/10 p-6 pr-16 dark:border-cream-100/10">
                   <div>
                     <p className="eyebrow">Atelier panel</p>
                     <h3 className="display-3 mt-2">Manage your collection</h3>
+                    {cloudReady && auth.admin && (
+                      <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-800/60 dark:text-cream-100/60">
+                        <ShieldCheck size={12} className="text-bronze-500" />
+                        Signed in as <strong className="font-medium">{auth.admin.email}</strong>
+                      </p>
+                    )}
                   </div>
-                  <CloudStatus enabled={cloudEnabled} loading={loading} />
-                </div>
+                  <div className="flex items-center gap-2">
+                    <CloudStatus enabled={cloudEnabled} loading={loading} />
+                    {cloudReady && auth.admin && (
+                      <button
+                        type="button"
+                        onClick={() => auth.signOut()}
+                        className="grid h-9 w-9 place-items-center rounded-full border border-ink-800/15 text-ink-800/70 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/70"
+                        title="Sign out"
+                        aria-label="Sign out"
+                      >
+                        <LogOut size={14} />
+                      </button>
+                    )}
+                  </div>
+                </header>
 
-                {/* tabs */}
                 <div className="flex gap-1 border-b border-ink-800/10 px-6 dark:border-cream-100/10">
                   <TabButton active={tab === 'add'} onClick={() => setTab('add')}>
                     <Plus size={14} /> Add design
@@ -380,6 +455,151 @@ export default function AddDesignPanel({ open, onClose }: Props) {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+interface UnlockScreenProps {
+  cloudReady: boolean;
+  authBusy: boolean;
+  authLoading: boolean;
+  authMode: 'signin' | 'signup';
+  authEmail: string;
+  authPassword: string;
+  onChangeEmail: (s: string) => void;
+  onChangePassword: (s: string) => void;
+  onAuthSubmit: (e: React.FormEvent) => void;
+  onSwitchMode: (m: 'signin' | 'signup') => void;
+  passcodeInput: string;
+  onChangePasscode: (s: string) => void;
+  onPasscodeSubmit: (e: React.FormEvent) => void;
+  error: string | null;
+  info: string | null;
+}
+
+function UnlockScreen(p: UnlockScreenProps) {
+  // Show real auth form when cloud + admin email are both configured.
+  if (p.cloudReady) {
+    return (
+      <div className="p-8 md:p-12">
+        <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500">
+          <ShieldCheck size={20} />
+        </div>
+        <h3 className="display-3 mt-5">
+          {p.authMode === 'signin' ? 'Atelier sign in' : 'Create your atelier account'}
+        </h3>
+        <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
+          {p.authMode === 'signin'
+            ? "Sign in with the atelier admin email to manage the collection."
+            : "First time? Create the atelier account using your registered admin email."}
+        </p>
+
+        <form onSubmit={p.onAuthSubmit} className="mt-8 space-y-3">
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+              Email
+            </label>
+            <input
+              type="email"
+              autoFocus
+              value={p.authEmail}
+              onChange={(e) => p.onChangeEmail(e.target.value)}
+              placeholder="atelier@happinessfashion.com"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              required
+            />
+          </div>
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+              Password
+            </label>
+            <input
+              type="password"
+              value={p.authPassword}
+              onChange={(e) => p.onChangePassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              required
+              minLength={6}
+            />
+          </div>
+
+          {p.error && <p className="text-sm text-wine-500">{p.error}</p>}
+          {p.info && (
+            <p className="rounded-2xl bg-[#25D366]/10 p-3 text-sm text-[#1da851]">{p.info}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={p.authBusy || p.authLoading}
+            className="btn-primary w-full disabled:opacity-50"
+          >
+            {p.authBusy
+              ? 'Working…'
+              : p.authMode === 'signin'
+              ? 'Sign in'
+              : 'Create account'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-ink-800/60 dark:text-cream-100/60">
+          {p.authMode === 'signin' ? (
+            <>
+              First time?{' '}
+              <button
+                type="button"
+                onClick={() => p.onSwitchMode('signup')}
+                className="font-medium text-bronze-500 hover:underline"
+              >
+                Create your atelier account
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => p.onSwitchMode('signin')}
+                className="font-medium text-bronze-500 hover:underline"
+              >
+                Sign in instead
+              </button>
+            </>
+          )}
+        </p>
+      </div>
+    );
+  }
+
+  // Local-only fallback: passcode (no Supabase configured)
+  return (
+    <div className="p-8 md:p-12">
+      <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500">
+        <Lock size={20} />
+      </div>
+      <h3 className="display-3 mt-5">Atelier access</h3>
+      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
+        Enter the studio passcode to manage your collection.
+      </p>
+      <form onSubmit={p.onPasscodeSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <input
+          type="password"
+          autoFocus
+          value={p.passcodeInput}
+          onChange={(e) => p.onChangePasscode(e.target.value)}
+          placeholder="Passcode"
+          className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+        />
+        <button type="submit" className="btn-primary">
+          Unlock
+        </button>
+      </form>
+      {p.error && <p className="mt-3 text-sm text-wine-500">{p.error}</p>}
+      <p className="mt-8 rounded-2xl bg-bronze-400/10 p-4 text-xs text-ink-800/70 dark:text-cream-100/70">
+        <span className="font-medium text-bronze-500">Local-only mode.</span> Designs you add
+        live on this device only. To make them sync to every visitor in real time, set up
+        cloud sync — see <code>SUPABASE_SETUP.md</code>.
+      </p>
+    </div>
   );
 }
 

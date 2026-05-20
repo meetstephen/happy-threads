@@ -42,7 +42,7 @@ export default function Faq() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-24 md:py-32">
+    <section id="faq" className="py-20 md:py-32">
       <div className="container-luxe grid gap-14 md:grid-cols-12">
         <div className="md:col-span-4">
           <p className="eyebrow">Common questions</p>
