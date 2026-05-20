@@ -24,7 +24,7 @@ const pillars = [
 
 export default function About() {
   return (
-    <section id="about" className="bg-cream-200/40 py-24 md:py-32 dark:bg-ink-800/40">
+    <section id="about" className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
         <motion.div
           initial={{ opacity: 0, x: -30 }}

@@ -111,7 +111,7 @@ export default function StyleQuiz({ onResult }: Props) {
   };
 
   return (
-    <section id="style-quiz" className="relative overflow-hidden py-24 md:py-32">
+    <section id="style-quiz" className="relative overflow-hidden py-20 md:py-32">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-bronze-400/20 via-transparent to-wine-500/15"

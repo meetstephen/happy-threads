@@ -30,10 +30,10 @@ export interface Design {
   custom?: boolean;
 }
 
-// Static catalog. All photos are royalty-free from Pexels and feature
-// African models in authentic Nigerian/African attire.
-// Happiness can swap any photo by editing the `image` field, OR by using
-// the in-app "Add Design" panel (see Footer ✦ admin button).
+// Static catalog. All photos are royalty-free from Pexels and have been
+// hand-verified to feature African / Nigerian models. Happiness can swap any
+// photo by editing the `image` field, OR by uploading her own through the
+// Add-Design admin panel.
 export const designs: Design[] = [
   {
     id: 'HF-001',
@@ -65,39 +65,39 @@ export const designs: Design[] = [
   },
   {
     id: 'HF-003',
-    name: 'Sahara Kaftan Boubou',
-    category: 'Kaftan & Boubou',
+    name: 'West African Heritage Set',
+    category: 'Aso-Ebi & Owambe',
     description:
-      'Flowing boubou kaftan in earthy tones with embroidered yoke and bell sleeves. Effortlessly elegant for any season.',
-    image: pexels(15944276),
-    tags: ['kaftan', 'boubou', 'embroidered'],
-    occasions: ['casual', 'traditional', 'party'],
-    vibes: ['romantic', 'playful'],
-    colorMood: 'earthy',
+      'A heritage-inspired traditional set with fitted top, high-slit wrapper, and detailed accents. A celebration of West African elegance.',
+    image: pexels(31486360),
+    tags: ['heritage', 'traditional', 'embellished'],
+    occasions: ['traditional', 'wedding', 'party'],
+    vibes: ['classic', 'romantic'],
+    colorMood: 'jewel',
     featured: true,
     isNew: true,
     addedOn: '2026-05-15',
   },
   {
     id: 'HF-004',
-    name: 'Heritage Headwrap Set',
-    category: 'Aso-Ebi & Owambe',
+    name: 'Sunrise Day Dress',
+    category: 'Ankara',
     description:
-      'A statement headwrap and matching wrap dress in patterned fabric. Worn for weddings, naming ceremonies, and Sunday best.',
-    image: pexels(18003195),
-    tags: ['headwrap', 'wrap dress', 'traditional'],
-    occasions: ['traditional', 'casual', 'party'],
-    vibes: ['classic', 'romantic'],
-    colorMood: 'neutral',
+      'A flowing day dress in vibrant prints with cinched waist and flared hem. Perfect for Sunday service, a brunch outing, or a relaxed owambe.',
+    image: pexels(15020799),
+    tags: ['day dress', 'flared', 'casual'],
+    occasions: ['casual', 'party', 'traditional'],
+    vibes: ['playful', 'romantic'],
+    colorMood: 'earthy',
   },
   {
     id: 'HF-005',
-    name: 'Boardroom Ankara Suit',
+    name: 'Boardroom Power Suit',
     category: 'Corporate',
     description:
-      'Crisp Ankara-trim blazer with ivory linen shell and wide-leg trouser. Tailored confidence for the modern Nigerian executive.',
+      'Crisp tailored co-ord — structured blazer with sharp shoulders and wide-leg trouser. Confidence stitched into every seam, for the modern Nigerian executive.',
     image: pexels(19209599),
-    tags: ['ankara trim', 'blazer', 'corporate'],
+    tags: ['suit', 'co-ord', 'corporate'],
     occasions: ['work'],
     vibes: ['minimal', 'classic'],
     colorMood: 'monochrome',
@@ -105,49 +105,51 @@ export const designs: Design[] = [
   },
   {
     id: 'HF-006',
-    name: 'Pearl Bridal Gown',
+    name: 'Sunday Service Wrap',
+    category: 'Ankara',
+    description:
+      'A breezy wrap dress with adjustable tie waist — flattering on every silhouette, ready to throw on for service, brunch, or an afternoon out.',
+    image: pexels(5248020),
+    tags: ['wrap dress', 'easy', 'cotton'],
+    occasions: ['casual', 'work'],
+    vibes: ['minimal', 'playful'],
+    colorMood: 'pastel',
+    isNew: true,
+    addedOn: '2026-05-12',
+  },
+  {
+    id: 'HF-007',
+    name: 'Onyx Gala Gown',
+    category: 'Kaftan & Boubou',
+    description:
+      'A floor-sweeping black gown with sculpted shoulder and bias-cut skirt. Quietly powerful — made for premieres, galas, and unforgettable nights.',
+    image: pexels(17980365),
+    tags: ['gala', 'evening', 'sculpted'],
+    occasions: ['gala', 'party'],
+    vibes: ['bold', 'minimal'],
+    colorMood: 'monochrome',
+  },
+  {
+    id: 'HF-008',
+    name: 'Atelier Custom Fit',
     category: 'Bridal',
     description:
-      'A dreamy bridal gown crafted over four fittings — fitted lace bodice, cathedral train, and hand-set pearl detailing throughout.',
-    image: pexels(17586999),
-    tags: ['bridal', 'lace', 'cathedral train', 'pearl'],
-    occasions: ['wedding'],
-    vibes: ['romantic', 'classic'],
+      'A made-to-measure piece crafted over multiple fittings. Every stitch — from the fitted bodice to the hand-finished hem — drafted from your exact measurements at the atelier.',
+    image: pexels(5934222),
+    tags: ['bespoke', 'made-to-measure', 'fitting'],
+    occasions: ['wedding', 'gala'],
+    vibes: ['classic', 'romantic'],
     colorMood: 'neutral',
     featured: true,
     isNew: true,
     addedOn: '2026-05-08',
   },
   {
-    id: 'HF-007',
-    name: 'Pink Daystar Kaftan',
-    category: 'Kaftan & Boubou',
-    description:
-      'A breezy kaftan in dusty rose with intricate beaded neckline. Soft, modest, and unmistakably feminine.',
-    image: pexels(31712094),
-    tags: ['kaftan', 'beaded', 'modest'],
-    occasions: ['casual', 'traditional'],
-    vibes: ['romantic', 'playful'],
-    colorMood: 'pastel',
-  },
-  {
-    id: 'HF-008',
-    name: 'Onyx Evening Wrap',
-    category: 'Kaftan & Boubou',
-    description:
-      'A dramatic black floor-length wrap with structured shoulder. Quietly powerful for evening events.',
-    image: pexels(4029925),
-    tags: ['evening', 'wrap', 'minimal'],
-    occasions: ['gala', 'party'],
-    vibes: ['minimal', 'bold'],
-    colorMood: 'monochrome',
-  },
-  {
     id: 'HF-009',
     name: "Heritage Agbada (Men's)",
     category: "Men's Tailoring",
     description:
-      'A regal three-piece agbada with hand-embroidered neckline and matching cap. Crafted in flowing brocade for the modern gentleman.',
+      'A regal agbada with hand-embroidered neckline. Crafted in flowing brocade with matching cap — for the modern Nigerian gentleman.',
     image: pexels(34660898),
     tags: ['agbada', 'embroidered', 'brocade', 'cap'],
     occasions: ['traditional', 'wedding', 'party'],

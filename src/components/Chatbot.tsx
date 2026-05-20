@@ -4,6 +4,7 @@ import { ArrowRight, MessageCircle, Send, Sparkles, X } from 'lucide-react';
 import { generateReply, initialMessages, userMessage, type BotMessage } from '../utils/chatbot';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { designs as staticDesigns } from '../data/designs';
+import { useNearBottom } from '../utils/scroll';
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,10 @@ export default function Chatbot() {
   const [unread, setUnread] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { customDesigns } = useCustomDesigns();
+  const nearBottom = useNearBottom();
+  // Hide the launcher when the chat is closed AND the user is near the
+  // footer — gives them clear access to footer links on mobile.
+  const launcherVisible = open || !nearBottom;
 
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
@@ -79,7 +84,7 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Launcher */}
+      {/* Launcher — compact on mobile, expanded on desktop, hides near footer */}
       <button
         type="button"
         onClick={() => {
@@ -87,17 +92,19 @@ export default function Chatbot() {
           setUnread(false);
         }}
         aria-label="Chat with Joy, Happiness's AI assistant"
-        className="fixed bottom-6 left-6 z-30 flex items-center gap-2.5 rounded-full bg-ink-800 px-5 py-3.5 text-sm font-medium text-cream-100 shadow-luxe transition-all duration-300 hover:bg-bronze-500 dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400"
+        className={`fixed bottom-5 left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-all duration-500 hover:bg-bronze-500 sm:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
+          launcherVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
+        }`}
       >
-        <span className="relative grid h-7 w-7 place-items-center rounded-full bg-bronze-400/30">
-          <Sparkles size={14} className="text-bronze-400" />
+        <span className="relative grid h-6 w-6 place-items-center rounded-full bg-bronze-400/30 sm:h-7 sm:w-7">
+          <Sparkles size={12} className="text-bronze-400 sm:h-[14px] sm:w-[14px]" />
           {unread && !open && (
             <span className="absolute -right-0.5 -top-0.5 grid h-3 w-3 place-items-center rounded-full bg-wine-500">
               <span className="absolute h-3 w-3 animate-ping rounded-full bg-wine-500 opacity-75" />
             </span>
           )}
         </span>
-        <span className="hidden sm:inline">{open ? 'Close' : 'Ask Joy (AI)'}</span>
+        <span className="hidden md:inline">{open ? 'Close' : 'Ask Joy (AI)'}</span>
       </button>
 
       <AnimatePresence>
