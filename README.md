@@ -11,17 +11,23 @@ into WhatsApp clients.
 
 - **Custom monogram logo** — bronze-gradient "H" with thread-arc detail
 - **Magazine-grade UI** — Playfair Display + Inter, cream/bronze/wine palette, smooth Framer Motion animations
-- **Authentic Nigerian collection** — categories include Aso-Ebi, Ankara, Kaftan & Boubou, Bridal, Corporate, and Men's Tailoring
-- **🤖 AI Chatbot "Joy"** — smart pattern-matching assistant that answers pricing, lead time, fabric, location and order questions, recommends designs, and escalates to WhatsApp
+- **Authentic Nigerian collection** — Aso-Ebi, Ankara, Kaftan & Boubou, Bridal, Corporate, Men's Tailoring — featuring African models throughout
+- **🤖 AI Chatbot "Joy"** — answers pricing, lead time, location, fabric, and ordering questions; recommends specific designs; escalates to WhatsApp when needed
 - **🪄 AI Style Finder** — 3-question quiz that recommends pieces from the collection
-- **➕ Add Design panel** — passcode-protected admin form lets Happiness add new pieces (with auto-resized photo upload) directly from her phone — saved to browser storage and merged with the catalog
-- **Filterable gallery** — All / New Arrivals / 6 categories / Favorites
-- **NEW Arrival badges** + "Just In" badge for designs Happiness adds herself
+- **➕ Add Design panel** — passcode-protected admin form lets Happiness add new pieces from her phone (with auto-resized photo upload)
+- **☁️ Real-time cloud sync (optional)** — when [Supabase is configured](./SUPABASE_SETUP.md), her additions appear live on every visitor's device, instantly
+- **🔗 Shareable design URLs** — every design has its own deep link (`/?design=HF-001`); the Share button uses the native phone share sheet or copies to clipboard
+- **📲 Installable PWA** — visitors can add the site to their phone home screen
+- **📧 Newsletter signup** — captured via Netlify Forms, no backend needed
+- **📱 QR code generator** — one-tap download to print on her business cards/shop sign
+- **❓ FAQ section** — answers the top 8 questions automatically (reduces her support workload)
+- **🟢 Filterable gallery** — All / New Arrivals / 6 categories / Favorites
+- **🔖 Badges** — "New Arrival", "Just In" (custom uploads), "Stylist Pick"
 - **Lightbox** with keyboard support and full design details
 - **WhatsApp deep-linking** on every CTA — pre-fills polite messages with design name + reference ID to `+234 906 509 2129`
 - **Floating WhatsApp button** + AI chat launcher
 - **Light + Dark mode** with system preference detection
-- **Mobile-first responsive** + Open Graph / SEO so the link looks beautiful on WhatsApp
+- **Mobile-first responsive** + Open Graph + Schema.org structured data (rich Google results)
 
 ## Tech Stack
 
@@ -29,8 +35,10 @@ into WhatsApp clients.
 - [Tailwind CSS](https://tailwindcss.com/) (custom luxury palette + fonts)
 - [Framer Motion](https://www.framer.com/motion/) for animations
 - [Lucide React](https://lucide.dev/) for icons
+- [Supabase](https://supabase.com/) for optional cloud sync (free tier)
+- [QRCode](https://www.npmjs.com/package/qrcode) for the printable QR generator
 - Hosted on [Netlify](https://www.netlify.com/) (free tier)
-- Photography from Pexels (royalty-free, swappable per design)
+- Photography from Pexels (royalty-free, all swappable)
 
 ## Local Development
 
@@ -41,53 +49,30 @@ npm run build    # production build to dist/
 npm run preview  # preview the production build locally
 ```
 
-## How to add new designs (Happiness — this is for you)
+## Adding new designs (3 ways)
 
-You have **three** ways to add a new piece you've just made:
+### 1. In-app admin panel — for Happiness, from her phone
 
-### Option 1 — In-app Add Design panel (easiest, do it from your phone)
+1. Open the live site
+2. Scroll to the footer and tap the small **🔑 key icon**
+3. Enter passcode: `happy2026` (change it in `src/components/AddDesignPanel.tsx`)
+4. Tap "Click to upload a photo" → choose a photo
+5. Fill in name, category, optional description and tags
+6. Tap **Save Design** ✨
 
-1. Open https://happythreads.netlify.app
-2. Scroll to the very bottom (footer)
-3. Click the small **🔑 key icon** at the right end of the footer
-4. Enter the passcode: `happy2026`
-5. Tap **"Click to upload a photo"** → choose a photo of the dress
-6. Fill in name, pick a category, optional description and tags
-7. Tap **Save Design** ✨
+If [Supabase cloud sync](./SUPABASE_SETUP.md) is configured (it should be), the design appears for **everyone** in real-time. If not, it's saved on her phone only.
 
-The new design appears immediately on the site (with a "Just In" badge) and is saved in your browser. **Tip:** if you want this design visible to *every* visitor (not just on your browser), use Option 2 below.
+### 2. Edit the catalog file — permanent, ships with the code
 
-### Option 2 — Edit the catalog file (permanent, visible to everyone)
+All designs live in `src/data/designs.ts`. Copy any block, change the values, push to GitHub. Netlify auto-redeploys in ~90 seconds.
 
-All designs live in **one file**: `src/data/designs.ts`.
+### 3. Ask the developer
 
-1. Upload your photo to **[Cloudinary](https://cloudinary.com/)** (free) or any image host. Get the direct URL.
-2. Open `src/data/designs.ts`.
-3. Copy any existing design block and paste it at the top of the array.
-4. Change `id`, `name`, `image` URL, `description`, `category`, `tags`, and set `isNew: true` and `addedOn: '2026-05-20'` (today's date).
-5. Push to GitHub. Netlify auto-redeploys in ~90 seconds and the design is live for everyone.
+Send a WhatsApp with the photo and details — anyone maintaining the repo can add it permanently.
 
-### Option 3 — Ask the developer
+## Cloud sync setup (Supabase)
 
-Just send me (or whoever maintains the site) a WhatsApp message with the photo and design info. They can add it permanently.
-
-## How to update the AI chatbot's answers
-
-The chatbot's knowledge lives in `src/utils/chatbot.ts`. Each "intent" has a list of regex patterns and a reply. To add a new FAQ:
-
-```ts
-{
-  patterns: [/\b(your|trigger|words)\b/],
-  reply: () => ({
-    text: 'Your answer here...',
-    chips: ['Suggested follow-up', 'Another option'],
-  }),
-},
-```
-
-## Updating the WhatsApp number
-
-Edit `src/utils/whatsapp.ts` — the constants `WHATSAPP_PHONE` and `WHATSAPP_DISPLAY` are the single source of truth used everywhere on the site.
+See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for a 10-minute step-by-step guide. Without it, the site works fine — designs added by Happiness are saved on her phone only.
 
 ## Folder structure
 
@@ -96,39 +81,58 @@ src/
 ├── App.tsx
 ├── main.tsx
 ├── index.css
+├── vite-env.d.ts
 ├── components/
 │   ├── About.tsx
-│   ├── AddDesignPanel.tsx       👈 admin form for new designs
+│   ├── AddDesignPanel.tsx       👈 admin form (passcode + photo upload)
 │   ├── Chatbot.tsx              👈 AI assistant "Joy"
 │   ├── Collections.tsx
 │   ├── Contact.tsx
 │   ├── DesignCard.tsx
+│   ├── Faq.tsx                  👈 8 FAQs in an accordion
 │   ├── FloatingWhatsApp.tsx
 │   ├── Footer.tsx
 │   ├── Hero.tsx
-│   ├── Lightbox.tsx
+│   ├── Lightbox.tsx             👈 deep-link aware
 │   ├── Logo.tsx                 👈 brand monogram
 │   ├── Marquee.tsx
 │   ├── Navbar.tsx
+│   ├── Newsletter.tsx           👈 Netlify Forms signup
+│   ├── QrPanel.tsx              👈 QR code generator (in admin)
 │   ├── Services.tsx
 │   ├── StyleQuiz.tsx
 │   └── Testimonials.tsx
 ├── context/
-│   ├── CustomDesignsContext.tsx 👈 localStorage-backed user-added designs
+│   ├── CustomDesignsContext.tsx 👈 cloud + local design storage
 │   ├── FavoritesContext.tsx
 │   └── ThemeContext.tsx
 ├── data/
-│   └── designs.ts               👈 edit this to add/remove designs permanently
+│   └── designs.ts               👈 static catalog (curated pieces)
+├── lib/
+│   └── supabase.ts              👈 cloud client (only active when env vars set)
+├── services/
+│   └── designsService.ts        👈 cloud read/write/upload + realtime
 └── utils/
-    ├── chatbot.ts               👈 AI bot intents & replies
-    ├── images.ts                👈 Pexels image URL helper
+    ├── chatbot.ts               👈 AI bot intents
+    ├── images.ts                👈 Pexels URL helper
     ├── imageResize.ts           👈 client-side photo resizer
-    └── whatsapp.ts              👈 phone number + message builders
+    └── whatsapp.ts              👈 phone + message builders
 public/
-├── _redirects                   SPA fallback for Netlify
-└── favicon.svg                  brand mark
+├── _redirects                   SPA fallback
+├── favicon.svg                  brand mark
+└── manifest.webmanifest         PWA config
 netlify.toml                     Netlify build config
+SUPABASE_SETUP.md                cloud-sync guide
 ```
+
+## Environment variables
+
+| Var | Required? | What it does |
+|---|---|---|
+| `VITE_SUPABASE_URL` | optional | Your Supabase project URL — enables cloud sync |
+| `VITE_SUPABASE_ANON_KEY` | optional | Your Supabase anon public key |
+
+Without them the site falls back to localStorage-only design storage. See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md).
 
 ---
 

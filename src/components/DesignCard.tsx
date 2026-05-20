@@ -1,8 +1,30 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Maximize2, MessageCircle, Sparkles } from 'lucide-react';
+import { Heart, Maximize2, MessageCircle, Share2, Sparkles } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import type { Design } from '../data/designs';
+
+async function shareDesign(d: Design) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('design', d.id);
+  const shareUrl = url.toString();
+  const shareData = {
+    title: `${d.name} · Happiness Fashion`,
+    text: `Check out this ${d.category} piece: ${d.name}`,
+    url: shareUrl,
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      return false;
+    }
+    await navigator.clipboard.writeText(shareUrl);
+    return true; // copied
+  } catch {
+    return false;
+  }
+}
 
 interface Props {
   design: Design;
@@ -12,7 +34,17 @@ interface Props {
 
 export default function DesignCard({ design, onOpen, highlighted }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [copied, setCopied] = useState(false);
   const fav = isFavorite(design.id);
+
+  const onShareClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const wasCopied = await shareDesign(design);
+    if (wasCopied) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    }
+  };
 
   return (
     <motion.article
@@ -81,6 +113,15 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
             className="grid h-9 w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
           >
             <Maximize2 size={15} />
+          </button>
+          <button
+            type="button"
+            onClick={onShareClick}
+            aria-label="Share this design"
+            className="grid h-9 w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
+            title={copied ? 'Link copied!' : 'Share'}
+          >
+            <Share2 size={15} />
           </button>
         </div>
 

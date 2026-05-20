@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, MessageCircle, X } from 'lucide-react';
+import { Heart, MessageCircle, Share2, X } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import type { Design } from '../data/designs';
@@ -12,6 +12,7 @@ interface Props {
 
 export default function Lightbox({ design, onClose }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [shared, setShared] = useState(false);
 
   useEffect(() => {
     if (!design) return;
@@ -20,11 +21,41 @@ export default function Lightbox({ design, onClose }: Props) {
     };
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
+    // Update URL so the lightbox is shareable. Replaces (no history entry).
+    const url = new URL(window.location.href);
+    url.searchParams.set('design', design.id);
+    window.history.replaceState({}, '', url.toString());
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
+      const u = new URL(window.location.href);
+      u.searchParams.delete('design');
+      window.history.replaceState({}, '', u.toString());
     };
   }, [design, onClose]);
+
+  const onShare = async () => {
+    if (!design) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('design', design.id);
+    const shareUrl = url.toString();
+    const shareData = {
+      title: `${design.name} · Happiness Fashion`,
+      text: `Check out this ${design.category} piece by Happiness Fashion: ${design.name}`,
+      url: shareUrl,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        setShared(true);
+        setTimeout(() => setShared(false), 1800);
+      }
+    } catch {
+      // user cancelled — ignore
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -68,39 +99,54 @@ export default function Lightbox({ design, onClose }: Props) {
                   {design.description}
                 </p>
 
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {design.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-ink-800/15 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-800/70 dark:border-cream-100/20 dark:text-cream-100/70"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                {design.tags.length > 0 && (
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {design.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-full border border-ink-800/15 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-800/70 dark:border-cream-100/20 dark:text-cream-100/70"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-10 space-y-3">
                 <a
                   href={buildWhatsAppUrl(orderMessage(design.name, design.id))}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-whatsapp flex-1"
+                  className="btn-whatsapp w-full"
                 >
                   <MessageCircle size={16} /> Order on WhatsApp
                 </a>
-                <button
-                  type="button"
-                  onClick={() => toggleFavorite(design.id)}
-                  className={`inline-flex items-center justify-center gap-2 rounded-full border px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] transition-all ${
-                    isFavorite(design.id)
-                      ? 'border-wine-500 bg-wine-500 text-cream-100'
-                      : 'border-ink-800/20 text-ink-800 hover:border-ink-800 dark:border-cream-100/20 dark:text-cream-100'
-                  }`}
-                >
-                  <Heart size={16} fill={isFavorite(design.id) ? 'currentColor' : 'none'} />
-                  {isFavorite(design.id) ? 'Saved' : 'Save'}
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleFavorite(design.id)}
+                    className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-all ${
+                      isFavorite(design.id)
+                        ? 'border-wine-500 bg-wine-500 text-cream-100'
+                        : 'border-ink-800/20 text-ink-800 hover:border-ink-800 dark:border-cream-100/20 dark:text-cream-100'
+                    }`}
+                  >
+                    <Heart
+                      size={14}
+                      fill={isFavorite(design.id) ? 'currentColor' : 'none'}
+                    />
+                    {isFavorite(design.id) ? 'Saved' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onShare}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-ink-800/20 px-5 py-3 text-xs font-medium uppercase tracking-[0.18em] text-ink-800 transition-all hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100"
+                  >
+                    <Share2 size={14} />
+                    {shared ? 'Link copied!' : 'Share'}
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Lock, Plus, Trash2, Upload, X } from 'lucide-react';
+import { Cloud, CloudOff, Lock, Plus, QrCode, Trash2, Upload, X } from 'lucide-react';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { categories, type DesignCategory } from '../data/designs';
-import { resizeImageToBase64 } from '../utils/imageResize';
+import { resizeImageFile } from '../utils/imageResize';
+import { uploadDesignImage } from '../services/designsService';
+import QrPanel from './QrPanel';
 
 interface Props {
   open: boolean;
@@ -12,18 +14,22 @@ interface Props {
 
 const PASSCODE = 'happy2026';
 
+type Tab = 'add' | 'qr';
+
 export default function AddDesignPanel({ open, onClose }: Props) {
-  const { customDesigns, addDesign, removeDesign } = useCustomDesigns();
+  const { customDesigns, addDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
   const [unlocked, setUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('add');
 
   // form state
   const [name, setName] = useState('');
   const [category, setCategory] = useState<DesignCategory>('Aso-Ebi & Owambe');
   const [description, setDescription] = useState('');
-  const [imagePreview, setImagePreview] = useState<string>('');
   const [tags, setTags] = useState('');
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingPreview, setPendingPreview] = useState<string>('');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -40,12 +46,12 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     };
   }, [open, onClose]);
 
-  // reset on close
   useEffect(() => {
     if (!open) {
       setUnlocked(false);
       setPasscodeInput('');
       setError(null);
+      setTab('add');
     }
   }, [open]);
 
@@ -62,9 +68,11 @@ export default function AddDesignPanel({ open, onClose }: Props) {
   const onFileChosen = async (file: File) => {
     if (!file) return;
     setBusy(true);
+    setError(null);
     try {
-      const dataUrl = await resizeImageToBase64(file, 900, 0.82);
-      setImagePreview(dataUrl);
+      const resized = await resizeImageFile(file, 900, 0.82);
+      setPendingFile(resized);
+      setPendingPreview(URL.createObjectURL(resized));
     } catch {
       setError('Could not read that image. Try a different one.');
     } finally {
@@ -76,33 +84,53 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     setName('');
     setCategory('Aso-Ebi & Owambe');
     setDescription('');
-    setImagePreview('');
+    setPendingFile(null);
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingPreview('');
     setTags('');
+    setError(null);
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!name.trim()) return setError('Please enter a name.');
-    if (!imagePreview) return setError('Please choose a photo.');
+    if (!pendingFile) return setError('Please choose a photo.');
 
+    setBusy(true);
     try {
-      addDesign({
+      let imageUrl: string;
+      if (cloudEnabled) {
+        imageUrl = await uploadDesignImage(pendingFile);
+      } else {
+        // localStorage path: store as base64
+        imageUrl = await fileToBase64(pendingFile);
+      }
+
+      await addDesign({
         name: name.trim(),
         category,
         description: description.trim() || `A new ${category} piece by Happiness.`,
-        image: imagePreview,
+        image: imageUrl,
         tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
         occasions: ['party'],
         vibes: ['classic'],
         colorMood: 'neutral',
       });
       resetForm();
-    } catch {
-      setError(
-        'Could not save — your browser storage may be full. Try removing older designs first.'
-      );
+    } catch (err) {
+      setError((err as Error).message ?? 'Could not save. Please try again.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRemove = async (id: string) => {
+    try {
+      await removeDesign(id);
+    } catch (err) {
+      setError((err as Error).message ?? 'Could not remove design.');
     }
   };
 
@@ -140,7 +168,7 @@ export default function AddDesignPanel({ open, onClose }: Props) {
                 </div>
                 <h3 className="display-3 mt-5">Atelier access</h3>
                 <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
-                  Enter the studio passcode to add new designs.
+                  Enter the studio passcode to manage your collection.
                 </p>
                 <form onSubmit={tryUnlock} className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <input
@@ -162,151 +190,188 @@ export default function AddDesignPanel({ open, onClose }: Props) {
                   <code className="rounded bg-ink-800/10 px-2 py-0.5 font-mono dark:bg-cream-100/10">
                     {PASSCODE}
                   </code>
-                  . You can change it in <code>src/components/AddDesignPanel.tsx</code>.
+                  . Change it in <code>src/components/AddDesignPanel.tsx</code>.
                 </p>
               </div>
             ) : (
-              <div className="grid max-h-[85vh] grid-rows-[auto_1fr] overflow-hidden">
-                <div className="border-b border-ink-800/10 p-6 dark:border-cream-100/10">
-                  <p className="eyebrow">Manage your collection</p>
-                  <h3 className="display-3 mt-2">Add a new design</h3>
+              <div className="grid max-h-[88vh] grid-rows-[auto_auto_1fr] overflow-hidden">
+                <div className="flex items-center justify-between gap-4 border-b border-ink-800/10 p-6 pr-16 dark:border-cream-100/10">
+                  <div>
+                    <p className="eyebrow">Atelier panel</p>
+                    <h3 className="display-3 mt-2">Manage your collection</h3>
+                  </div>
+                  <CloudStatus enabled={cloudEnabled} loading={loading} />
                 </div>
+
+                {/* tabs */}
+                <div className="flex gap-1 border-b border-ink-800/10 px-6 dark:border-cream-100/10">
+                  <TabButton active={tab === 'add'} onClick={() => setTab('add')}>
+                    <Plus size={14} /> Add design
+                  </TabButton>
+                  <TabButton active={tab === 'qr'} onClick={() => setTab('qr')}>
+                    <QrCode size={14} /> Site QR code
+                  </TabButton>
+                </div>
+
                 <div className="overflow-y-auto p-6 md:p-8">
-                  <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
-                    {/* Image */}
-                    <div className="md:col-span-2">
-                      <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                        Photo of the design
-                      </label>
-                      {imagePreview ? (
-                        <div className="relative overflow-hidden rounded-2xl">
-                          <img src={imagePreview} alt="preview" className="h-64 w-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => setImagePreview('')}
-                            className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-cream-100/90 text-ink-800"
-                          >
-                            <X size={16} />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => fileRef.current?.click()}
-                          className="grid w-full place-items-center gap-2 rounded-2xl border-2 border-dashed border-ink-800/20 px-6 py-12 text-sm text-ink-800/70 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/70"
-                        >
-                          <Upload size={22} />
-                          <span>{busy ? 'Resizing…' : 'Click to upload a photo'}</span>
-                          <span className="text-[11px] uppercase tracking-[0.2em] text-ink-800/40 dark:text-cream-100/40">
-                            Auto-resized to 900px wide
-                          </span>
-                        </button>
-                      )}
-                      <input
-                        ref={fileRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => e.target.files?.[0] && onFileChosen(e.target.files[0])}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                        Design name
-                      </label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Sapphire Aso-Ebi"
-                        className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                        Category
-                      </label>
-                      <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value as DesignCategory)}
-                        className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
-                      >
-                        {categories.map((c) => (
-                          <option key={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                        Description (optional)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Tell clients what makes this piece special..."
-                        className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                        Tags (comma separated)
-                      </label>
-                      <input
-                        type="text"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        placeholder="lace, embroidered, beaded"
-                        className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
-                      />
-                    </div>
-
-                    {error && (
-                      <p className="md:col-span-2 text-sm text-wine-500">{error}</p>
-                    )}
-
-                    <div className="flex gap-3 md:col-span-2">
-                      <button type="submit" className="btn-primary">
-                        <Plus size={16} /> Save Design
-                      </button>
-                      <button type="button" onClick={resetForm} className="btn-ghost">
-                        Reset
-                      </button>
-                    </div>
-                  </form>
-
-                  {customDesigns.length > 0 && (
-                    <div className="mt-12">
-                      <p className="eyebrow">Your additions ({customDesigns.length})</p>
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                        {customDesigns.map((d) => (
-                          <div
-                            key={d.id}
-                            className="group relative overflow-hidden rounded-xl"
-                          >
-                            <img src={d.image} alt={d.name} className="h-32 w-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/0" />
-                            <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
-                              <span className="line-clamp-1 text-xs font-medium text-cream-100">
-                                {d.name}
-                              </span>
+                  {tab === 'qr' ? (
+                    <QrPanel />
+                  ) : (
+                    <>
+                      <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
+                        <div className="md:col-span-2">
+                          <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+                            Photo of the design
+                          </label>
+                          {pendingPreview ? (
+                            <div className="relative overflow-hidden rounded-2xl">
+                              <img
+                                src={pendingPreview}
+                                alt="preview"
+                                className="h-64 w-full object-cover"
+                              />
                               <button
                                 type="button"
-                                onClick={() => removeDesign(d.id)}
-                                aria-label="Remove design"
-                                className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-wine-500 text-cream-100 opacity-0 transition-opacity group-hover:opacity-100"
+                                onClick={() => {
+                                  if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+                                  setPendingFile(null);
+                                  setPendingPreview('');
+                                }}
+                                className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-cream-100/90 text-ink-800"
                               >
-                                <Trash2 size={12} />
+                                <X size={16} />
                               </button>
                             </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => fileRef.current?.click()}
+                              className="grid w-full place-items-center gap-2 rounded-2xl border-2 border-dashed border-ink-800/20 px-6 py-12 text-sm text-ink-800/70 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/70"
+                            >
+                              <Upload size={22} />
+                              <span>{busy ? 'Resizing…' : 'Click to upload a photo'}</span>
+                              <span className="text-[11px] uppercase tracking-[0.2em] text-ink-800/40 dark:text-cream-100/40">
+                                Auto-resized to 900px wide
+                              </span>
+                            </button>
+                          )}
+                          <input
+                            ref={fileRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              e.target.files?.[0] && onFileChosen(e.target.files[0])
+                            }
+                          />
+                        </div>
+
+                        <div>
+                          <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+                            Design name
+                          </label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="e.g. Sapphire Aso-Ebi"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+                            Category
+                          </label>
+                          <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value as DesignCategory)}
+                            className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
+                          >
+                            {categories.map((c) => (
+                              <option key={c}>{c}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+                            Description (optional)
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Tell clients what makes this piece special..."
+                            className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
+                            Tags (comma separated)
+                          </label>
+                          <input
+                            type="text"
+                            value={tags}
+                            onChange={(e) => setTags(e.target.value)}
+                            placeholder="lace, embroidered, beaded"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                          />
+                        </div>
+
+                        {error && (
+                          <p className="text-sm text-wine-500 md:col-span-2">{error}</p>
+                        )}
+
+                        <div className="flex gap-3 md:col-span-2">
+                          <button type="submit" disabled={busy} className="btn-primary disabled:opacity-50">
+                            <Plus size={16} />
+                            {busy ? 'Saving…' : cloudEnabled ? 'Publish to site' : 'Save Design'}
+                          </button>
+                          <button type="button" onClick={resetForm} className="btn-ghost">
+                            Reset
+                          </button>
+                        </div>
+                      </form>
+
+                      {customDesigns.length > 0 && (
+                        <div className="mt-12">
+                          <p className="eyebrow">
+                            {cloudEnabled ? 'Live on the site' : 'Saved on this device'} (
+                            {customDesigns.length})
+                          </p>
+                          <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                            {customDesigns.map((d) => (
+                              <div
+                                key={d.id}
+                                className="group relative overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={d.image}
+                                  alt={d.name}
+                                  className="h-32 w-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/0" />
+                                <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
+                                  <span className="line-clamp-1 text-xs font-medium text-cream-100">
+                                    {d.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemove(d.id)}
+                                    aria-label="Remove design"
+                                    className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-wine-500 text-cream-100 opacity-0 transition-opacity group-hover:opacity-100"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -316,4 +381,57 @@ export default function AddDesignPanel({ open, onClose }: Props) {
       )}
     </AnimatePresence>
   );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${
+        active
+          ? 'border-bronze-500 text-bronze-500'
+          : 'border-transparent text-ink-800/60 hover:text-ink-800 dark:text-cream-100/60 dark:hover:text-cream-100'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function CloudStatus({ enabled, loading }: { enabled: boolean; loading: boolean }) {
+  if (enabled) {
+    return (
+      <div className="flex items-center gap-2 rounded-full border border-[#25D366]/30 bg-[#25D366]/10 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-[#1da851]">
+        <Cloud size={12} />
+        {loading ? 'Syncing…' : 'Live sync'}
+      </div>
+    );
+  }
+  return (
+    <div
+      className="flex items-center gap-2 rounded-full border border-ink-800/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-ink-800/60 dark:border-cream-100/20 dark:text-cream-100/60"
+      title="Designs are saved on this device only. Set up Supabase to sync everywhere."
+    >
+      <CloudOff size={12} />
+      Local only
+    </div>
+  );
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(file);
+  });
 }
