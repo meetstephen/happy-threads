@@ -1,0 +1,82 @@
+import { motion } from 'framer-motion';
+import { Award, Scissors, Sparkles } from 'lucide-react';
+
+const ABOUT_IMG =
+  'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1000&q=80';
+
+const pillars = [
+  {
+    icon: Scissors,
+    title: 'Hand-Cut Patterns',
+    body: 'Every silhouette is drafted from your exact measurements — never off the rack.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Signature Finishing',
+    body: 'Hand-beaded trims, hidden boning, French seams. Couture-grade details on every piece.',
+  },
+  {
+    icon: Award,
+    title: 'Trusted by 200+ Clients',
+    body: 'From brides to executives across Nigeria — celebrated for fit, comfort, and elegance.',
+  },
+];
+
+export default function About() {
+  return (
+    <section id="about" className="bg-cream-200/40 py-24 md:py-32 dark:bg-ink-800/40">
+      <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="md:col-span-5"
+        >
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-luxe">
+            <img src={ABOUT_IMG} alt="The Happiness Fashion atelier" className="h-full w-full object-cover" />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="md:col-span-7"
+        >
+          <p className="eyebrow">About the Designer</p>
+          <h2 className="display-2 mt-4">
+            A quiet obsession with the way <span className="italic text-bronze-500">a woman feels</span> in what she wears.
+          </h2>
+          <div className="mt-8 space-y-5 text-ink-800/75 dark:text-cream-100/75">
+            <p>
+              I started Happiness Fashion seven years ago in a small studio with one
+              second-hand sewing machine and a notebook full of sketches. Today, the
+              atelier dresses brides, executives, and women who simply want to feel
+              extraordinary on a regular Tuesday.
+            </p>
+            <p>
+              I believe clothing is intimate. The way a sleeve sits, the weight of a
+              hem, the curve of a neckline against your collarbone — these details are
+              what turn fabric into memory. That's the Happiness signature.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+            {pillars.map(({ icon: Icon, title, body }) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-ink-800/10 bg-cream-100/60 p-5 backdrop-blur dark:border-cream-100/10 dark:bg-ink-900/40"
+              >
+                <Icon className="text-bronze-500" size={22} />
+                <h4 className="mt-3 font-display text-lg">{title}</h4>
+                <p className="mt-1 text-sm text-ink-800/65 dark:text-cream-100/65">{body}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: #B07A4C;
+    color: #FAF6F1;
+  }
+}
+
+@layer components {
+  .container-luxe {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink-800 px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 hover:bg-bronze-500 hover:shadow-luxe dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink-800/30 px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-ink-800 transition-all duration-300 hover:border-ink-800 hover:bg-ink-800 hover:text-cream-100 dark:border-cream-100/30 dark:text-cream-100 dark:hover:border-cream-100 dark:hover:bg-cream-100 dark:hover:text-ink-900;
+  }
+
+  .btn-whatsapp {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-white transition-all duration-300 hover:bg-[#1da851] hover:shadow-luxe;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.4em] text-bronze-500;
+  }
+
+  .display-1 {
+    @apply font-display text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-[5.5rem];
+  }
+
+  .display-2 {
+    @apply font-display text-4xl leading-tight sm:text-5xl md:text-6xl;
+  }
+
+  .display-3 {
+    @apply font-display text-3xl leading-tight sm:text-4xl md:text-5xl;
+  }
+
+  .gold-divider {
+    @apply mx-auto h-px w-16 bg-gradient-to-r from-transparent via-bronze-500 to-transparent;
+  }
+
+  .glass-panel {
+    @apply border border-cream-100/15 bg-cream-100/5 backdrop-blur-md dark:border-cream-100/10 dark:bg-ink-900/40;
+  }
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #B07A4C;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8E5E37;
+}
+
+/* image hover treatment */
+.luxe-image {
+  filter: saturate(0.95) contrast(1.02);
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1), filter 600ms ease;
+}
+.luxe-image:hover {
+  filter: saturate(1.05) contrast(1.05);
+}
