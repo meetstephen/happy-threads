@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FAF6F1" />
+    <meta name="apple-mobile-web-app-title" content="Happiness Fashion" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <title>Happiness Fashion — Bespoke Couture in Abakaliki, Nigeria</title>
     <meta
@@ -29,6 +33,33 @@
     />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Schema.org structured data for rich Google results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ClothingStore",
+      "name": "Happiness Fashion",
+      "description": "Bespoke Nigerian couture — aso-ebi, owambe, bridal, Ankara, kaftans and men's agbada.",
+      "image": "https://images.pexels.com/photos/30030552/pexels-photo-30030552.jpeg",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Abakaliki",
+        "addressRegion": "Ebonyi",
+        "addressCountry": "NG"
+      },
+      "telephone": "+2349065092129",
+      "priceRange": "₦₦",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -38,6 +69,18 @@
   </head>
   <body class="bg-cream-100 text-ink-800 dark:bg-ink-900 dark:text-cream-100">
     <div id="root"></div>
+
+    <!--
+      Static mirror of the newsletter form so Netlify's build-time crawler can
+      detect and register it. This element is invisible to humans; the live
+      form is rendered by the React app.
+    -->
+    <form name="newsletter" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="bot-field" />
+    </form>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

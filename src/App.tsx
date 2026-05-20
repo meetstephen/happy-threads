@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
@@ -7,15 +7,20 @@ import About from './components/About';
 import Services from './components/Services';
 import StyleQuiz from './components/StyleQuiz';
 import Testimonials from './components/Testimonials';
+import Faq from './components/Faq';
+import Newsletter from './components/Newsletter';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Lightbox from './components/Lightbox';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import Chatbot from './components/Chatbot';
-import AddDesignPanel from './components/AddDesignPanel';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
+
+// Admin panel is rarely opened (passcode-protected) — load on demand
+// to keep the initial bundle small.
+const AddDesignPanel = lazy(() => import('./components/AddDesignPanel'));
 
 export default function App() {
   const [lightboxDesign, setLightboxDesign] = useState<Design | null>(null);
@@ -29,7 +34,7 @@ export default function App() {
     [customDesigns]
   );
 
-  // open admin via #admin URL hash too
+  // Open admin when URL hash is #admin
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') setAdminOpen(true);
@@ -38,6 +43,15 @@ export default function App() {
     window.addEventListener('hashchange', checkHash);
     return () => window.removeEventListener('hashchange', checkHash);
   }, []);
+
+  // Open lightbox when ?design=HF-XXX deep link is used
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('design');
+    if (!id) return;
+    const found = allDesigns.find((d) => d.id === id);
+    if (found) setLightboxDesign(found);
+  }, [allDesigns]);
 
   return (
     <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
@@ -54,21 +68,25 @@ export default function App() {
         <Services />
         <StyleQuiz onResult={(ids) => setQuizFilter(ids)} />
         <Testimonials />
+        <Faq />
+        <Newsletter />
         <Contact />
       </main>
       <Footer onAdminClick={() => setAdminOpen(true)} />
       <FloatingWhatsApp />
       <Chatbot />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />
-      <AddDesignPanel
-        open={adminOpen}
-        onClose={() => {
-          setAdminOpen(false);
-          if (window.location.hash === '#admin') {
-            history.replaceState(null, '', window.location.pathname);
-          }
-        }}
-      />
+      <Suspense fallback={null}>
+        <AddDesignPanel
+          open={adminOpen}
+          onClose={() => {
+            setAdminOpen(false);
+            if (window.location.hash === '#admin') {
+              history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+          }}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -1,0 +1,21 @@
+{
+  "name": "Happiness Fashion — Bespoke Naija Couture",
+  "short_name": "Happiness Fashion",
+  "description": "Bespoke aso-ebi, owambe sets, bridal couture, Ankara tailoring and men's agbada — handcrafted in Abakaliki, Nigeria.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6F1",
+  "theme_color": "#14110E",
+  "lang": "en",
+  "categories": ["lifestyle", "shopping", "fashion"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
