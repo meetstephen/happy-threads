@@ -3,13 +3,13 @@ const items = [
   '✦',
   'Aso-Ebi & Owambe',
   '✦',
-  'Made-to-Measure',
+  'Ankara Tailoring',
   '✦',
-  "Men's Tailoring",
+  'Kaftans & Boubou',
   '✦',
-  'Ready-to-Wear',
+  "Men's Agbada",
   '✦',
-  'Hand-Beaded Finishes',
+  'Made in Abakaliki',
   '✦',
 ];
 

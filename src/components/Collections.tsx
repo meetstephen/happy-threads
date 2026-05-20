@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DesignCard from './DesignCard';
 import { categories, type Design, type DesignCategory } from '../data/designs';
@@ -11,21 +11,27 @@ interface Props {
   onOpen: (design: Design) => void;
 }
 
-type Filter = 'All' | DesignCategory | 'Favorites';
+type Filter = 'All' | 'New Arrivals' | DesignCategory | 'Favorites';
 
 export default function Collections({ designs, highlightIds, onOpen }: Props) {
   const [filter, setFilter] = useState<Filter>('All');
   const { favorites } = useFavorites();
 
+  const newCount = useMemo(
+    () => designs.filter((d) => d.isNew || d.custom).length,
+    [designs]
+  );
+
   const visible = useMemo(() => {
     let list = designs;
-    if (filter === 'Favorites') {
+    if (filter === 'New Arrivals') {
+      list = list.filter((d) => d.isNew || d.custom);
+    } else if (filter === 'Favorites') {
       list = list.filter((d) => favorites.includes(d.id));
     } else if (filter !== 'All') {
       list = list.filter((d) => d.category === filter);
     }
     if (highlightIds && highlightIds.length > 0) {
-      // sort highlighted first, preserve order otherwise
       list = [...list].sort((a, b) => {
         const ai = highlightIds.includes(a.id) ? 0 : 1;
         const bi = highlightIds.includes(b.id) ? 0 : 1;
@@ -35,7 +41,7 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
     return list;
   }, [designs, filter, favorites, highlightIds]);
 
-  const allFilters: Filter[] = ['All', ...categories, 'Favorites'];
+  const allFilters: Filter[] = ['All', 'New Arrivals', ...categories, 'Favorites'];
 
   return (
     <section id="collections" className="py-24 md:py-32">
@@ -55,6 +61,7 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
           {allFilters.map((f) => {
             const active = filter === f;
             const isFav = f === 'Favorites';
+            const isNew = f === 'New Arrivals';
             return (
               <button
                 type="button"
@@ -67,10 +74,16 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
                 }`}
               >
                 {isFav && <Heart size={12} fill={active ? 'currentColor' : 'none'} />}
+                {isNew && <Sparkles size={12} />}
                 {f}
                 {isFav && favorites.length > 0 && (
                   <span className="ml-1 rounded-full bg-bronze-500 px-1.5 text-[9px] text-cream-100">
                     {favorites.length}
+                  </span>
+                )}
+                {isNew && newCount > 0 && (
+                  <span className="ml-1 rounded-full bg-wine-500 px-1.5 text-[9px] text-cream-100">
+                    {newCount}
                   </span>
                 )}
               </button>
@@ -94,6 +107,8 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
           <div className="mt-16 rounded-2xl border border-dashed border-ink-800/20 p-12 text-center text-ink-800/60 dark:border-cream-100/20 dark:text-cream-100/60">
             {filter === 'Favorites'
               ? 'No favorites yet — tap the heart on any design to save it for later.'
+              : filter === 'New Arrivals'
+              ? 'No new arrivals at the moment. Check back soon!'
               : 'No pieces in this category yet.'}
           </div>
         )}

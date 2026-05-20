@@ -1,22 +1,27 @@
-# Happiness Fashion — Bespoke Couture Portfolio
+# Happiness Fashion — Bespoke Naija Couture
 
-A luxury fashion-portfolio site for **Happiness**, a Nigerian fashion designer.
-Built to showcase her bespoke women's couture, bridal, ready-to-wear and
-men's tailoring — and to convert visitors into WhatsApp clients.
+A luxury fashion-portfolio site for **Happiness**, an Abakaliki-based Nigerian
+fashion designer. Built to showcase her bespoke aso-ebi, owambe sets, bridal
+couture, Ankara tailoring, kaftans, and men's agbada — and to convert visitors
+into WhatsApp clients.
 
-[![Deploys on Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
+🌐 **Live:** https://happythreads.netlify.app
 
 ## Highlights
 
+- **Custom monogram logo** — bronze-gradient "H" with thread-arc detail
 - **Magazine-grade UI** — Playfair Display + Inter, cream/bronze/wine palette, smooth Framer Motion animations
-- **AI Style Finder** — 3-question quiz that recommends pieces from the collection (runs entirely client-side, zero API cost)
-- **Filterable gallery** by category + a Favorites filter (saved in `localStorage`)
+- **Authentic Nigerian collection** — categories include Aso-Ebi, Ankara, Kaftan & Boubou, Bridal, Corporate, and Men's Tailoring
+- **🤖 AI Chatbot "Joy"** — smart pattern-matching assistant that answers pricing, lead time, fabric, location and order questions, recommends designs, and escalates to WhatsApp
+- **🪄 AI Style Finder** — 3-question quiz that recommends pieces from the collection
+- **➕ Add Design panel** — passcode-protected admin form lets Happiness add new pieces (with auto-resized photo upload) directly from her phone — saved to browser storage and merged with the catalog
+- **Filterable gallery** — All / New Arrivals / 6 categories / Favorites
+- **NEW Arrival badges** + "Just In" badge for designs Happiness adds herself
 - **Lightbox** with keyboard support and full design details
-- **WhatsApp deep-linking** — every "Order" button pre-fills a polite, structured WhatsApp message to `+234 906 509 2129` containing the design name + reference ID
-- **Floating WhatsApp button** that appears after scroll
+- **WhatsApp deep-linking** on every CTA — pre-fills polite messages with design name + reference ID to `+234 906 509 2129`
+- **Floating WhatsApp button** + AI chat launcher
 - **Light + Dark mode** with system preference detection
-- **Fully responsive** — mobile-first since most clients arrive from WhatsApp links
-- **SEO + Open Graph** — beautiful link previews when shared on WhatsApp/Instagram/Facebook
+- **Mobile-first responsive** + Open Graph / SEO so the link looks beautiful on WhatsApp
 
 ## Tech Stack
 
@@ -25,6 +30,7 @@ men's tailoring — and to convert visitors into WhatsApp clients.
 - [Framer Motion](https://www.framer.com/motion/) for animations
 - [Lucide React](https://lucide.dev/) for icons
 - Hosted on [Netlify](https://www.netlify.com/) (free tier)
+- Photography from Pexels (royalty-free, swappable per design)
 
 ## Local Development
 
@@ -35,57 +41,51 @@ npm run build    # production build to dist/
 npm run preview  # preview the production build locally
 ```
 
-## Deploying to Netlify (step-by-step, no prior experience needed)
+## How to add new designs (Happiness — this is for you)
 
-> Goal: a live URL like `https://happiness-fashion.netlify.app` that Happiness can paste into WhatsApp/Instagram bio. **100% free**.
+You have **three** ways to add a new piece you've just made:
 
-### Option A — Connect GitHub (recommended, auto-deploys on every push)
+### Option 1 — In-app Add Design panel (easiest, do it from your phone)
 
-1. Push this repository to GitHub (already done if you see this README on GitHub).
-2. Go to **https://app.netlify.com/signup** and sign up with your GitHub account (free).
-3. After signing in, click **"Add new site" → "Import an existing project"**.
-4. Choose **"Deploy with GitHub"**, then authorize Netlify.
-5. Pick the **`happy-threads`** repository from the list.
-6. Netlify will auto-detect the build settings from `netlify.toml`. They should already read:
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-   - **Node version:** `20`
-   Leave them as-is.
-7. Click **"Deploy site"**. First build takes ~1–2 minutes.
-8. When the build finishes, Netlify gives you a random URL like
-   `https://luminous-puffin-1234.netlify.app`. Click **"Site settings" → "Change site name"** and set it to `happiness-fashion` (or anything available) — the URL becomes `https://happiness-fashion.netlify.app`.
-9. **Done.** Every future `git push` to `main` redeploys automatically.
+1. Open https://happythreads.netlify.app
+2. Scroll to the very bottom (footer)
+3. Click the small **🔑 key icon** at the right end of the footer
+4. Enter the passcode: `happy2026`
+5. Tap **"Click to upload a photo"** → choose a photo of the dress
+6. Fill in name, pick a category, optional description and tags
+7. Tap **Save Design** ✨
 
-### Option B — Drag & drop (zero git, fastest one-off)
+The new design appears immediately on the site (with a "Just In" badge) and is saved in your browser. **Tip:** if you want this design visible to *every* visitor (not just on your browser), use Option 2 below.
 
-1. Run `npm run build` locally — this creates the `dist/` folder.
-2. Go to **https://app.netlify.com/drop** while signed in.
-3. Drag the entire `dist` folder onto the page.
-4. Netlify hosts it instantly and gives you a public URL.
-5. The downside: every update needs a fresh drag-and-drop. Option A is better long term.
-
-### Custom domain (optional, ~$10/year)
-
-If Happiness later wants `happinessfashion.com`:
-1. Buy the domain on Namecheap, GoDaddy, or any registrar.
-2. In Netlify: **Site settings → Domain management → Add custom domain**.
-3. Follow Netlify's DNS instructions (or transfer the domain to Netlify DNS — easiest).
-4. Netlify auto-issues a free SSL certificate.
-
-## How to update the designs (Happiness — this is for you)
+### Option 2 — Edit the catalog file (permanent, visible to everyone)
 
 All designs live in **one file**: `src/data/designs.ts`.
 
-For each design you can edit:
-- `name` — the design title
-- `image` — a URL to the photo (use [Cloudinary](https://cloudinary.com/), Imgur, or Google Drive direct-link)
-- `description` — what makes the piece special
-- `tags` — fabric, technique, etc.
-- `occasions`, `vibes`, `colorMood` — these power the AI Style Finder so the right pieces get recommended
+1. Upload your photo to **[Cloudinary](https://cloudinary.com/)** (free) or any image host. Get the direct URL.
+2. Open `src/data/designs.ts`.
+3. Copy any existing design block and paste it at the top of the array.
+4. Change `id`, `name`, `image` URL, `description`, `category`, `tags`, and set `isNew: true` and `addedOn: '2026-05-20'` (today's date).
+5. Push to GitHub. Netlify auto-redeploys in ~90 seconds and the design is live for everyone.
 
-To add a new design, copy any block in the file and change the values. Save, push to GitHub, and Netlify auto-redeploys in under 2 minutes.
+### Option 3 — Ask the developer
 
-## Updating WhatsApp number
+Just send me (or whoever maintains the site) a WhatsApp message with the photo and design info. They can add it permanently.
+
+## How to update the AI chatbot's answers
+
+The chatbot's knowledge lives in `src/utils/chatbot.ts`. Each "intent" has a list of regex patterns and a reply. To add a new FAQ:
+
+```ts
+{
+  patterns: [/\b(your|trigger|words)\b/],
+  reply: () => ({
+    text: 'Your answer here...',
+    chips: ['Suggested follow-up', 'Another option'],
+  }),
+},
+```
+
+## Updating the WhatsApp number
 
 Edit `src/utils/whatsapp.ts` — the constants `WHATSAPP_PHONE` and `WHATSAPP_DISPLAY` are the single source of truth used everywhere on the site.
 
@@ -96,16 +96,40 @@ src/
 ├── App.tsx
 ├── main.tsx
 ├── index.css
-├── components/        # All UI sections
-├── context/           # Theme + Favorites (localStorage-backed)
-├── data/designs.ts    # 👈 Edit this to add/remove designs
-└── utils/whatsapp.ts  # 👈 Edit this to change phone number
+├── components/
+│   ├── About.tsx
+│   ├── AddDesignPanel.tsx       👈 admin form for new designs
+│   ├── Chatbot.tsx              👈 AI assistant "Joy"
+│   ├── Collections.tsx
+│   ├── Contact.tsx
+│   ├── DesignCard.tsx
+│   ├── FloatingWhatsApp.tsx
+│   ├── Footer.tsx
+│   ├── Hero.tsx
+│   ├── Lightbox.tsx
+│   ├── Logo.tsx                 👈 brand monogram
+│   ├── Marquee.tsx
+│   ├── Navbar.tsx
+│   ├── Services.tsx
+│   ├── StyleQuiz.tsx
+│   └── Testimonials.tsx
+├── context/
+│   ├── CustomDesignsContext.tsx 👈 localStorage-backed user-added designs
+│   ├── FavoritesContext.tsx
+│   └── ThemeContext.tsx
+├── data/
+│   └── designs.ts               👈 edit this to add/remove designs permanently
+└── utils/
+    ├── chatbot.ts               👈 AI bot intents & replies
+    ├── images.ts                👈 Pexels image URL helper
+    ├── imageResize.ts           👈 client-side photo resizer
+    └── whatsapp.ts              👈 phone number + message builders
 public/
-├── _redirects         # SPA fallback for Netlify
-└── favicon.svg
-netlify.toml           # Netlify build config
+├── _redirects                   SPA fallback for Netlify
+└── favicon.svg                  brand mark
+netlify.toml                     Netlify build config
 ```
 
 ---
 
-Built with care.
+Built with care for Happiness Fashion, Abakaliki.

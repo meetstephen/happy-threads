@@ -24,8 +24,8 @@ export default function Contact() {
                 Ready for something <span className="italic text-bronze-400">made for you?</span>
               </h2>
               <p className="mt-6 max-w-md text-cream-100/75 dark:text-ink-900/75">
-                Reach out on WhatsApp for the fastest response. Share inspiration photos,
-                your event date, and your city — Happiness will take it from there.
+                WhatsApp is the fastest way to reach Happiness. Share inspiration photos,
+                your event date, and your city — she'll take it from there.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
@@ -57,7 +57,11 @@ export default function Contact() {
               <ContactRow icon={Phone} label="Phone" value={WHATSAPP_DISPLAY} />
               <ContactRow icon={Instagram} label="Instagram" value="@happiness.fashion" />
               <ContactRow icon={Mail} label="Email" value="atelier@happinessfashion.com" />
-              <ContactRow icon={MapPin} label="Atelier" value="Lagos, Nigeria — by appointment" />
+              <ContactRow
+                icon={MapPin}
+                label="Atelier"
+                value="Abakaliki, Ebonyi State, Nigeria — by appointment"
+              />
             </motion.div>
           </div>
         </div>

@@ -1,8 +1,10 @@
+import { pexels } from '../utils/images';
+
 export type DesignCategory =
   | 'Bridal'
-  | 'Evening Gowns'
-  | 'Ankara & Aso-Ebi'
-  | 'Ready-to-Wear'
+  | 'Aso-Ebi & Owambe'
+  | 'Ankara'
+  | 'Kaftan & Boubou'
   | 'Corporate'
   | "Men's Tailoring";
 
@@ -21,166 +23,146 @@ export interface Design {
   vibes: Vibe[];
   colorMood: ColorMood;
   featured?: boolean;
+  isNew?: boolean;
+  /** ISO date string for sorting "New Arrivals" */
+  addedOn?: string;
+  /** True when added by Happiness through the Add-Design panel (vs static catalog). */
+  custom?: boolean;
 }
 
-// Note: placeholder imagery from Unsplash (free to use). Happiness can swap each
-// `image` URL with her own photo by editing this single file.
+// Static catalog. All photos are royalty-free from Pexels and feature
+// African models in authentic Nigerian/African attire.
+// Happiness can swap any photo by editing the `image` field, OR by using
+// the in-app "Add Design" panel (see Footer ✦ admin button).
 export const designs: Design[] = [
   {
     id: 'HF-001',
-    name: 'Ivory Cathedral Gown',
-    category: 'Bridal',
+    name: 'Royal Aso-Ebi Set',
+    category: 'Aso-Ebi & Owambe',
     description:
-      'A cathedral-train bridal gown in silk mikado with hand-beaded bodice and illusion neckline. Made-to-measure over four fittings.',
-    image: 'https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=900&q=80',
-    tags: ['silk', 'beaded', 'cathedral train', 'bespoke'],
-    occasions: ['wedding'],
-    vibes: ['romantic', 'classic'],
-    colorMood: 'neutral',
+      'A regal aso-ebi ensemble — fitted corseted top with high-slit wrapper and matching gele headtie. Hand-finished for the celebration of a lifetime.',
+    image: pexels(30030552),
+    tags: ['aso-ebi', 'gele', 'owambe', 'corseted'],
+    occasions: ['traditional', 'party', 'wedding'],
+    vibes: ['bold', 'romantic'],
+    colorMood: 'earthy',
     featured: true,
+    isNew: true,
+    addedOn: '2026-05-10',
   },
   {
     id: 'HF-002',
-    name: 'Burgundy Mermaid',
-    category: 'Evening Gowns',
+    name: 'Ankara Power Co-ord',
+    category: 'Ankara',
     description:
-      'A floor-sweeping mermaid gown in deep burgundy crepe — sculpted bodice, dramatic flare, made for unforgettable nights.',
-    image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=80',
-    tags: ['mermaid', 'red carpet', 'crepe'],
-    occasions: ['gala', 'party'],
-    vibes: ['bold', 'romantic'],
+      'Tailored Ankara two-piece — structured blazer with peak lapels and tapered trousers. Confidence in print, made for the boardroom and beyond.',
+    image: pexels(3869639),
+    tags: ['ankara', 'co-ord', 'tailored', 'office'],
+    occasions: ['work', 'traditional'],
+    vibes: ['bold', 'classic'],
     colorMood: 'jewel',
     featured: true,
   },
   {
     id: 'HF-003',
-    name: 'Aso-Ebi Royale',
-    category: 'Ankara & Aso-Ebi',
+    name: 'Sahara Kaftan Boubou',
+    category: 'Kaftan & Boubou',
     description:
-      'Owambe-ready aso-ebi ensemble featuring a corseted blouse and high-slit skirt in pleated taffeta with gele to match.',
-    image: 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=900&q=80',
-    tags: ['aso-ebi', 'owambe', 'gele', 'corset'],
-    occasions: ['traditional', 'party'],
-    vibes: ['bold', 'playful'],
-    colorMood: 'jewel',
+      'Flowing boubou kaftan in earthy tones with embroidered yoke and bell sleeves. Effortlessly elegant for any season.',
+    image: pexels(15944276),
+    tags: ['kaftan', 'boubou', 'embroidered'],
+    occasions: ['casual', 'traditional', 'party'],
+    vibes: ['romantic', 'playful'],
+    colorMood: 'earthy',
     featured: true,
+    isNew: true,
+    addedOn: '2026-05-15',
   },
   {
     id: 'HF-004',
-    name: 'Ankara Power Suit',
-    category: 'Ankara & Aso-Ebi',
+    name: 'Heritage Headwrap Set',
+    category: 'Aso-Ebi & Owambe',
     description:
-      'Tailored two-piece Ankara suit — structured blazer with peak lapels and tapered trousers. Confidence in print.',
-    image: 'https://images.unsplash.com/photo-1551803091-e20673f15770?w=900&q=80',
-    tags: ['ankara', 'suit', 'tailored'],
-    occasions: ['work', 'traditional'],
-    vibes: ['bold', 'classic'],
-    colorMood: 'earthy',
+      'A statement headwrap and matching wrap dress in patterned fabric. Worn for weddings, naming ceremonies, and Sunday best.',
+    image: pexels(18003195),
+    tags: ['headwrap', 'wrap dress', 'traditional'],
+    occasions: ['traditional', 'casual', 'party'],
+    vibes: ['classic', 'romantic'],
+    colorMood: 'neutral',
   },
   {
     id: 'HF-005',
-    name: 'Champagne Slip',
-    category: 'Evening Gowns',
+    name: 'Boardroom Ankara Suit',
+    category: 'Corporate',
     description:
-      'A bias-cut silk slip dress in champagne gold — minimalist, sensual, effortlessly elegant.',
-    image: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=900&q=80',
-    tags: ['silk', 'minimalist', 'bias cut'],
-    occasions: ['gala', 'party'],
-    vibes: ['minimal', 'romantic'],
-    colorMood: 'neutral',
+      'Crisp Ankara-trim blazer with ivory linen shell and wide-leg trouser. Tailored confidence for the modern Nigerian executive.',
+    image: pexels(19209599),
+    tags: ['ankara trim', 'blazer', 'corporate'],
+    occasions: ['work'],
+    vibes: ['minimal', 'classic'],
+    colorMood: 'monochrome',
+    featured: true,
   },
   {
     id: 'HF-006',
-    name: 'Linen Boardroom Set',
-    category: 'Corporate',
+    name: 'Pearl Bridal Gown',
+    category: 'Bridal',
     description:
-      'Crisp ivory linen co-ord — a relaxed blazer and wide-leg trouser. Tailored confidence for the modern executive.',
-    image: 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=900&q=80',
-    tags: ['linen', 'co-ord', 'office'],
-    occasions: ['work'],
-    vibes: ['minimal', 'classic'],
+      'A dreamy bridal gown crafted over four fittings — fitted lace bodice, cathedral train, and hand-set pearl detailing throughout.',
+    image: pexels(17586999),
+    tags: ['bridal', 'lace', 'cathedral train', 'pearl'],
+    occasions: ['wedding'],
+    vibes: ['romantic', 'classic'],
     colorMood: 'neutral',
+    featured: true,
+    isNew: true,
+    addedOn: '2026-05-08',
   },
   {
     id: 'HF-007',
-    name: 'Sunday Brunch Wrap',
-    category: 'Ready-to-Wear',
+    name: 'Pink Daystar Kaftan',
+    category: 'Kaftan & Boubou',
     description:
-      'A breezy wrap dress in soft cotton sateen — flattering on every silhouette, ready to throw on and go.',
-    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=900&q=80',
-    tags: ['wrap dress', 'cotton', 'easy'],
-    occasions: ['casual', 'party'],
-    vibes: ['playful', 'romantic'],
+      'A breezy kaftan in dusty rose with intricate beaded neckline. Soft, modest, and unmistakably feminine.',
+    image: pexels(31712094),
+    tags: ['kaftan', 'beaded', 'modest'],
+    occasions: ['casual', 'traditional'],
+    vibes: ['romantic', 'playful'],
     colorMood: 'pastel',
   },
   {
     id: 'HF-008',
-    name: 'Emerald Cocktail',
-    category: 'Evening Gowns',
+    name: 'Onyx Evening Wrap',
+    category: 'Kaftan & Boubou',
     description:
-      'Knee-length emerald velvet cocktail dress with sweetheart neckline — a jewel for intimate evenings.',
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=900&q=80',
-    tags: ['velvet', 'cocktail', 'sweetheart'],
-    occasions: ['party', 'gala'],
-    vibes: ['bold', 'romantic'],
-    colorMood: 'jewel',
-  },
-  {
-    id: 'HF-009',
-    name: 'Heritage Agbada (Men)',
-    category: "Men's Tailoring",
-    description:
-      'A regal three-piece agbada in cream brocade with hand-embroidered neckline. Crafted for the modern gentleman.',
-    image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=900&q=80',
-    tags: ['agbada', 'embroidered', 'brocade'],
-    occasions: ['traditional', 'wedding'],
-    vibes: ['classic', 'bold'],
-    colorMood: 'neutral',
-  },
-  {
-    id: 'HF-010',
-    name: 'Slim Charcoal Suit (Men)',
-    category: "Men's Tailoring",
-    description:
-      'Two-piece slim-cut suit in charcoal wool blend with a crisp white shirt. Made-to-measure precision.',
-    image: 'https://images.unsplash.com/photo-1593032465175-481ac7f401a0?w=900&q=80',
-    tags: ['suit', 'wool', 'slim fit'],
-    occasions: ['work', 'gala', 'wedding'],
-    vibes: ['minimal', 'classic'],
+      'A dramatic black floor-length wrap with structured shoulder. Quietly powerful for evening events.',
+    image: pexels(4029925),
+    tags: ['evening', 'wrap', 'minimal'],
+    occasions: ['gala', 'party'],
+    vibes: ['minimal', 'bold'],
     colorMood: 'monochrome',
   },
   {
-    id: 'HF-011',
-    name: 'Sahara Kaftan',
-    category: 'Ready-to-Wear',
+    id: 'HF-009',
+    name: "Heritage Agbada (Men's)",
+    category: "Men's Tailoring",
     description:
-      'Flowing kaftan in earthy ochre with bell sleeves and beaded trim. Quietly luxurious for any season.',
-    image: 'https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=900&q=80',
-    tags: ['kaftan', 'beaded', 'flowy'],
-    occasions: ['casual', 'party', 'traditional'],
-    vibes: ['romantic', 'playful'],
-    colorMood: 'earthy',
-  },
-  {
-    id: 'HF-012',
-    name: 'Blush Princess Gown',
-    category: 'Bridal',
-    description:
-      'A blush-pink ball gown with layered tulle skirt, bodice in French lace, and a soft cathedral veil.',
-    image: 'https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=900&q=80',
-    tags: ['ball gown', 'lace', 'tulle'],
-    occasions: ['wedding'],
-    vibes: ['romantic', 'classic'],
-    colorMood: 'pastel',
-    featured: true,
+      'A regal three-piece agbada with hand-embroidered neckline and matching cap. Crafted in flowing brocade for the modern gentleman.',
+    image: pexels(34660898),
+    tags: ['agbada', 'embroidered', 'brocade', 'cap'],
+    occasions: ['traditional', 'wedding', 'party'],
+    vibes: ['classic', 'bold'],
+    colorMood: 'jewel',
+    isNew: true,
+    addedOn: '2026-05-12',
   },
 ];
 
 export const categories: DesignCategory[] = [
   'Bridal',
-  'Evening Gowns',
-  'Ankara & Aso-Ebi',
-  'Ready-to-Wear',
+  'Aso-Ebi & Owambe',
+  'Ankara',
+  'Kaftan & Boubou',
   'Corporate',
   "Men's Tailoring",
 ];

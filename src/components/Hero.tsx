@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, MapPin, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+import { pexels } from '../utils/images';
 
-const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1600&q=80';
+const HERO_IMAGE = pexels(30030552, 1200, 1500);
 
 export default function Hero() {
   return (
     <section id="top" className="relative isolate overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
-      {/* Decorative background */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-32 -top-32 h-[520px] w-[520px] rounded-full bg-bronze-400/20 blur-3xl"
@@ -26,8 +25,8 @@ export default function Hero() {
             transition={{ duration: 0.7 }}
             className="inline-flex items-center gap-2 rounded-full border border-ink-800/15 bg-cream-100/40 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.32em] text-ink-800/70 backdrop-blur dark:border-cream-100/15 dark:bg-ink-800/40 dark:text-cream-100/70"
           >
-            <Sparkles size={12} className="text-bronze-500" />
-            Bespoke • Couture • Ready-to-Wear
+            <MapPin size={12} className="text-bronze-500" />
+            Abakaliki • Ebonyi State • Nigeria
           </motion.div>
 
           <motion.h1
@@ -36,7 +35,7 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.1 }}
             className="display-1 mt-6"
           >
-            Wear something
+            Naija couture
             <br />
             <span className="italic text-bronze-500">stitched with</span>{' '}
             <span className="italic">love.</span>
@@ -48,10 +47,10 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.25 }}
             className="mt-7 max-w-xl text-base leading-relaxed text-ink-800/75 md:text-lg dark:text-cream-100/75"
           >
-            I'm <strong className="font-medium">Happiness</strong> — a Nigerian fashion
-            designer crafting bespoke women's couture, bridal gowns, aso-ebi, and refined
-            menswear. Every piece is hand-finished in my atelier with measurements made
-            for you alone.
+            I'm <strong className="font-medium">Happiness</strong> — an Abakaliki-based
+            fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara
+            co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my
+            atelier and made-to-measure for you.
           </motion.p>
 
           <motion.div
@@ -81,12 +80,20 @@ export default function Hero() {
           >
             <div>
               <div className="font-display text-3xl text-ink-800 dark:text-cream-100">200+</div>
-              <div className="text-xs uppercase tracking-[0.25em]">Brides dressed</div>
+              <div className="text-xs uppercase tracking-[0.25em]">Clients dressed</div>
             </div>
             <div className="h-10 w-px bg-ink-800/20 dark:bg-cream-100/20" />
             <div>
               <div className="font-display text-3xl text-ink-800 dark:text-cream-100">7 yrs</div>
               <div className="text-xs uppercase tracking-[0.25em]">Of craftsmanship</div>
+            </div>
+            <div className="h-10 w-px bg-ink-800/20 dark:bg-cream-100/20" />
+            <div>
+              <div className="inline-flex items-center gap-1.5 font-display text-3xl text-ink-800 dark:text-cream-100">
+                <Sparkles size={18} className="text-bronze-500" />
+                AI
+              </div>
+              <div className="text-xs uppercase tracking-[0.25em]">Stylist on site</div>
             </div>
           </motion.div>
         </div>
@@ -102,7 +109,7 @@ export default function Hero() {
             <div className="relative h-full w-full overflow-hidden rounded-[2rem] shadow-luxe">
               <img
                 src={HERO_IMAGE}
-                alt="A model wearing a Happiness Fashion couture gown"
+                alt="A model wearing a Happiness Fashion design"
                 className="luxe-image h-full w-full object-cover"
                 loading="eager"
               />
@@ -112,7 +119,7 @@ export default function Hero() {
                   <div className="text-xs uppercase tracking-[0.3em] text-bronze-500">
                     Featured
                   </div>
-                  <div className="font-display text-base">Burgundy Mermaid</div>
+                  <div className="font-display text-base">Royal Aso-Ebi Set</div>
                 </div>
                 <a
                   href="#collections"

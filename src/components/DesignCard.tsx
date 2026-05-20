@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Heart, Maximize2, MessageCircle } from 'lucide-react';
+import { Heart, Maximize2, MessageCircle, Sparkles } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import type { Design } from '../data/designs';
@@ -16,6 +16,7 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
 
   return (
     <motion.article
+      data-design-id={design.id}
       layout
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -33,6 +34,25 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
           className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/0 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+        {/* badges (top-left) */}
+        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+          {highlighted && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
+              <Sparkles size={10} /> Stylist Pick
+            </span>
+          )}
+          {design.isNew && (
+            <span className="rounded-full bg-wine-500 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
+              New Arrival
+            </span>
+          )}
+          {design.custom && (
+            <span className="rounded-full border border-cream-100/40 bg-ink-900/60 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+              Just In
+            </span>
+          )}
+        </div>
 
         {/* top-right actions */}
         <div className="absolute right-3 top-3 flex flex-col gap-2">
@@ -64,13 +84,6 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
           </button>
         </div>
 
-        {/* highlighted badge */}
-        {highlighted && (
-          <div className="absolute left-3 top-3 rounded-full bg-bronze-500 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
-            Stylist Pick
-          </div>
-        )}
-
         {/* hover order overlay */}
         <div className="absolute bottom-0 left-0 right-0 translate-y-full p-4 transition-transform duration-500 group-hover:translate-y-0">
           <a
@@ -95,7 +108,7 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
             {design.name}
           </h3>
           <span className="text-[10px] uppercase tracking-[0.3em] text-bronze-500">
-            {design.id}
+            {design.id.length > 12 ? design.id.slice(0, 12) + '…' : design.id}
           </span>
         </div>
         <p className="mt-1 text-xs uppercase tracking-[0.22em] text-ink-800/55 dark:text-cream-100/55">
