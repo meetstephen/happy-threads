@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Award, Scissors, Sparkles } from 'lucide-react';
+import { pexels } from '../utils/images';
 
-const ABOUT_IMG =
-  'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1000&q=80';
+const ABOUT_IMG = pexels(5934222, 1000, 1250);
 
 const pillars = [
   {
@@ -13,12 +13,12 @@ const pillars = [
   {
     icon: Sparkles,
     title: 'Signature Finishing',
-    body: 'Hand-beaded trims, hidden boning, French seams. Couture-grade details on every piece.',
+    body: 'Hand-beaded trims, hidden boning, French seams. Couture details on every piece.',
   },
   {
     icon: Award,
-    title: 'Trusted by 200+ Clients',
-    body: 'From brides to executives across Nigeria — celebrated for fit, comfort, and elegance.',
+    title: 'Trusted Across Nigeria',
+    body: 'From Abakaliki brides to Lagos executives — celebrated for fit, comfort, and elegance.',
   },
 ];
 
@@ -34,7 +34,7 @@ export default function About() {
           className="md:col-span-5"
         >
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-luxe">
-            <img src={ABOUT_IMG} alt="The Happiness Fashion atelier" className="h-full w-full object-cover" />
+            <img src={ABOUT_IMG} alt="Inside the Happiness Fashion atelier in Abakaliki" className="h-full w-full object-cover" />
           </div>
         </motion.div>
 
@@ -51,14 +51,14 @@ export default function About() {
           </h2>
           <div className="mt-8 space-y-5 text-ink-800/75 dark:text-cream-100/75">
             <p>
-              I started Happiness Fashion seven years ago in a small studio with one
-              second-hand sewing machine and a notebook full of sketches. Today, the
-              atelier dresses brides, executives, and women who simply want to feel
+              I started Happiness Fashion seven years ago in a small studio in Abakaliki
+              with one second-hand sewing machine and a notebook full of sketches. Today,
+              the atelier dresses brides, executives, and women who simply want to feel
               extraordinary on a regular Tuesday.
             </p>
             <p>
-              I believe clothing is intimate. The way a sleeve sits, the weight of a
-              hem, the curve of a neckline against your collarbone — these details are
+              I believe clothing is intimate. The way a sleeve sits, the weight of a hem,
+              the way an Ankara print catches the light at an owambe — these details are
               what turn fabric into memory. That's the Happiness signature.
             </p>
           </div>

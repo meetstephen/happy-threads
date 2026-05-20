@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useFavorites } from '../context/FavoritesContext';
+import Logo from './Logo';
 
 const links = [
   { href: '#collections', label: 'Collection' },
@@ -31,14 +32,8 @@ export default function Navbar() {
   return (
     <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${navBg}`}>
       <div className="container-luxe flex h-20 items-center justify-between">
-        <a href="#top" className="group flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-ink-800 font-display text-lg italic text-bronze-400 transition-transform duration-500 group-hover:rotate-[8deg] dark:bg-cream-100 dark:text-ink-900">
-            H
-          </span>
-          <div className="leading-tight">
-            <div className="font-display text-lg">Happiness</div>
-            <div className="text-[10px] uppercase tracking-[0.32em] text-bronze-500">Fashion Atelier</div>
-          </div>
+        <a href="#top" className="group">
+          <Logo size={42} withWordmark />
         </a>
 
         <nav className="hidden items-center gap-9 md:flex">
