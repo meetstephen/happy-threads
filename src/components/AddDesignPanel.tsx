@@ -5,15 +5,18 @@ import {
   CloudOff,
   Lock,
   LogOut,
+  Pencil,
   Plus,
   QrCode,
   ShieldCheck,
+  Tag,
   Trash2,
   Upload,
   X,
 } from 'lucide-react';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
-import { categories, type DesignCategory } from '../data/designs';
+import { useSiteContent } from '../context/SiteContentContext';
+import { categories, type Design, type DesignCategory } from '../data/designs';
 import { resizeImageFile } from '../utils/imageResize';
 import { uploadDesignImage } from '../services/designsService';
 import { hasAdminConfigured, useAdminAuth } from '../lib/auth';
@@ -23,24 +26,18 @@ import QrPanel from './QrPanel';
 interface Props {
   open: boolean;
   onClose: () => void;
+  /** When set, the panel opens in EDIT mode pre-filled with this design. */
+  editingDesign?: Design | null;
 }
 
-/**
- * Local-only fallback passcode (used only when Supabase is not configured —
- * in that mode there is no real auth, and design data only lives on the
- * current device, so a soft passcode is fine).
- */
 const LOCAL_PASSCODE = 'happy2026';
 
-type Tab = 'add' | 'qr';
+type Tab = 'add' | 'categories' | 'qr';
 
-export default function AddDesignPanel({ open, onClose }: Props) {
-  const { customDesigns, addDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
+export default function AddDesignPanel({ open, onClose, editingDesign }: Props) {
+  const { customDesigns, addDesign, updateDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
   const auth = useAdminAuth();
 
-  // Two parallel "unlocked" sources:
-  //  - cloud mode: unlocked === auth.admin !== null
-  //  - local mode: unlocked === passcode entered correctly
   const [localUnlocked, setLocalUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState('');
   const [tab, setTab] = useState<Tab>('add');
@@ -54,18 +51,36 @@ export default function AddDesignPanel({ open, onClose }: Props) {
   const [authPassword, setAuthPassword] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
 
-  // Form state for adding a design
+  // Form state for adding/editing a design
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<DesignCategory>('Aso-Ebi & Owambe');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [pendingPreview, setPendingPreview] = useState<string>('');
+  const [keepExistingImage, setKeepExistingImage] = useState<string>('');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const cloudReady = isSupabaseEnabled && hasAdminConfigured();
   const unlocked = cloudReady ? auth.admin !== null : localUnlocked;
+
+  // When opened with an editingDesign, switch to add tab + pre-fill
+  useEffect(() => {
+    if (open && editingDesign) {
+      setTab('add');
+      setEditingId(editingDesign.id);
+      setName(editingDesign.name);
+      setCategory(editingDesign.category);
+      setDescription(editingDesign.description);
+      setTags(editingDesign.tags.join(', '));
+      setKeepExistingImage(editingDesign.image);
+      setPendingFile(null);
+      if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+      setPendingPreview('');
+    }
+  }, [open, editingDesign]);
 
   useEffect(() => {
     if (!open) return;
@@ -87,10 +102,11 @@ export default function AddDesignPanel({ open, onClose }: Props) {
       setError(null);
       setInfo(null);
       setTab('add');
+      setEditingId(null);
     }
   }, [open]);
 
-  // ---- local passcode flow (Supabase not configured) ---------------------
+  // ---- local passcode flow ---------------------
 
   const tryLocalUnlock = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +118,7 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     }
   };
 
-  // ---- cloud auth flow (Supabase + admin email configured) --------------
+  // ---- cloud auth flow --------------
 
   const onAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +155,7 @@ export default function AddDesignPanel({ open, onClose }: Props) {
       setPendingFile(resized);
       if (pendingPreview) URL.revokeObjectURL(pendingPreview);
       setPendingPreview(URL.createObjectURL(resized));
+      setKeepExistingImage('');
     } catch {
       setError('Could not read that image. Try a different one.');
     } finally {
@@ -147,12 +164,14 @@ export default function AddDesignPanel({ open, onClose }: Props) {
   };
 
   const resetForm = () => {
+    setEditingId(null);
     setName('');
     setCategory('Aso-Ebi & Owambe');
     setDescription('');
     setPendingFile(null);
     if (pendingPreview) URL.revokeObjectURL(pendingPreview);
     setPendingPreview('');
+    setKeepExistingImage('');
     setTags('');
     setError(null);
     if (fileRef.current) fileRef.current.value = '';
@@ -162,28 +181,43 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     e.preventDefault();
     setError(null);
     if (!name.trim()) return setError('Please enter a name.');
-    if (!pendingFile) return setError('Please choose a photo.');
+    const isEditing = Boolean(editingId);
+    if (!isEditing && !pendingFile) return setError('Please choose a photo.');
 
     setBusy(true);
     try {
-      let imageUrl: string;
-      if (cloudEnabled) {
-        imageUrl = await uploadDesignImage(pendingFile);
-      } else {
-        imageUrl = await fileToBase64(pendingFile);
+      let imageUrl = keepExistingImage;
+      if (pendingFile) {
+        if (cloudEnabled) {
+          imageUrl = await uploadDesignImage(pendingFile);
+        } else {
+          imageUrl = await fileToBase64(pendingFile);
+        }
       }
 
-      await addDesign({
-        name: name.trim(),
-        category,
-        description: description.trim() || `A new ${category} piece by Happiness.`,
-        image: imageUrl,
-        tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
-        occasions: ['party'],
-        vibes: ['classic'],
-        colorMood: 'neutral',
-      });
+      if (isEditing && editingId) {
+        await updateDesign(editingId, {
+          name: name.trim(),
+          category,
+          description: description.trim() || `A ${category} piece by Happiness.`,
+          image: imageUrl,
+          tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+        });
+        setInfo('Design updated.');
+      } else {
+        await addDesign({
+          name: name.trim(),
+          category,
+          description: description.trim() || `A new ${category} piece by Happiness.`,
+          image: imageUrl,
+          tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+          occasions: ['party'],
+          vibes: ['classic'],
+          colorMood: 'neutral',
+        });
+      }
       resetForm();
+      setTimeout(() => setInfo(null), 2200);
     } catch (err) {
       setError((err as Error).message ?? 'Could not save. Please try again.');
     } finally {
@@ -199,7 +233,22 @@ export default function AddDesignPanel({ open, onClose }: Props) {
     }
   };
 
-  // ----------------------------------------------------------------------
+  const startEdit = (d: Design) => {
+    setEditingId(d.id);
+    setName(d.name);
+    setCategory(d.category);
+    setDescription(d.description);
+    setTags(d.tags.join(', '));
+    setKeepExistingImage(d.image);
+    setPendingFile(null);
+    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+    setPendingPreview('');
+    setTab('add');
+    if (fileRef.current) fileRef.current.value = '';
+  };
+
+  const isEditing = Boolean(editingId);
+  const previewSrc = pendingPreview || keepExistingImage;
 
   return (
     <AnimatePresence>
@@ -281,41 +330,71 @@ export default function AddDesignPanel({ open, onClose }: Props) {
 
                 <div className="flex gap-1 border-b border-ink-800/10 px-6 dark:border-cream-100/10">
                   <TabButton active={tab === 'add'} onClick={() => setTab('add')}>
-                    <Plus size={14} /> Add design
+                    <Plus size={14} /> {isEditing ? 'Edit design' : 'Add design'}
+                  </TabButton>
+                  <TabButton active={tab === 'categories'} onClick={() => setTab('categories')}>
+                    <Tag size={14} /> Categories
                   </TabButton>
                   <TabButton active={tab === 'qr'} onClick={() => setTab('qr')}>
-                    <QrCode size={14} /> Site QR code
+                    <QrCode size={14} /> QR
                   </TabButton>
                 </div>
 
                 <div className="overflow-y-auto p-6 md:p-8">
-                  {tab === 'qr' ? (
-                    <QrPanel />
-                  ) : (
+                  {tab === 'qr' && <QrPanel />}
+
+                  {tab === 'categories' && <CategoryLabelsPanel />}
+
+                  {tab === 'add' && (
                     <>
+                      {isEditing && (
+                        <div className="mb-5 flex items-center justify-between gap-3 rounded-2xl border border-bronze-500/30 bg-bronze-400/10 p-3 text-sm">
+                          <span className="flex items-center gap-2 text-bronze-600 dark:text-bronze-400">
+                            <Pencil size={14} /> Editing <strong>{name || '(untitled)'}</strong>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={resetForm}
+                            className="rounded-full border border-ink-800/15 px-3 py-0.5 text-[10px] uppercase tracking-[0.18em] hover:border-bronze-500 dark:border-cream-100/20"
+                          >
+                            New design instead
+                          </button>
+                        </div>
+                      )}
+
                       <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
                         <div className="md:col-span-2">
                           <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
                             Photo of the design
                           </label>
-                          {pendingPreview ? (
+                          {previewSrc ? (
                             <div className="relative overflow-hidden rounded-2xl">
                               <img
-                                src={pendingPreview}
+                                src={previewSrc}
                                 alt="preview"
                                 className="h-64 w-full object-cover"
                               />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (pendingPreview) URL.revokeObjectURL(pendingPreview);
-                                  setPendingFile(null);
-                                  setPendingPreview('');
-                                }}
-                                className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-cream-100/90 text-ink-800"
-                              >
-                                <X size={16} />
-                              </button>
+                              <div className="absolute right-3 top-3 flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => fileRef.current?.click()}
+                                  className="rounded-full bg-cream-100/90 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-800"
+                                >
+                                  Replace
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+                                    setPendingFile(null);
+                                    setPendingPreview('');
+                                    setKeepExistingImage('');
+                                  }}
+                                  className="grid h-7 w-7 place-items-center rounded-full bg-cream-100/90 text-ink-800"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
                             </div>
                           ) : (
                             <button
@@ -356,7 +435,7 @@ export default function AddDesignPanel({ open, onClose }: Props) {
 
                         <div>
                           <label className="mb-2 block text-xs uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
-                            Category
+                            Category (which section to put it in)
                           </label>
                           <select
                             value={category}
@@ -364,7 +443,9 @@ export default function AddDesignPanel({ open, onClose }: Props) {
                             className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
                           >
                             {categories.map((c) => (
-                              <option key={c}>{c}</option>
+                              <option key={c} value={c}>
+                                {c}
+                              </option>
                             ))}
                           </select>
                         </div>
@@ -398,14 +479,29 @@ export default function AddDesignPanel({ open, onClose }: Props) {
                         {error && (
                           <p className="text-sm text-wine-500 md:col-span-2">{error}</p>
                         )}
+                        {info && (
+                          <p className="rounded-2xl bg-[#25D366]/10 p-2.5 text-xs text-[#1da851] md:col-span-2">
+                            {info}
+                          </p>
+                        )}
 
                         <div className="flex gap-3 md:col-span-2">
-                          <button type="submit" disabled={busy} className="btn-primary disabled:opacity-50">
-                            <Plus size={16} />
-                            {busy ? 'Saving…' : cloudEnabled ? 'Publish to site' : 'Save Design'}
+                          <button
+                            type="submit"
+                            disabled={busy}
+                            className="btn-primary disabled:opacity-50"
+                          >
+                            {isEditing ? <Pencil size={16} /> : <Plus size={16} />}
+                            {busy
+                              ? 'Saving…'
+                              : isEditing
+                              ? 'Save changes'
+                              : cloudEnabled
+                              ? 'Publish to site'
+                              : 'Save Design'}
                           </button>
                           <button type="button" onClick={resetForm} className="btn-ghost">
-                            Reset
+                            {isEditing ? 'Cancel edit' : 'Reset'}
                           </button>
                         </div>
                       </form>
@@ -428,18 +524,33 @@ export default function AddDesignPanel({ open, onClose }: Props) {
                                   className="h-32 w-full object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/0" />
-                                <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
-                                  <span className="line-clamp-1 text-xs font-medium text-cream-100">
-                                    {d.name}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemove(d.id)}
-                                    aria-label="Remove design"
-                                    className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-wine-500 text-cream-100 opacity-0 transition-opacity group-hover:opacity-100"
-                                  >
-                                    <Trash2 size={12} />
-                                  </button>
+                                <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <div className="line-clamp-1 text-xs font-medium text-cream-100">
+                                      {d.name}
+                                    </div>
+                                    <div className="line-clamp-1 text-[9px] uppercase tracking-[0.2em] text-cream-100/70">
+                                      {d.category}
+                                    </div>
+                                  </div>
+                                  <div className="flex shrink-0 gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                    <button
+                                      type="button"
+                                      onClick={() => startEdit(d)}
+                                      aria-label="Edit design"
+                                      className="grid h-7 w-7 place-items-center rounded-full bg-bronze-500 text-cream-100"
+                                    >
+                                      <Pencil size={11} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemove(d.id)}
+                                      aria-label="Remove design"
+                                      className="grid h-7 w-7 place-items-center rounded-full bg-wine-500 text-cream-100"
+                                    >
+                                      <Trash2 size={11} />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             ))}
@@ -455,6 +566,99 @@ export default function AddDesignPanel({ open, onClose }: Props) {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+/**
+ * Categories tab — admin can rename the displayed labels of the 6 default
+ * categories. The underlying data uses the canonical strings; only the
+ * labels shown to visitors change. Saved via SiteContentContext under
+ * `category.label.<canonical>` keys, so they sync across devices when
+ * Supabase is configured.
+ */
+function CategoryLabelsPanel() {
+  const { get, set, reset, hasOverride } = useSiteContent();
+  const [drafts, setDrafts] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    for (const c of categories) initial[c] = get(`category.label.${c}`, c);
+    return initial;
+  });
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+
+  const onSave = async (canonical: DesignCategory) => {
+    const value = drafts[canonical].trim();
+    setSavingKey(canonical);
+    try {
+      if (!value || value === canonical) {
+        await reset(`category.label.${canonical}`);
+      } else {
+        await set(`category.label.${canonical}`, value);
+      }
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  return (
+    <div>
+      <p className="eyebrow">Section labels</p>
+      <h4 className="display-3 mt-2">Rename the categories</h4>
+      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
+        These labels appear on the filter chips in the Collection and the Lookbook,
+        and in the dropdown when you add a new design. Renaming here does not
+        move existing pieces — it just changes the label visitors see.
+      </p>
+
+      <div className="mt-6 space-y-3">
+        {categories.map((c) => {
+          const overridden = hasOverride(`category.label.${c}`);
+          const draft = drafts[c] ?? c;
+          return (
+            <div
+              key={c}
+              className="flex flex-col gap-2 rounded-2xl border border-ink-800/10 p-4 sm:flex-row sm:items-center dark:border-cream-100/10"
+            >
+              <div className="min-w-[180px] sm:flex-1">
+                <div className="text-[10px] uppercase tracking-[0.22em] text-ink-800/55 dark:text-cream-100/55">
+                  Default name
+                </div>
+                <div className="font-display text-base">{c}</div>
+              </div>
+              <div className="flex flex-1 items-center gap-2">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={(e) => setDrafts((p) => ({ ...p, [c]: e.target.value }))}
+                  placeholder={c}
+                  className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-4 py-2 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => onSave(c)}
+                  disabled={savingKey === c}
+                  className="rounded-full bg-bronze-500 px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-cream-100 disabled:opacity-50"
+                >
+                  {savingKey === c ? '…' : 'Save'}
+                </button>
+                {overridden && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await reset(`category.label.${c}`);
+                      setDrafts((p) => ({ ...p, [c]: c }));
+                    }}
+                    className="rounded-full border border-ink-800/15 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-800/70 hover:border-bronze-500 dark:border-cream-100/20 dark:text-cream-100/70"
+                    title="Reset to default name"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -477,7 +681,6 @@ interface UnlockScreenProps {
 }
 
 function UnlockScreen(p: UnlockScreenProps) {
-  // Show real auth form when cloud + admin email are both configured.
   if (p.cloudReady) {
     return (
       <div className="p-8 md:p-12">
@@ -489,8 +692,8 @@ function UnlockScreen(p: UnlockScreenProps) {
         </h3>
         <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
           {p.authMode === 'signin'
-            ? "Sign in with the atelier admin email to manage the collection."
-            : "First time? Create the atelier account using your registered admin email."}
+            ? 'Sign in with the atelier admin email to manage the collection.'
+            : 'First time? Create the atelier account using your registered admin email.'}
         </p>
 
         <form onSubmit={p.onAuthSubmit} className="mt-8 space-y-3">
@@ -570,7 +773,6 @@ function UnlockScreen(p: UnlockScreenProps) {
     );
   }
 
-  // Local-only fallback: passcode (no Supabase configured)
   return (
     <div className="p-8 md:p-12">
       <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500">

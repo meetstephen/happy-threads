@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Heart, Maximize2, MessageCircle, Share2, Sparkles } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
+import { useCategoryLabel } from '../utils/categoryLabel';
 import type { Design } from '../data/designs';
 
 async function shareDesign(d: Design) {
@@ -36,6 +37,7 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [copied, setCopied] = useState(false);
   const fav = isFavorite(design.id);
+  const labelFor = useCategoryLabel();
 
   const onShareClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -153,7 +155,7 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
           </span>
         </div>
         <p className="mt-1 text-xs uppercase tracking-[0.22em] text-ink-800/55 dark:text-cream-100/55">
-          {design.category}
+          {labelFor(design.category)}
         </p>
       </button>
     </motion.article>

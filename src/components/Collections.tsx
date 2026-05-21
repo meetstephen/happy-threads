@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import DesignCard from './DesignCard';
 import { categories, type Design, type DesignCategory } from '../data/designs';
 import { useFavorites } from '../context/FavoritesContext';
+import { useCategoryLabel } from '../utils/categoryLabel';
 
 interface Props {
   designs: Design[];
@@ -17,6 +18,7 @@ type Filter = 'All' | 'New Arrivals' | DesignCategory | 'Favorites';
 export default function Collections({ designs, highlightIds, onOpen, onOpenLookbook }: Props) {
   const [filter, setFilter] = useState<Filter>('All');
   const { favorites } = useFavorites();
+  const labelFor = useCategoryLabel();
 
   const newCount = useMemo(
     () => designs.filter((d) => d.isNew || d.custom).length,
@@ -66,6 +68,8 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
             const active = filter === f;
             const isFav = f === 'Favorites';
             const isNew = f === 'New Arrivals';
+            const display =
+              f === 'All' || isFav || isNew ? f : labelFor(f);
             return (
               <button
                 type="button"
@@ -79,7 +83,7 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
               >
                 {isFav && <Heart size={12} fill={active ? 'currentColor' : 'none'} />}
                 {isNew && <Sparkles size={12} />}
-                {f}
+                {display}
                 {isFav && favorites.length > 0 && (
                   <span className="ml-1 rounded-full bg-bronze-500 px-1.5 text-[9px] text-cream-100">
                     {favorites.length}

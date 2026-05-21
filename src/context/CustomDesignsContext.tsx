@@ -6,6 +6,7 @@ import {
   insertRemoteDesign,
   isSupabaseEnabled,
   subscribeToDesigns,
+  updateRemoteDesign,
 } from '../services/designsService';
 
 interface CustomDesignsContextValue {
@@ -18,6 +19,8 @@ interface CustomDesignsContextValue {
   addDesign: (
     d: Omit<Design, 'id' | 'custom' | 'addedOn'> & { id?: string }
   ) => Promise<Design>;
+  /** Updates an existing custom design (name, category, description, image, tags). */
+  updateDesign: (id: string, patch: Partial<Design>) => Promise<Design | null>;
   removeDesign: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -87,7 +90,6 @@ export function CustomDesignsProvider({ children }: { children: ReactNode }) {
 
     if (isSupabaseEnabled) {
       const saved = await insertRemoteDesign(next);
-      // realtime will catch up, but optimistic is nicer
       setCustomDesigns((prev) =>
         prev.find((x) => x.id === saved.id) ? prev : [saved, ...prev]
       );
@@ -97,6 +99,24 @@ export function CustomDesignsProvider({ children }: { children: ReactNode }) {
     setCustomDesigns((prev) => [next, ...prev]);
     return next;
   }, []);
+
+  const updateDesign: CustomDesignsContextValue['updateDesign'] = useCallback(
+    async (id, patch) => {
+      const existing = customDesigns.find((d) => d.id === id);
+      if (!existing) return null;
+      const merged: Design = { ...existing, ...patch, id, custom: true };
+
+      if (isSupabaseEnabled) {
+        const saved = await updateRemoteDesign(merged);
+        setCustomDesigns((prev) => prev.map((d) => (d.id === id ? saved : d)));
+        return saved;
+      }
+
+      setCustomDesigns((prev) => prev.map((d) => (d.id === id ? merged : d)));
+      return merged;
+    },
+    [customDesigns]
+  );
 
   const removeDesign: CustomDesignsContextValue['removeDesign'] = useCallback(async (id) => {
     if (isSupabaseEnabled) {
@@ -114,6 +134,7 @@ export function CustomDesignsProvider({ children }: { children: ReactNode }) {
         loading,
         cloudEnabled: isSupabaseEnabled,
         addDesign,
+        updateDesign,
         removeDesign,
         refresh,
       }}

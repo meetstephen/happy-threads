@@ -30,6 +30,7 @@ export default function App() {
   const [lightboxDesign, setLightboxDesign] = useState<Design | null>(null);
   const [quizFilter, setQuizFilter] = useState<string[] | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [editingDesign, setEditingDesign] = useState<Design | null>(null);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [lookbookOpen, setLookbookOpen] = useState(false);
   const { customDesigns } = useCustomDesigns();
@@ -68,6 +69,20 @@ export default function App() {
     }
   };
 
+  // From Lookbook: admin clicks "Add design" — close lookbook, open admin panel
+  const openAdminAddNew = () => {
+    setEditingDesign(null);
+    setLookbookOpen(false);
+    setAdminOpen(true);
+  };
+
+  // From Lookbook: admin clicks edit on one of her custom designs
+  const openAdminEdit = (d: Design) => {
+    setEditingDesign(d);
+    setLookbookOpen(false);
+    setAdminOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
       {/* Admin mode banner — visible only when Happiness is signed in */}
@@ -77,7 +92,10 @@ export default function App() {
           Edit Mode — tap any text or image to change it
           <button
             type="button"
-            onClick={() => setAdminOpen(true)}
+            onClick={() => {
+              setEditingDesign(null);
+              setAdminOpen(true);
+            }}
             className="ml-3 rounded-full border border-cream-100/40 px-2.5 py-0.5 text-[9px] transition-colors hover:bg-cream-100 hover:text-bronze-600"
           >
             Add Design
@@ -126,12 +144,16 @@ export default function App() {
           }
         }}
         onOpenDesign={(d) => setLightboxDesign(d)}
+        onAddNew={openAdminAddNew}
+        onEditDesign={openAdminEdit}
       />
       <Suspense fallback={null}>
         <AddDesignPanel
           open={adminOpen}
+          editingDesign={editingDesign}
           onClose={() => {
             setAdminOpen(false);
+            setEditingDesign(null);
             if (window.location.hash === '#admin') {
               history.replaceState(null, '', window.location.pathname + window.location.search);
             }
