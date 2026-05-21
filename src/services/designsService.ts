@@ -84,6 +84,19 @@ export async function insertRemoteDesign(d: Design): Promise<Design> {
   return rowToDesign(data as DesignRow);
 }
 
+export async function updateRemoteDesign(d: Design): Promise<Design> {
+  if (!supabase) throw new Error('Cloud sync is not configured.');
+  const { id, ...rest } = designToRow(d);
+  const { data, error } = await supabase
+    .from(DESIGNS_TABLE)
+    .update(rest)
+    .eq('id', id)
+    .select('*')
+    .single();
+  if (error) throw new Error(error.message);
+  return rowToDesign(data as DesignRow);
+}
+
 export async function deleteRemoteDesign(id: string): Promise<void> {
   if (!supabase) throw new Error('Cloud sync is not configured.');
   const { error } = await supabase.from(DESIGNS_TABLE).delete().eq('id', id);

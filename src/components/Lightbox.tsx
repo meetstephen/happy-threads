@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, MessageCircle, Share2, X } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
+import { useCategoryLabel } from '../utils/categoryLabel';
 import type { Design } from '../data/designs';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 export default function Lightbox({ design, onClose }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [shared, setShared] = useState(false);
+  const labelFor = useCategoryLabel();
 
   useEffect(() => {
     if (!design) return;
@@ -90,7 +92,7 @@ export default function Lightbox({ design, onClose }: Props) {
 
             <div className="flex flex-col justify-between p-8 md:p-10">
               <div>
-                <p className="eyebrow">{design.category}</p>
+                <p className="eyebrow">{labelFor(design.category)}</p>
                 <h3 className="display-3 mt-3">{design.name}</h3>
                 <p className="mt-1 text-xs uppercase tracking-[0.3em] text-bronze-500">
                   Reference {design.id}
