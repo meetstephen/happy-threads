@@ -16,6 +16,7 @@ import Lightbox from './components/Lightbox';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import Chatbot from './components/Chatbot';
 import SizeGuide from './components/SizeGuide';
+import Lookbook from './components/Lookbook';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
@@ -30,6 +31,7 @@ export default function App() {
   const [quizFilter, setQuizFilter] = useState<string[] | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [lookbookOpen, setLookbookOpen] = useState(false);
   const { customDesigns } = useCustomDesigns();
   const { admin } = useAdminAuth();
 
@@ -38,11 +40,12 @@ export default function App() {
     [customDesigns]
   );
 
-  // Open admin only when URL hash is #admin
+  // Deep-link hash routing
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') setAdminOpen(true);
       if (window.location.hash === '#size-guide') setSizeGuideOpen(true);
+      if (window.location.hash === '#lookbook') setLookbookOpen(true);
     };
     checkHash();
     window.addEventListener('hashchange', checkHash);
@@ -57,6 +60,13 @@ export default function App() {
     const found = allDesigns.find((d) => d.id === id);
     if (found) setLightboxDesign(found);
   }, [allDesigns]);
+
+  const openLookbook = () => {
+    setLookbookOpen(true);
+    if (window.location.hash !== '#lookbook') {
+      history.replaceState(null, '', window.location.pathname + window.location.search + '#lookbook');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
@@ -74,7 +84,7 @@ export default function App() {
           </button>
         </div>
       )}
-      <Navbar />
+      <Navbar onOpenLookbook={openLookbook} />
       <main>
         <Hero />
         <Marquee />
@@ -82,6 +92,7 @@ export default function App() {
           designs={allDesigns}
           highlightIds={quizFilter}
           onOpen={setLightboxDesign}
+          onOpenLookbook={openLookbook}
         />
         <PressStrip />
         <About />
@@ -104,6 +115,17 @@ export default function App() {
             history.replaceState(null, '', window.location.pathname + window.location.search);
           }
         }}
+      />
+      <Lookbook
+        open={lookbookOpen}
+        designs={allDesigns}
+        onClose={() => {
+          setLookbookOpen(false);
+          if (window.location.hash === '#lookbook') {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+        }}
+        onOpenDesign={(d) => setLightboxDesign(d)}
       />
       <Suspense fallback={null}>
         <AddDesignPanel

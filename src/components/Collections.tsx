@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Heart, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DesignCard from './DesignCard';
 import { categories, type Design, type DesignCategory } from '../data/designs';
@@ -9,11 +9,12 @@ interface Props {
   designs: Design[];
   highlightIds?: string[] | null;
   onOpen: (design: Design) => void;
+  onOpenLookbook: () => void;
 }
 
 type Filter = 'All' | 'New Arrivals' | DesignCategory | 'Favorites';
 
-export default function Collections({ designs, highlightIds, onOpen }: Props) {
+export default function Collections({ designs, highlightIds, onOpen, onOpenLookbook }: Props) {
   const [filter, setFilter] = useState<Filter>('All');
   const { favorites } = useFavorites();
 
@@ -115,6 +116,22 @@ export default function Collections({ designs, highlightIds, onOpen }: Props) {
               : 'No pieces in this category yet.'}
           </div>
         )}
+
+        {/* Lookbook CTA — opens full catalog overlay */}
+        <div className="mt-14 flex justify-center md:mt-20">
+          <button
+            type="button"
+            onClick={onOpenLookbook}
+            className="group inline-flex items-center gap-3 rounded-full border border-ink-800/15 bg-cream-50 px-7 py-4 text-sm font-medium uppercase tracking-[0.18em] text-ink-800 transition-all duration-300 hover:-translate-y-0.5 hover:border-bronze-500 hover:bg-bronze-500 hover:text-cream-100 hover:shadow-luxe dark:border-cream-100/15 dark:bg-ink-800 dark:text-cream-100 dark:hover:bg-bronze-500"
+          >
+            <BookOpen size={16} />
+            <span>Open The Lookbook</span>
+            <span className="rounded-full bg-bronze-500 px-2 py-0.5 text-[10px] tracking-normal text-cream-100 group-hover:bg-cream-100 group-hover:text-bronze-600">
+              {designs.length}
+            </span>
+            <ArrowUpRight size={14} className="transition-transform group-hover:rotate-45" />
+          </button>
+        </div>
       </div>
     </section>
   );
