@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, MessageCircle, Send, Sparkles, X } from 'lucide-react';
+import { ArrowRight, MessageCircle, Send, Sparkles, X, Zap } from 'lucide-react';
 import { generateReply, initialMessages, userMessage, type BotMessage } from '../utils/chatbot';
+import { chatWithGemini, isGeminiEnabled, type GeminiMessage } from '../services/geminiChat';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { designs as staticDesigns } from '../data/designs';
 import { useNearBottom } from '../utils/scroll';
+import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+
+function makeId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -15,9 +21,10 @@ export default function Chatbot() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { customDesigns } = useCustomDesigns();
   const nearBottom = useNearBottom();
-  // Hide the launcher when the chat is closed AND the user is near the
-  // footer — gives them clear access to footer links on mobile.
   const launcherVisible = open || !nearBottom;
+
+  // Gemini conversation history (persists across messages in this session)
+  const geminiHistory = useRef<GeminiMessage[]>([]);
 
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
@@ -30,26 +37,65 @@ export default function Chatbot() {
     }
   }, [messages, typing, open]);
 
-  // gentle nudge after a few seconds
   useEffect(() => {
     if (open) return;
     const t = setTimeout(() => setUnread(true), 8000);
     return () => clearTimeout(t);
   }, [open]);
 
-  const sendText = (text: string) => {
+  const sendText = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
     setMessages((m) => [...m, userMessage(trimmed)]);
     setInput('');
     setTyping(true);
-    // simulate thinking
-    const delay = Math.min(1400, 600 + trimmed.length * 18);
-    setTimeout(() => {
+
+    try {
+      if (isGeminiEnabled) {
+        // Use real AI
+        const { reply, updatedHistory } = await chatWithGemini(
+          trimmed,
+          geminiHistory.current,
+          allDesigns
+        );
+        geminiHistory.current = updatedHistory;
+
+        // Check if Gemini mentioned a design by reference ID — show the card
+        const mentionedDesign = allDesigns.find(
+          (d) => reply.includes(d.id) || reply.toLowerCase().includes(d.name.toLowerCase())
+        );
+
+        const botMsg: BotMessage = {
+          id: makeId(),
+          from: 'bot',
+          text: reply,
+          design: mentionedDesign,
+          // Add WhatsApp CTA if the reply mentions ordering or WhatsApp
+          cta: /whatsapp|wa\.me|order|book/i.test(reply)
+            ? {
+                label: 'Chat with Happiness',
+                href: buildWhatsAppUrl(generalEnquiryMessage()),
+                external: true,
+              }
+            : undefined,
+        };
+        setMessages((m) => [...m, botMsg]);
+      } else {
+        // Fallback: pattern-matching engine (still solid for basic queries)
+        await new Promise((r) =>
+          setTimeout(r, Math.min(1400, 600 + trimmed.length * 18))
+        );
+        const reply = generateReply(trimmed, allDesigns);
+        setMessages((m) => [...m, reply]);
+      }
+    } catch (err) {
+      console.warn('[Chatbot] error:', err);
+      // On Gemini failure, fallback to pattern matcher for this message
       const reply = generateReply(trimmed, allDesigns);
       setMessages((m) => [...m, reply]);
+    } finally {
       setTyping(false);
-    }, delay);
+    }
   };
 
   const onSubmit = (e: React.FormEvent) => {
@@ -75,7 +121,6 @@ export default function Chatbot() {
     setOpen(false);
     setTimeout(() => {
       document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' });
-      // briefly highlight
       const el = document.querySelector(`[data-design-id="${id}"]`);
       el?.classList.add('animate-pulse');
       setTimeout(() => el?.classList.remove('animate-pulse'), 2000);
@@ -84,7 +129,7 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Launcher — compact on mobile, expanded on desktop, hides near footer */}
+      {/* Launcher */}
       <button
         type="button"
         onClick={() => {
@@ -114,7 +159,7 @@ export default function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.96 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-24 left-4 right-4 z-40 flex h-[min(640px,80vh)] max-w-md flex-col overflow-hidden rounded-3xl border border-ink-800/10 bg-cream-100 shadow-luxe sm:left-6 sm:right-auto sm:w-[400px] dark:border-cream-100/10 dark:bg-ink-800"
+            className="fixed bottom-20 left-4 right-4 z-40 flex h-[min(640px,78vh)] max-w-md flex-col overflow-hidden rounded-3xl border border-ink-800/10 bg-cream-100 shadow-luxe sm:bottom-24 sm:left-6 sm:right-auto sm:w-[400px] dark:border-cream-100/10 dark:bg-ink-800"
           >
             {/* Header */}
             <header className="flex items-center justify-between gap-3 border-b border-ink-800/10 bg-ink-800 p-4 text-cream-100 dark:border-cream-100/10 dark:bg-ink-900">
@@ -129,8 +174,14 @@ export default function Chatbot() {
                       <span className="absolute h-2 w-2 animate-ping rounded-full bg-[#25D366]/60" />
                     </span>
                   </div>
-                  <div className="text-[10px] uppercase tracking-[0.22em] text-bronze-400">
-                    AI Stylist • Online
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-bronze-400">
+                    {isGeminiEnabled ? (
+                      <>
+                        <Zap size={9} /> Gemini AI • Online
+                      </>
+                    ) : (
+                      'AI Stylist • Online'
+                    )}
                   </div>
                 </div>
               </div>
@@ -172,12 +223,12 @@ export default function Chatbot() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask anything about the collection…"
+                placeholder={isGeminiEnabled ? 'Ask Joy anything…' : 'Ask about the collection…'}
                 className="flex-1 rounded-full bg-cream-200/50 px-4 py-2.5 text-sm focus:outline-none dark:bg-ink-900/60"
               />
               <button
                 type="submit"
-                disabled={!input.trim()}
+                disabled={!input.trim() || typing}
                 aria-label="Send"
                 className="grid h-10 w-10 place-items-center rounded-full bg-ink-800 text-cream-100 transition-colors hover:bg-bronze-500 disabled:opacity-40 dark:bg-cream-100 dark:text-ink-900"
               >

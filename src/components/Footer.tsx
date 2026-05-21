@@ -5,7 +5,7 @@ import { WHATSAPP_DISPLAY, buildWhatsAppUrl, generalEnquiryMessage } from '../ut
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-ink-800/10 py-12 dark:border-cream-100/10">
+    <footer className="border-t border-ink-800/10 py-12 pb-24 sm:pb-12 dark:border-cream-100/10">
       <div className="container-luxe flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
         <Logo size={36} withWordmark />
 
