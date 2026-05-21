@@ -17,6 +17,7 @@ import Chatbot from './components/Chatbot';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
+import { useAdminAuth } from './lib/auth';
 
 // Admin panel is only opened via the hidden /#admin URL — load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
@@ -27,6 +28,7 @@ export default function App() {
   const [quizFilter, setQuizFilter] = useState<string[] | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
   const { customDesigns } = useCustomDesigns();
+  const { admin } = useAdminAuth();
 
   // merge: custom first (newest), then static catalog
   const allDesigns = useMemo(
@@ -57,6 +59,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
+      {/* Admin mode banner — visible only when Happiness is signed in */}
+      {admin && (
+        <div className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 bg-bronze-500 px-4 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-cream-100 sm:text-xs">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-cream-100" />
+          Edit Mode — tap any text or image to change it
+          <button
+            type="button"
+            onClick={() => setAdminOpen(true)}
+            className="ml-3 rounded-full border border-cream-100/40 px-2.5 py-0.5 text-[9px] transition-colors hover:bg-cream-100 hover:text-bronze-600"
+          >
+            Add Design
+          </button>
+        </div>
+      )}
       <Navbar />
       <main>
         <Hero />

@@ -2,8 +2,14 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 import { pexels } from '../utils/images';
+import EditableText from './EditableText';
+import EditableImage from './EditableImage';
 
 const HERO_IMAGE = pexels(30030552, 1200, 1500);
+
+const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
+const DEFAULT_SUBTEXT =
+  "I'm Happiness — an Abakaliki-based fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my atelier and made-to-measure for you.";
 
 export default function Hero() {
   return (
@@ -35,10 +41,24 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.1 }}
             className="display-1 mt-6"
           >
-            Naija couture
-            <br />
-            <span className="italic text-bronze-500">stitched with</span>{' '}
-            <span className="italic">love.</span>
+            <EditableText contentKey="hero.headline" defaultValue={DEFAULT_HEADLINE}>
+              {(text) => {
+                // Split at the last two words for styling
+                const words = text.split(' ');
+                if (words.length <= 3) {
+                  return <span className="italic text-bronze-500">{text}</span>;
+                }
+                const first = words.slice(0, 2).join(' ');
+                const rest = words.slice(2).join(' ');
+                return (
+                  <>
+                    {first}
+                    <br />
+                    <span className="italic text-bronze-500">{rest}</span>
+                  </>
+                );
+              }}
+            </EditableText>
           </motion.h1>
 
           <motion.p
@@ -47,10 +67,9 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.25 }}
             className="mt-7 max-w-xl text-base leading-relaxed text-ink-800/75 md:text-lg dark:text-cream-100/75"
           >
-            I'm <strong className="font-medium">Happiness</strong> — an Abakaliki-based
-            fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara
-            co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my
-            atelier and made-to-measure for you.
+            <EditableText contentKey="hero.subtext" defaultValue={DEFAULT_SUBTEXT} multiline>
+              {(text) => <>{text}</>}
+            </EditableText>
           </motion.p>
 
           <motion.div
@@ -107,11 +126,11 @@ export default function Hero() {
           >
             <div className="absolute inset-0 -translate-x-4 translate-y-4 rounded-[2rem] border border-bronze-500/40" />
             <div className="relative h-full w-full overflow-hidden rounded-[2rem] shadow-luxe">
-              <img
-                src={HERO_IMAGE}
+              <EditableImage
+                contentKey="hero.image"
+                defaultSrc={HERO_IMAGE}
                 alt="A model wearing a Happiness Fashion design"
                 className="luxe-image h-full w-full object-cover"
-                loading="eager"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent" />
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between rounded-2xl bg-cream-100/85 px-4 py-3 backdrop-blur-md dark:bg-ink-800/85">

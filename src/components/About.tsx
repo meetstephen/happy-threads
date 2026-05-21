@@ -1,8 +1,16 @@
 import { motion } from 'framer-motion';
 import { Award, Scissors, Sparkles } from 'lucide-react';
 import { pexels } from '../utils/images';
+import EditableText from './EditableText';
+import EditableImage from './EditableImage';
 
 const ABOUT_IMG = pexels(5934222, 1000, 1250);
+
+const DEFAULT_ABOUT_P1 =
+  'I started Happiness Fashion seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
+
+const DEFAULT_ABOUT_P2 =
+  "I believe clothing is intimate. The way a sleeve sits, the weight of a hem, the way an Ankara print catches the light at an owambe — these details are what turn fabric into memory. That's the Happiness signature.";
 
 const pillars = [
   {
@@ -34,7 +42,12 @@ export default function About() {
           className="md:col-span-5"
         >
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-luxe">
-            <img src={ABOUT_IMG} alt="Inside the Happiness Fashion atelier in Abakaliki" className="h-full w-full object-cover" />
+            <EditableImage
+              contentKey="about.image"
+              defaultSrc={ABOUT_IMG}
+              alt="The designer — Happiness — in her Abakaliki atelier"
+              className="h-full w-full object-cover"
+            />
           </div>
         </motion.div>
 
@@ -47,19 +60,20 @@ export default function About() {
         >
           <p className="eyebrow">About the Designer</p>
           <h2 className="display-2 mt-4">
-            A quiet obsession with the way <span className="italic text-bronze-500">a woman feels</span> in what she wears.
+            A quiet obsession with the way{' '}
+            <span className="italic text-bronze-500">a woman feels</span> in what she
+            wears.
           </h2>
           <div className="mt-8 space-y-5 text-ink-800/75 dark:text-cream-100/75">
             <p>
-              I started Happiness Fashion seven years ago in a small studio in Abakaliki
-              with one second-hand sewing machine and a notebook full of sketches. Today,
-              the atelier dresses brides, executives, and women who simply want to feel
-              extraordinary on a regular Tuesday.
+              <EditableText contentKey="about.p1" defaultValue={DEFAULT_ABOUT_P1} multiline>
+                {(text) => <>{text}</>}
+              </EditableText>
             </p>
             <p>
-              I believe clothing is intimate. The way a sleeve sits, the weight of a hem,
-              the way an Ankara print catches the light at an owambe — these details are
-              what turn fabric into memory. That's the Happiness signature.
+              <EditableText contentKey="about.p2" defaultValue={DEFAULT_ABOUT_P2} multiline>
+                {(text) => <>{text}</>}
+              </EditableText>
             </p>
           </div>
 

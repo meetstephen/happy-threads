@@ -7,10 +7,9 @@ interface Props {
 /**
  * Happiness Fashion brand mark.
  *
- * A refined sans-serif "H" with a delicate fashion-thread crossbar and
- * a small Nigerian three-cowrie accent below. Designed as a clean
- * luxury monogram — no heavy crest, no decorative noise. Reads beautifully
- * at any size from 16px favicon to large hero header.
+ * A refined "H" monogram with a delicate thread-crossbar and three-cowrie
+ * accent, set on a **warm deep-brown** plate (#3D2B1F). The warm background
+ * ensures the gold gradient details pop clearly in BOTH light and dark mode.
  */
 export default function Logo({ size = 44, withWordmark = false, className = '' }: Props) {
   return (
@@ -24,48 +23,53 @@ export default function Logo({ size = 44, withWordmark = false, className = '' }
       >
         <defs>
           <linearGradient id="hf-gold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#E8C098" />
-            <stop offset="50%" stopColor="#D4A574" />
-            <stop offset="100%" stopColor="#8E5E37" />
+            <stop offset="0%" stopColor="#F2D4A8" />
+            <stop offset="50%" stopColor="#E5B87A" />
+            <stop offset="100%" stopColor="#C48B4A" />
           </linearGradient>
         </defs>
 
-        {/* dark plate */}
-        <rect width="120" height="120" rx="22" className="fill-ink-900 dark:fill-cream-100" />
+        {/* Warm deep-brown plate — same in light & dark mode for brand consistency */}
+        <rect width="120" height="120" rx="22" fill="#3D2B1F" />
 
-        {/* H — two slim verticals + delicate stitched crossbar */}
+        {/* H — two elegant verticals + delicate stitched-thread crossbar */}
         <g
           stroke="url(#hf-gold)"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
         >
-          <line x1="38" y1="28" x2="38" y2="80" strokeWidth="5" />
-          <line x1="82" y1="28" x2="82" y2="80" strokeWidth="5" />
+          {/* Left stem */}
+          <line x1="38" y1="26" x2="38" y2="78" strokeWidth="5.5" />
+          {/* Right stem */}
+          <line x1="82" y1="26" x2="82" y2="78" strokeWidth="5.5" />
+          {/* Thread crossbar — dashed for that stitched/threaded effect */}
           <path
-            d="M 38 56 C 50 50, 70 50, 82 56"
-            strokeWidth="2.4"
-            strokeDasharray="0.8 2.6"
+            d="M 38 54 C 50 47, 70 47, 82 54"
+            strokeWidth="2.6"
+            strokeDasharray="1 3"
           />
-          <circle cx="38" cy="56" r="1.7" fill="url(#hf-gold)" stroke="none" />
-          <circle cx="82" cy="56" r="1.7" fill="url(#hf-gold)" stroke="none" />
+          {/* Anchor dots where thread meets stems */}
+          <circle cx="38" cy="54" r="2" fill="url(#hf-gold)" stroke="none" />
+          <circle cx="82" cy="54" r="2" fill="url(#hf-gold)" stroke="none" />
         </g>
 
-        {/* Nigerian three-cowrie row beneath the H */}
+        {/* Three-cowrie row — Nigerian cultural accent */}
         <g fill="url(#hf-gold)">
-          <circle cx="52" cy="92" r="1.6" />
-          <circle cx="60" cy="92" r="2.0" />
-          <circle cx="68" cy="92" r="1.6" />
+          <circle cx="50" cy="90" r="2" />
+          <circle cx="60" cy="90" r="2.4" />
+          <circle cx="70" cy="90" r="2" />
         </g>
 
+        {/* Subtle ground line */}
         <line
-          x1="44"
-          y1="100"
-          x2="76"
-          y2="100"
+          x1="42"
+          y1="102"
+          x2="78"
+          y2="102"
           stroke="url(#hf-gold)"
-          strokeWidth="0.6"
-          opacity="0.55"
+          strokeWidth="0.8"
+          opacity="0.5"
         />
       </svg>
 
