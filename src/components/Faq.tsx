@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, MessageCircle } from 'lucide-react';
+import { ChevronDown, MessageCircle, Ruler } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+
+interface Props {
+  onOpenSizeGuide: () => void;
+}
 
 const faqs = [
   {
@@ -13,7 +17,7 @@ const faqs = [
     a: 'Ready-to-wear and alterations take 5 – 10 days. Aso-ebi sets and corporate co-ords take 2 – 3 weeks. Bridal couture is 4 – 8 weeks (with 3 fittings). Rush orders are sometimes possible — message Happiness with your event date.',
   },
   {
-    q: "Where are you based? Can I visit the studio?",
+    q: 'Where are you based? Can I visit the studio?',
     a: "We're in Abakaliki, Ebonyi State, Nigeria. Studio visits are by appointment only, Monday – Saturday. Send a WhatsApp message to schedule your slot.",
   },
   {
@@ -22,7 +26,7 @@ const faqs = [
   },
   {
     q: 'How do I take measurements myself?',
-    a: "Don't worry about that — Happiness will guide you over a video call, step-by-step. All you need is a regular tape measure (or a piece of string + a ruler).",
+    a: "Don't worry about that — Happiness will guide you over a video call, step-by-step. All you need is a regular tape measure (or a piece of string + a ruler). You can also use the Size Guide button below to fill in what you have and send it on WhatsApp.",
   },
   {
     q: 'How do I pay?',
@@ -38,7 +42,7 @@ const faqs = [
   },
 ];
 
-export default function Faq() {
+export default function Faq({ onOpenSizeGuide }: Props) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
@@ -51,14 +55,23 @@ export default function Faq() {
             Don't see your question? Joy (the AI assistant in the corner) might know — or
             tap below to message Happiness directly.
           </p>
-          <a
-            href={buildWhatsAppUrl(generalEnquiryMessage())}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-whatsapp mt-8 inline-flex"
-          >
-            <MessageCircle size={16} /> Ask on WhatsApp
-          </a>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row md:flex-col lg:flex-row">
+            <a
+              href={buildWhatsAppUrl(generalEnquiryMessage())}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-whatsapp"
+            >
+              <MessageCircle size={16} /> Ask on WhatsApp
+            </a>
+            <button
+              type="button"
+              onClick={onOpenSizeGuide}
+              className="btn-ghost"
+            >
+              <Ruler size={16} /> Size Guide
+            </button>
+          </div>
         </div>
 
         <div className="md:col-span-8">
