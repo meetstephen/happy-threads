@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
+import PressStrip from './components/PressStrip';
 import Collections from './components/Collections';
 import About from './components/About';
 import Services from './components/Services';
@@ -14,6 +15,7 @@ import Footer from './components/Footer';
 import Lightbox from './components/Lightbox';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import Chatbot from './components/Chatbot';
+import SizeGuide from './components/SizeGuide';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
@@ -27,21 +29,20 @@ export default function App() {
   const [lightboxDesign, setLightboxDesign] = useState<Design | null>(null);
   const [quizFilter, setQuizFilter] = useState<string[] | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const { customDesigns } = useCustomDesigns();
   const { admin } = useAdminAuth();
 
-  // merge: custom first (newest), then static catalog
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
     [customDesigns]
   );
 
-  // Open admin only when URL hash is #admin (no UI surface — Happiness
-  // bookmarks the URL on her phone). This way visitors never see an
-  // admin entry point.
+  // Open admin only when URL hash is #admin
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') setAdminOpen(true);
+      if (window.location.hash === '#size-guide') setSizeGuideOpen(true);
     };
     checkHash();
     window.addEventListener('hashchange', checkHash);
@@ -82,11 +83,12 @@ export default function App() {
           highlightIds={quizFilter}
           onOpen={setLightboxDesign}
         />
+        <PressStrip />
         <About />
         <Services />
         <StyleQuiz onResult={(ids) => setQuizFilter(ids)} />
         <Testimonials />
-        <Faq />
+        <Faq onOpenSizeGuide={() => setSizeGuideOpen(true)} />
         <Newsletter />
         <Contact />
       </main>
@@ -94,6 +96,15 @@ export default function App() {
       <FloatingWhatsApp />
       <Chatbot />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />
+      <SizeGuide
+        open={sizeGuideOpen}
+        onClose={() => {
+          setSizeGuideOpen(false);
+          if (window.location.hash === '#size-guide') {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+        }}
+      />
       <Suspense fallback={null}>
         <AddDesignPanel
           open={adminOpen}
