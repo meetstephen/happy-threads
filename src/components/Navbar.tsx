@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, Menu, Moon, Sun, X } from 'lucide-react';
+import { BookOpen, Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Logo from './Logo';
@@ -13,7 +13,11 @@ const links = [
   { href: '#contact', label: 'Contact' },
 ];
 
-export default function Navbar() {
+interface Props {
+  onOpenLookbook: () => void;
+}
+
+export default function Navbar({ onOpenLookbook }: Props) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -38,6 +42,14 @@ export default function Navbar() {
         </a>
 
         <nav className="hidden items-center gap-9 md:flex">
+          <button
+            type="button"
+            onClick={onOpenLookbook}
+            className="relative flex items-center gap-1.5 text-sm font-medium tracking-wide text-ink-800/80 transition-colors hover:text-bronze-500 dark:text-cream-100/80 dark:hover:text-bronze-400"
+          >
+            <BookOpen size={14} />
+            Lookbook
+          </button>
           {links.map((l) => (
             <a
               key={l.href}
@@ -86,6 +98,17 @@ export default function Navbar() {
         <div className="md:hidden">
           <div className="mx-5 mb-4 rounded-3xl border border-ink-800/10 bg-cream-100/95 p-6 shadow-luxe backdrop-blur-xl dark:border-cream-100/10 dark:bg-ink-900/95">
             <nav className="flex flex-col gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onOpenLookbook();
+                }}
+                className="flex items-center gap-2 text-left font-display text-2xl text-ink-800 transition-colors hover:text-bronze-500 dark:text-cream-100"
+              >
+                <BookOpen size={20} />
+                Lookbook
+              </button>
               {links.map((l) => (
                 <a
                   key={l.href}
