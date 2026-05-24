@@ -50,7 +50,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-ink-800/15 bg-cream-100/40 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.32em] text-ink-800/70 backdrop-blur dark:border-cream-100/15 dark:bg-ink-800/40 dark:text-cream-100/70"
           >
             <MapPin size={12} className="text-bronze-500" />
-            Est. 2019 &bull; Luxury Bespoke Couture &bull; Abakaliki
+            Luxury Bespoke Couture
           </motion.div>
 
           <motion.h1
