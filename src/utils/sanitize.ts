@@ -19,19 +19,19 @@ export function sanitizeText(input: string): string {
   if (!input) return '';
 
   let clean = input
-    // Remove script tags and their content
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    // Remove style tags and their content
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-    // Remove all remaining HTML tags
-    .replace(/<[^>]*>/g, '')
-    // Decode common HTML entities
+    // Decode common HTML entities FIRST so any resulting tags get stripped
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#x27;/g, "'")
     .replace(/&#x2F;/g, '/')
+    // Remove script tags and their content
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    // Remove style tags and their content
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    // Remove all remaining HTML tags
+    .replace(/<[^>]*>/g, '')
     // Remove null bytes
     .replace(/\0/g, '')
     // Normalize whitespace (but keep single newlines for multiline text)

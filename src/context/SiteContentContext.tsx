@@ -1,6 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { isSupabaseEnabled, supabase } from '../lib/supabase';
-import { sanitizeText } from '../utils/sanitize';
 
 /**
  * Site Content Management — allows the admin to edit text and swap images
@@ -89,15 +88,11 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const hasOverride = useCallback((key: string) => key in content, [content]);
 
   const set = useCallback(async (key: string, value: string) => {
-    // Only sanitize text content, not image URLs
-    const sanitized = (value.startsWith('http') || value.startsWith('data:image'))
-      ? value
-      : sanitizeText(value);
-    setContent((prev) => ({ ...prev, [key]: sanitized }));
+    setContent((prev) => ({ ...prev, [key]: value }));
     if (supabase) {
       await supabase
         .from(SUPABASE_TABLE)
-        .upsert({ key, value: sanitized }, { onConflict: 'key' })
+        .upsert({ key, value }, { onConflict: 'key' })
         .then(({ error }) => {
           if (error) console.warn('[site-content] upsert error:', error.message);
         });

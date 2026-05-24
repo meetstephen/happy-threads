@@ -30,17 +30,19 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
   const { get, set, reset, hasOverride } = useSiteContent();
   const { admin } = useAdminAuth();
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const currentSrc = get(contentKey, defaultSrc);
 
   const onFile = async (file: File) => {
     if (!file) return;
+    setValidationError(null);
     setUploading(true);
     try {
       const validation = await validateImageFile(file);
       if (!validation.valid) {
-        console.warn('[EditableImage] invalid file:', validation.error);
+        setValidationError(validation.error || 'Invalid file.');
         return;
       }
       const resized = await resizeImageFile(file, 1200, 0.85);
@@ -99,6 +101,11 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
           >
             <RotateCcw size={10} /> Reset
           </button>
+        )}
+        {validationError && (
+          <span className="mt-2 block rounded-lg bg-wine-500/10 px-3 py-2 text-[11px] text-wine-500">
+            {validationError}
+          </span>
         )}
       </span>
 
