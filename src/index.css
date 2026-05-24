@@ -141,12 +141,3 @@
   }
 }
 
-/* glow pulse keyframe */
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 8px 1px rgba(176, 122, 76, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 20px 4px rgba(176, 122, 76, 0.2);
-  }
-}
