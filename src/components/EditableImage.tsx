@@ -3,6 +3,7 @@ import { Camera, RotateCcw } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useAdminAuth } from '../lib/auth';
 import { resizeImageFile } from '../utils/imageResize';
+import { validateImageFile } from '../utils/sanitize';
 import { uploadDesignImage } from '../services/designsService';
 import { isSupabaseEnabled } from '../lib/supabase';
 
@@ -29,14 +30,21 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
   const { get, set, reset, hasOverride } = useSiteContent();
   const { admin } = useAdminAuth();
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const currentSrc = get(contentKey, defaultSrc);
 
   const onFile = async (file: File) => {
     if (!file) return;
+    setValidationError(null);
     setUploading(true);
     try {
+      const validation = await validateImageFile(file);
+      if (!validation.valid) {
+        setValidationError(validation.error || 'Invalid file.');
+        return;
+      }
       const resized = await resizeImageFile(file, 1200, 0.85);
       let url: string;
       if (isSupabaseEnabled) {
@@ -94,12 +102,17 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
             <RotateCcw size={10} /> Reset
           </button>
         )}
+        {validationError && (
+          <span className="mt-2 block rounded-lg bg-wine-500/10 px-3 py-2 text-[11px] text-wine-500">
+            {validationError}
+          </span>
+        )}
       </span>
 
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/heic"
         className="hidden"
         onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
       />

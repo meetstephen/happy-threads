@@ -47,7 +47,7 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
   const allFilters: Filter[] = ['All', 'New Arrivals', ...categories, 'Favorites'];
 
   return (
-    <section id="collections" className="py-20 md:py-32">
+    <section id="collections" className="py-20 md:py-32 luxury-gradient">
       <div className="container-luxe">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">The Collection</p>

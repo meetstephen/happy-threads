@@ -125,6 +125,32 @@ create policy "only admin may delete site_content"
 
 -- Realtime: content edits appear for all visitors instantly
 alter publication supabase_realtime add table public.site_content;
+
+-- ============================================================
+-- TABLE 3: site_analytics (visitor tracking for admin dashboard)
+-- ============================================================
+create table if not exists public.site_analytics (
+  id uuid primary key default gen_random_uuid(),
+  event_type text not null check (event_type in ('page_view', 'section_time', 'design_view', 'design_like')),
+  event_data jsonb default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+
+alter table public.site_analytics enable row level security;
+
+-- Anyone can INSERT analytics events (anonymous tracking)
+drop policy if exists "anyone can insert analytics" on public.site_analytics;
+create policy "anyone can insert analytics"
+  on public.site_analytics for insert
+  with check (true);
+
+-- Only the admin can READ analytics data
+drop policy if exists "only admin can read analytics" on public.site_analytics;
+create policy "only admin can read analytics"
+  on public.site_analytics for select
+  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+
+-- Realtime not needed for analytics (batch reads only)
 ```
 
 **IMPORTANT:** Before clicking Run, replace every instance of

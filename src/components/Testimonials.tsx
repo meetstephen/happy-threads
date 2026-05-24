@@ -41,7 +41,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
+    <section id="testimonials" className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">Kind Words</p>
@@ -57,7 +57,7 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="relative overflow-hidden rounded-3xl border border-ink-800/10 border-l-4 border-l-bronze-500 bg-cream-50 p-8 shadow-soft dark:border-cream-100/10 dark:border-l-bronze-400 dark:bg-ink-800"
+              className="relative overflow-hidden rounded-3xl border border-ink-800/10 border-l-4 border-l-bronze-500 bg-cream-50 p-8 shadow-soft gold-glow dark:border-cream-100/10 dark:border-l-bronze-400 dark:bg-ink-800"
             >
               <Quote className="absolute right-6 top-6 text-bronze-400/40" size={48} />
               <Quote className="absolute left-6 bottom-6 rotate-180 text-bronze-400/20" size={32} />

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  BarChart3,
   Cloud,
   CloudOff,
   Lock,
@@ -18,10 +19,12 @@ import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { categories, type Design, type DesignCategory } from '../data/designs';
 import { resizeImageFile } from '../utils/imageResize';
+import { validateImageFile } from '../utils/sanitize';
 import { uploadDesignImage } from '../services/designsService';
 import { hasAdminConfigured, useAdminAuth } from '../lib/auth';
 import { ADMIN_EMAIL, isSupabaseEnabled } from '../lib/supabase';
 import QrPanel from './QrPanel';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 interface Props {
   open: boolean;
@@ -31,8 +34,30 @@ interface Props {
 }
 
 const LOCAL_PASSCODE = 'happy2026';
+const ATTEMPT_STORAGE_KEY = 'hfw-admin-attempts';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 300000; // 5 minutes in ms
 
-type Tab = 'add' | 'categories' | 'qr';
+interface AttemptState {
+  count: number;
+  lockedUntil: number | null;
+}
+
+function getAttemptState(): AttemptState {
+  try {
+    const raw = sessionStorage.getItem(ATTEMPT_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return { count: 0, lockedUntil: null };
+}
+
+function setAttemptState(state: AttemptState) {
+  try {
+    sessionStorage.setItem(ATTEMPT_STORAGE_KEY, JSON.stringify(state));
+  } catch { /* ignore */ }
+}
+
+type Tab = 'add' | 'categories' | 'qr' | 'analytics';
 
 export default function AddDesignPanel({ open, onClose, editingDesign }: Props) {
   const { customDesigns, addDesign, updateDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
@@ -40,6 +65,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
 
   const [localUnlocked, setLocalUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState('');
+  const [lockoutRemaining, setLockoutRemaining] = useState(0);
   const [tab, setTab] = useState<Tab>('add');
 
   const [error, setError] = useState<string | null>(null);
@@ -106,15 +132,60 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
     }
   }, [open]);
 
+  // ---- rate limiting lockout countdown ---------------------
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const state = getAttemptState();
+      if (state.lockedUntil) {
+        const remaining = state.lockedUntil - Date.now();
+        if (remaining <= 0) {
+          setAttemptState({ count: 0, lockedUntil: null });
+          setLockoutRemaining(0);
+          setError(null);
+        } else {
+          setLockoutRemaining(remaining);
+        }
+      } else {
+        setLockoutRemaining(0);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ---- local passcode flow ---------------------
 
   const tryLocalUnlock = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const state = getAttemptState();
+
+    // Check if currently locked out
+    if (state.lockedUntil && state.lockedUntil > Date.now()) {
+      const remaining = Math.ceil((state.lockedUntil - Date.now()) / 1000);
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      setError(`Too many failed attempts. Try again in ${mins}:${secs.toString().padStart(2, '0')}.`);
+      return;
+    }
+
     if (passcodeInput.trim() === LOCAL_PASSCODE) {
       setLocalUnlocked(true);
       setError(null);
+      setAttemptState({ count: 0, lockedUntil: null });
+      setLockoutRemaining(0);
     } else {
-      setError('Incorrect passcode.');
+      const newCount = state.count + 1;
+      if (newCount >= MAX_ATTEMPTS) {
+        const lockedUntil = Date.now() + LOCKOUT_DURATION;
+        setAttemptState({ count: newCount, lockedUntil });
+        setLockoutRemaining(LOCKOUT_DURATION);
+        setError('Too many failed attempts. Try again in 5:00.');
+      } else {
+        setAttemptState({ count: newCount, lockedUntil: null });
+        const remaining = MAX_ATTEMPTS - newCount;
+        setError(`Incorrect passcode. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`);
+      }
     }
   };
 
@@ -151,6 +222,12 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
     setBusy(true);
     setError(null);
     try {
+      const validation = await validateImageFile(file);
+      if (!validation.valid) {
+        setError(validation.error || 'Invalid image file.');
+        setBusy(false);
+        return;
+      }
       const resized = await resizeImageFile(file, 900, 0.82);
       setPendingFile(resized);
       if (pendingPreview) URL.revokeObjectURL(pendingPreview);
@@ -266,7 +343,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
             exit={{ scale: 0.96, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-3xl overflow-hidden rounded-3xl bg-cream-100 shadow-luxe dark:bg-ink-800"
+            className="relative w-full max-w-3xl sm:max-w-3xl max-h-[100dvh] sm:max-h-[88vh] overflow-hidden rounded-none sm:rounded-3xl m-0 sm:m-4 bg-cream-100 shadow-luxe dark:bg-ink-800"
           >
             <button
               type="button"
@@ -298,6 +375,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                 onPasscodeSubmit={tryLocalUnlock}
                 error={error}
                 info={info}
+                lockoutRemaining={lockoutRemaining}
               />
             ) : (
               <div className="grid max-h-[88vh] grid-rows-[auto_auto_1fr] overflow-hidden">
@@ -328,7 +406,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                   </div>
                 </header>
 
-                <div className="flex gap-1 border-b border-ink-800/10 px-6 dark:border-cream-100/10">
+                <div className="flex gap-1 overflow-x-auto border-b border-ink-800/10 px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden dark:border-cream-100/10">
                   <TabButton active={tab === 'add'} onClick={() => setTab('add')}>
                     <Plus size={14} /> {isEditing ? 'Edit design' : 'Add design'}
                   </TabButton>
@@ -338,10 +416,15 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                   <TabButton active={tab === 'qr'} onClick={() => setTab('qr')}>
                     <QrCode size={14} /> QR
                   </TabButton>
+                  <TabButton active={tab === 'analytics'} onClick={() => setTab('analytics')}>
+                    <BarChart3 size={14} /> Analytics
+                  </TabButton>
                 </div>
 
-                <div className="overflow-y-auto p-6 md:p-8">
+                <div className="overflow-y-auto p-6 pb-[env(safe-area-inset-bottom,0)] md:p-8">
                   {tab === 'qr' && <QrPanel />}
+
+                  {tab === 'analytics' && <AnalyticsDashboard />}
 
                   {tab === 'categories' && <CategoryLabelsPanel />}
 
@@ -412,7 +495,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                           <input
                             ref={fileRef}
                             type="file"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/webp,image/heic"
                             className="hidden"
                             onChange={(e) =>
                               e.target.files?.[0] && onFileChosen(e.target.files[0])
@@ -429,7 +512,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. Sapphire Aso-Ebi"
-                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -440,7 +523,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                           <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value as DesignCategory)}
-                            className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
+                            className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
                           >
                             {categories.map((c) => (
                               <option key={c} value={c}>
@@ -459,7 +542,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Tell clients what makes this piece special..."
-                            className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -472,7 +555,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={tags}
                             onChange={(e) => setTags(e.target.value)}
                             placeholder="lace, embroidered, beaded"
-                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -678,6 +761,7 @@ interface UnlockScreenProps {
   onPasscodeSubmit: (e: React.FormEvent) => void;
   error: string | null;
   info: string | null;
+  lockoutRemaining: number;
 }
 
 function UnlockScreen(p: UnlockScreenProps) {
@@ -707,7 +791,7 @@ function UnlockScreen(p: UnlockScreenProps) {
               value={p.authEmail}
               onChange={(e) => p.onChangeEmail(e.target.value)}
               placeholder="atelier@happinessfashion.com"
-              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
               required
             />
           </div>
@@ -720,7 +804,7 @@ function UnlockScreen(p: UnlockScreenProps) {
               value={p.authPassword}
               onChange={(e) => p.onChangePassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
               required
               minLength={6}
             />
@@ -789,9 +873,10 @@ function UnlockScreen(p: UnlockScreenProps) {
           value={p.passcodeInput}
           onChange={(e) => p.onChangePasscode(e.target.value)}
           placeholder="Passcode"
-          className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+          className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+          disabled={p.lockoutRemaining > 0}
         />
-        <button type="submit" className="btn-primary">
+        <button type="submit" className="btn-primary" disabled={p.lockoutRemaining > 0}>
           Unlock
         </button>
       </form>
@@ -818,7 +903,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${
+      className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${
         active
           ? 'border-bronze-500 text-bronze-500'
           : 'border-transparent text-ink-800/60 hover:text-ink-800 dark:text-cream-100/60 dark:hover:text-cream-100'

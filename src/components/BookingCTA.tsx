@@ -5,7 +5,7 @@ import { BRAND_STATS } from '../utils/constants';
 
 export default function BookingCTA() {
   return (
-    <section className="relative overflow-hidden bg-ink-800 py-20 md:py-32 dark:bg-ink-900">
+    <section className="relative overflow-hidden border-shimmer bg-ink-800 py-20 md:py-32 dark:bg-ink-900">
       {/* Gold gradient border top */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bronze-500 to-transparent" />
       {/* Gold gradient border bottom */}

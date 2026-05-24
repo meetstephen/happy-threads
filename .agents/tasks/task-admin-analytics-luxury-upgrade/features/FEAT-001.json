@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Admin Analytics Dashboard - Create a Supabase-backed analytics system that tracks visitor count per day, most viewed/liked designs, and section time-spent. Add a new 'Analytics' tab to the AddDesignPanel visible only to the admin. Update SUPABASE_SETUP.md with the new table SQL.",
+  "status": "completed",
+  "steps": [
+    "Create src/services/analytics.ts - a lightweight analytics tracker that: (a) records page visits with a daily counter to Supabase 'site_analytics' table, (b) tracks section visibility time using IntersectionObserver, (c) tracks design views/likes from existing favorite toggles and lightbox opens. When Supabase is not configured, store in localStorage as fallback. The tracker should batch events and flush periodically.",
+    "Create src/components/AnalyticsDashboard.tsx - a new component showing: (a) visitor count chart (last 7/14/30 days as a simple bar chart built with divs/CSS, no chart library), (b) top viewed/liked designs list, (c) section engagement ranking (which sections visitors spent most time in). Style it mobile-first with the existing Tailwind luxury theme (bronze-500 accents, cream backgrounds, font-display headings).",
+    "Modify src/components/AddDesignPanel.tsx - add a 4th tab 'Analytics' (with BarChart3 icon from lucide-react) that renders <AnalyticsDashboard /> when selected. Only show this tab when admin is signed in.",
+    "Modify src/App.tsx - initialize the analytics tracker on mount (call a setup function from analytics.ts). Track section visibility for: hero, collections, about, craftsmanship, services, style-quiz, testimonials, faq, contact. Track design opens (lightbox) and favorites.",
+    "Update SUPABASE_SETUP.md - add TABLE 3: site_analytics with columns: id (uuid), event_type (text: 'page_view', 'section_time', 'design_view', 'design_like'), event_data (jsonb), created_at (timestamptz). Add RLS policies: public can INSERT (for anonymous tracking), only admin can SELECT (for dashboard viewing). Add realtime publication."
+  ],
+  "acceptance_criteria": [
+    "A new 'Analytics' tab appears in the admin panel when signed in",
+    "The analytics dashboard shows daily visitor counts, top designs, and section engagement",
+    "Analytics data is stored in Supabase when configured, localStorage fallback when not",
+    "The dashboard is mobile-friendly (works on phone screens)",
+    "SUPABASE_SETUP.md contains the new site_analytics table SQL with proper RLS",
+    "TypeScript compiles without errors (npx tsc -b --noEmit)"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": "All wired up correctly: analytics service tracks page views, section time (via IntersectionObserver), design views (lightbox opens), and design likes (favorites toggled). FavoritesProvider wraps App so useFavorites works. The Analytics tab in AddDesignPanel is available to admin. Build passes cleanly."
+}

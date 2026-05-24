@@ -1,0 +1,39 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Comprehensive security hardening: add security headers to netlify.toml, CSP meta tag fallback in index.html, create sanitize.ts utility, add rate limiting to local passcode login, strengthen image upload validation with magic byte checking, sanitize inputs in EditableText and SiteContentContext, and update dependencies.",
+  "status": "completed",
+  "steps": [
+    "Step 1 - Security Headers in netlify.toml: Add a [[headers]] block for '/*' with: Content-Security-Policy (allow self, images.pexels.com, fonts.googleapis.com, fonts.gstatic.com, *.supabase.co, generativelanguage.googleapis.com for connect-src, 'unsafe-inline' for style-src since Tailwind/Framer need it, data: for img-src for base64 images), X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Referrer-Policy: strict-origin-when-cross-origin, Permissions-Policy: camera=(), microphone=(), geolocation=(), Strict-Transport-Security: max-age=31536000; includeSubDomains, Cross-Origin-Opener-Policy: same-origin, Cross-Origin-Resource-Policy: same-origin, X-XSS-Protection: 0",
+    "Step 2 - CSP meta tag in index.html: Add a <meta http-equiv='Content-Security-Policy'> tag as a fallback for environments where Netlify headers are not applied. Match the policy from netlify.toml.",
+    "Step 3 - Create src/utils/sanitize.ts: Export a sanitizeText(input: string): string function that strips HTML tags (using regex replace on <...> patterns), trims whitespace, and limits length to 5000 chars. Also export validateImageFile(file: File): Promise<{valid: boolean; error?: string}> that checks: max 10MB file size, validates magic bytes for JPEG (FF D8 FF), PNG (89 50 4E 47), WebP (52 49 46 46...57 45 42 50), HEIC (66 74 79 70 at offset 4).",
+    "Step 4 - Rate limiting in AddDesignPanel.tsx: Add a rate limiter for the local passcode flow. Track failed attempts in sessionStorage key 'admin-login-attempts'. After 5 failed attempts, lock out for 5 minutes. Show remaining attempts in the error message. Modify tryLocalUnlock to check/update the rate limiter before comparing the passcode. Add state for lockout countdown display.",
+    "Step 5 - Image validation in AddDesignPanel.tsx: In the onFileChosen handler, before calling resizeImageFile, call validateImageFile from sanitize.ts. If invalid, show the error and return early. Also update the file input accept attribute to 'image/jpeg,image/png,image/webp,image/heic'.",
+    "Step 6 - Sanitize in EditableText.tsx: Import sanitizeText from utils/sanitize.ts. In the save() function, apply sanitizeText to the trimmed draft before calling set().",
+    "Step 7 - Sanitize in SiteContentContext.tsx: Import sanitizeText from utils/sanitize.ts. In the set() callback, apply sanitizeText to the value parameter before storing it.",
+    "Step 8 - Sanitize in EditableImage.tsx: In the onFile handler, call validateImageFile before processing. Show console.warn and return early if invalid.",
+    "Step 9 - Dependency update: Run npm audit fix to patch what it can without breaking changes. If vite has a non-breaking patch available, update it. Document that the esbuild moderate vuln is dev-server-only and does not affect production.",
+    "Step 10 - Final verification: Run npx tsc -b --noEmit (zero errors) and npx vite build (success) to confirm nothing is broken."
+  ],
+  "acceptance_criteria": [
+    "netlify.toml contains [[headers]] block with all specified security headers",
+    "index.html contains a <meta http-equiv='Content-Security-Policy'> tag",
+    "src/utils/sanitize.ts exports sanitizeText and validateImageFile functions",
+    "AddDesignPanel.tsx implements rate limiting: locks out after 5 failed passcode attempts for 5 minutes",
+    "AddDesignPanel.tsx validates image files using magic bytes before resize",
+    "EditableText.tsx sanitizes text before saving",
+    "SiteContentContext.tsx sanitizes values before storing",
+    "EditableImage.tsx validates image files before processing",
+    "TypeScript type check passes with zero errors",
+    "Vite production build succeeds"
+  ],
+  "verification": [
+    "Run npx tsc -b --noEmit and confirm exit code 0",
+    "Run npx vite build and confirm successful build output",
+    "Grep netlify.toml for Content-Security-Policy header presence",
+    "Grep index.html for meta http-equiv Content-Security-Policy",
+    "Grep src/utils/sanitize.ts for sanitizeText and validateImageFile exports"
+  ],
+  "blocked_reason": null,
+  "findings": "All 10 steps implemented successfully. TypeScript compilation passes with zero errors. Vite build succeeds. npm audit fix found no non-breaking fixes available; the esbuild moderate vulnerability (GHSA-67mh-4wv8-2f99) only affects local dev server and requires vite 5->8 breaking change to resolve - does not affect production builds deployed to Netlify. Rate limiting uses sessionStorage key 'hfw-admin-attempts'. SiteContentContext sanitization skips values starting with 'http' or 'data:image' to avoid corrupting image URLs."
+}

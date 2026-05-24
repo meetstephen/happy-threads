@@ -4,7 +4,7 @@ import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const ABOUT_IMG = pexels(3738088, 1000, 1250);
+const ABOUT_IMG = pexels(3807517, 1000, 1250);
 
 const DEFAULT_ABOUT_P1 =
   'I started Happiness Fashion World seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
@@ -93,7 +93,7 @@ export default function About() {
           {/* Tools of the Trade */}
           <div className="mt-8 flex items-center justify-center gap-5">
             {[Scissors, Ruler, Pen, Palette, Layers, Shirt].map((Icon, i) => (
-              <Icon key={i} size={20} className="text-bronze-400 opacity-40" />
+              <Icon key={i} size={26} className="animate-float text-bronze-400 opacity-60" style={{ animationDelay: `${i * 0.7}s` }} />
             ))}
           </div>
         </motion.div>

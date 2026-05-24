@@ -25,6 +25,11 @@ export default {
           500: '#8B2942',
           600: '#6E1F33',
         },
+        gold: {
+          400: '#FFD700',
+          500: '#DAA520',
+          600: '#B8860B',
+        },
       },
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
@@ -33,11 +38,16 @@ export default {
       boxShadow: {
         luxe: '0 30px 60px -20px rgba(20, 17, 14, 0.25)',
         soft: '0 10px 30px -10px rgba(20, 17, 14, 0.15)',
+        'gold-glow': '0 0 20px rgba(218, 165, 32, 0.3), 0 0 40px rgba(218, 165, 32, 0.1)',
+      },
+      backgroundImage: {
+        'luxury-gradient': 'linear-gradient(135deg, rgba(176, 122, 76, 0.03) 0%, transparent 50%, rgba(139, 41, 66, 0.02) 100%)',
       },
       animation: {
         'fade-up': 'fadeUp 0.8s ease-out forwards',
         'shimmer': 'shimmer 2.5s linear infinite',
         'float': 'float 6s ease-in-out infinite',
+        'pulse-gold': 'pulse-gold 2.5s ease-in-out infinite',
       },
       keyframes: {
         fadeUp: {
@@ -51,6 +61,10 @@ export default {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-12px)' },
+        },
+        'pulse-gold': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(176, 122, 76, 0.3)' },
+          '50%': { boxShadow: '0 0 16px 4px rgba(176, 122, 76, 0.15)' },
         },
       },
     },

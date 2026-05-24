@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Create a 'What We Sew' section showing all types of clothes available, and enhance sewing/fashion icons visibility across the site to be more prominent but non-obstructive.",
+  "status": "completed",
+  "steps": [
+    "Create src/components/WhatWeSew.tsx - a new section component that shows a visually appealing list of all types of clothes the atelier can sew. Include: Aso-Ebi Sets, Bridal Gowns, Ankara Styles, Kaftans & Boubous, Agbada, Corporate Suits, Children's Wear, Blouse & Skirt, Jumpsuit, Peplum Top, Shift Dress, Ball Gown, Mermaid Dress, A-Line Dress, Senator Wear, and 'Bring Your Own Style'. Each item should have: a lucide-react icon, the name, a one-line description. Use a responsive grid layout (2 cols mobile, 3 tablet, 4 desktop). Include a prominent call-to-action at the bottom: 'Have your own design in mind? Bring your style and we will bring it to life!' with a WhatsApp link. Style with the luxury theme (gold/bronze accents, hover animations with framer-motion, card-glow effect). Add a decorative header with eyebrow text 'Bespoke Possibilities' and a display-2 heading.",
+    "Modify src/App.tsx - import WhatWeSew and place it between Services and BookingCTA in the render order. This gives a natural flow: Services (what we offer) -> What We Sew (specific garment types) -> BookingCTA (book now).",
+    "Enhance sewing icons visibility across the entire site. In src/components/Hero.tsx: increase icon sizes from 48/40/36 to 64/56/48, increase opacity from 0.12/0.10/0.08 to 0.25/0.20/0.18, and add 2 more floating icons (a sewing machine icon using Shirt, and a thread-like Sparkles icon). In src/components/About.tsx: increase the 'Tools of the Trade' icons from opacity-40 and size 20 to opacity-60 and size 26, and add a subtle animate-float class. In src/components/Services.tsx: increase the decorative strip icons from opacity-50 and size 18 to opacity-70 and size 24. In src/components/Craftsmanship.tsx: add a decorative icons row at the bottom similar to About.tsx.",
+    "Add a subtle floating sewing icons background layer. Create a small reusable component src/components/FloatingIcons.tsx that renders 4-6 absolutely-positioned, slowly floating sewing tool icons (Scissors, Ruler, Pen, Sparkles) with very low opacity (0.06-0.10) scattered across the viewport. Import and render it in App.tsx as a fixed background layer behind all content. Use CSS animations (not JS) for performance."
+  ],
+  "acceptance_criteria": [
+    "A new 'What We Sew' section is visible on the site between Services and BookingCTA",
+    "The section lists at least 15 garment types with icons and descriptions",
+    "There is a clear 'bring your own style' message with WhatsApp CTA",
+    "Sewing tool icons are more visible across Hero, About, Services, and Craftsmanship",
+    "A subtle floating icons background layer adds ambiance without obstructing content",
+    "All components are mobile-responsive",
+    "TypeScript compiles without errors"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": "All icons verified available in lucide-react 0.468.0. Added what-we-sew to analytics section tracking array. FloatingIcons uses fixed positioning with z-0 to stay behind content. Build passes cleanly."
+}
