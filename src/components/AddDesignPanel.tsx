@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  BarChart3,
   Cloud,
   CloudOff,
   Lock,
@@ -22,6 +23,7 @@ import { uploadDesignImage } from '../services/designsService';
 import { hasAdminConfigured, useAdminAuth } from '../lib/auth';
 import { ADMIN_EMAIL, isSupabaseEnabled } from '../lib/supabase';
 import QrPanel from './QrPanel';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 interface Props {
   open: boolean;
@@ -32,7 +34,7 @@ interface Props {
 
 const LOCAL_PASSCODE = 'happy2026';
 
-type Tab = 'add' | 'categories' | 'qr';
+type Tab = 'add' | 'categories' | 'qr' | 'analytics';
 
 export default function AddDesignPanel({ open, onClose, editingDesign }: Props) {
   const { customDesigns, addDesign, updateDesign, removeDesign, cloudEnabled, loading } = useCustomDesigns();
@@ -338,10 +340,15 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                   <TabButton active={tab === 'qr'} onClick={() => setTab('qr')}>
                     <QrCode size={14} /> QR
                   </TabButton>
+                  <TabButton active={tab === 'analytics'} onClick={() => setTab('analytics')}>
+                    <BarChart3 size={14} /> Analytics
+                  </TabButton>
                 </div>
 
                 <div className="overflow-y-auto p-6 md:p-8">
                   {tab === 'qr' && <QrPanel />}
+
+                  {tab === 'analytics' && <AnalyticsDashboard />}
 
                   {tab === 'categories' && <CategoryLabelsPanel />}
 

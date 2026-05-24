@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-005",
+  "type": "chore",
+  "description": "Final integration pass - ensure all new components are properly wired together, all imports resolve, the build is clean, and everything works as a cohesive whole.",
+  "status": "pending",
+  "steps": [
+    "Run npx tsc -b --noEmit and fix any TypeScript errors that may have accumulated across the previous features.",
+    "Run npx vite build and ensure the production build succeeds without warnings.",
+    "Verify all new Pexels image IDs (from FEAT-002) return HTTP 200 using curl.",
+    "Read src/App.tsx and verify: (a) WhatWeSew component is imported and rendered in the correct position, (b) Analytics tracker initialization is present, (c) All section IDs referenced by analytics exist in the DOM.",
+    "Read src/components/AddDesignPanel.tsx and verify the Analytics tab is properly integrated with the correct tab type and conditional rendering.",
+    "Read SUPABASE_SETUP.md and verify the new site_analytics table SQL is present with proper RLS policies.",
+    "Ensure the src/main.tsx provider tree is correct and no contexts are missing."
+  ],
+  "acceptance_criteria": [
+    "npx tsc -b --noEmit passes with zero errors",
+    "npx vite build succeeds",
+    "All Pexels image URLs return HTTP 200",
+    "All new components are properly imported and rendered in App.tsx",
+    "SUPABASE_SETUP.md is complete with analytics table SQL",
+    "No orphaned imports or dead code"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Luxury design enhancements and mobile-friendliness improvements. Make the site look premium with enhanced visual effects, better spacing, more gold/bronze accents. Ensure all admin controls work beautifully on mobile phones.",
+  "status": "pending",
+  "steps": [
+    "Enhance src/index.css with luxury polish: (a) Add a subtle gold shimmer border animation class .border-shimmer that can be applied to section dividers. (b) Add a .luxury-gradient class with a subtle warm gradient overlay. (c) Improve the .luxe-image class with a gentle warm color filter. (d) Add a .gold-glow utility for hover effects on interactive elements. (e) Add an @keyframes 'pulse-gold' for a subtle pulsing gold glow effect on CTAs.",
+    "Enhance tailwind.config.js: (a) Add a new 'gold' color shade: gold-400: '#FFD700', gold-500: '#DAA520', gold-600: '#B8860B'. (b) Add new box-shadow: 'gold-glow': '0 0 20px rgba(218, 165, 32, 0.3), 0 0 40px rgba(218, 165, 32, 0.1)'. (c) Add backgroundImage: 'luxury-gradient': 'linear-gradient(135deg, rgba(176, 122, 76, 0.03) 0%, transparent 50%, rgba(139, 41, 66, 0.02) 100%)' to theme extend.",
+    "Mobile-optimize the admin panel in src/components/AddDesignPanel.tsx: (a) Make the panel full-screen on mobile (remove max-w-3xl on small screens, use w-full h-full on mobile). (b) Increase touch targets for all buttons to at least 44px. (c) Make form inputs have larger font-size (16px) to prevent iOS zoom. (d) Add bottom safe-area padding for iPhone home bar. (e) Make the tab bar horizontally scrollable on very small screens. (f) Ensure the design grid in the 'saved designs' section uses 2 columns on mobile.",
+    "Add luxury visual touches to key sections: (a) In src/components/Hero.tsx - add a subtle particle-like gold dot background using CSS (3-4 small gold circles with very low opacity floating). (b) In src/components/Collections.tsx - add a subtle warm background gradient. (c) In src/components/BookingCTA.tsx - read the file first, then enhance with a gold border accent and improved spacing. (d) In src/components/Testimonials.tsx - add gold quote marks and refined card styling.",
+    "Ensure the Navbar admin banner (Edit Mode) is mobile-optimized: make the text smaller on mobile, ensure the 'Add Design' button is easily tappable, and add safe-area-top padding so it does not overlap the iOS status bar."
+  ],
+  "acceptance_criteria": [
+    "New CSS utilities (border-shimmer, luxury-gradient, gold-glow, pulse-gold) are available",
+    "Tailwind config has gold color shades and gold-glow shadow",
+    "Admin panel is full-screen and touch-friendly on mobile (44px+ touch targets)",
+    "Form inputs are 16px font-size minimum to prevent iOS zoom",
+    "Luxury visual effects (gold dots, warm gradients) are present but subtle",
+    "Admin banner works on mobile with proper spacing",
+    "TypeScript compiles without errors"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

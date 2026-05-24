@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
@@ -23,6 +23,8 @@ import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
 import { useAdminAuth } from './lib/auth';
+import { initAnalytics, trackPageView, trackDesignView, trackDesignLike, trackSectionTime } from './services/analytics';
+import { useFavorites } from './context/FavoritesContext';
 
 // Admin panel is only opened via the hidden /#admin URL — load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
@@ -37,6 +39,8 @@ export default function App() {
   const [lookbookOpen, setLookbookOpen] = useState(false);
   const { customDesigns } = useCustomDesigns();
   const { admin } = useAdminAuth();
+  const { favorites } = useFavorites();
+  const prevFavoritesRef = useRef<string[]>(favorites);
 
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
@@ -61,13 +65,88 @@ export default function App() {
     const id = params.get('design');
     if (!id) return;
     const found = allDesigns.find((d) => d.id === id);
-    if (found) setLightboxDesign(found);
+    if (found) {
+      setLightboxDesign(found);
+      trackDesignView(found.id);
+    }
   }, [allDesigns]);
+
+  // Analytics: initialize + track page view
+  useEffect(() => {
+    initAnalytics();
+    trackPageView();
+  }, []);
+
+  // Analytics: track section visibility time
+  useEffect(() => {
+    const sectionIds = [
+      'hero', 'collections', 'about', 'craftsmanship',
+      'services', 'style-quiz', 'testimonials', 'faq', 'contact',
+    ];
+    const timers = new Map<string, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          if (!id) continue;
+          if (entry.isIntersecting) {
+            timers.set(id, Date.now());
+          } else {
+            const start = timers.get(id);
+            if (start) {
+              const seconds = (Date.now() - start) / 1000;
+              trackSectionTime(id, seconds);
+              timers.delete(id);
+            }
+          }
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    // Observe after a short delay so DOM is ready
+    const timeout = setTimeout(() => {
+      for (const sectionId of sectionIds) {
+        const el = document.getElementById(sectionId);
+        if (el) observer.observe(el);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+      // Flush remaining section times
+      for (const [id, start] of timers.entries()) {
+        const seconds = (Date.now() - start) / 1000;
+        trackSectionTime(id, seconds);
+      }
+    };
+  }, []);
+
+  // Analytics: track design likes (favorites toggled)
+  useEffect(() => {
+    const prev = prevFavoritesRef.current;
+    // Find newly added favorites
+    const added = favorites.filter((id) => !prev.includes(id));
+    for (const id of added) {
+      trackDesignLike(id);
+    }
+    prevFavoritesRef.current = favorites;
+  }, [favorites]);
 
   const openLookbook = () => {
     setLookbookOpen(true);
     if (window.location.hash !== '#lookbook') {
       history.replaceState(null, '', window.location.pathname + window.location.search + '#lookbook');
+    }
+  };
+
+  // Wrapper that also tracks analytics for design views
+  const openDesignLightbox = (design: Design | null) => {
+    setLightboxDesign(design);
+    if (design) {
+      trackDesignView(design.id);
     }
   };
 
@@ -111,7 +190,7 @@ export default function App() {
         <Collections
           designs={allDesigns}
           highlightIds={quizFilter}
-          onOpen={setLightboxDesign}
+          onOpen={openDesignLightbox}
           onOpenLookbook={openLookbook}
         />
         <PressStrip />
@@ -147,7 +226,7 @@ export default function App() {
             history.replaceState(null, '', window.location.pathname + window.location.search);
           }
         }}
-        onOpenDesign={(d) => setLightboxDesign(d)}
+        onOpenDesign={(d) => openDesignLightbox(d)}
         onAddNew={openAdminAddNew}
         onEditDesign={openAdminEdit}
       />

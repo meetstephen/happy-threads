@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Fix mismatched images (HF-010, HF-011), add more lookbook designs, fix About designer image, and significantly improve Joy AI chatbot language to be warmer, more human, and luxurious.",
+  "status": "pending",
+  "steps": [
+    "In src/data/designs.ts, replace the image for HF-010 'Adire Indigo Shift Dress' with pexels(7095050) - a photo of African woman in indigo/tie-dye styled outfit. Replace HF-011 'George Wrapper & Blouse' with pexels(7691070) - a photo of African woman in traditional wrapper and blouse outfit.",
+    "In src/data/designs.ts, add 8 new designs after the existing 12. Use these verified Pexels IDs and create appropriate names/descriptions for authentic Nigerian fashion: (1) pexels(8191439) - 'Aso-Oke Celebration Set' category Aso-Ebi & Owambe, (2) pexels(8152356) - 'Ankara Mermaid Gown' category Ankara, (3) pexels(5876668) - 'Igbo Chief Kaftan' category Men's Tailoring, (4) pexels(11041780) - 'Ankara Peplum Blouse & Skirt' category Ankara, (5) pexels(7679865) - 'Velvet Owambe Dress' category Aso-Ebi & Owambe, (6) pexels(9255589) - 'Lace Bridal Reception Dress' category Bridal, (7) pexels(6462630) - 'Ankara A-Line Gown' category Ankara, (8) pexels(15664540) - 'Dashiki Power Set' category Corporate. Give each design rich descriptions with Nigerian flavor, appropriate tags, occasions, and vibes. Mark all as isNew with recent addedOn dates.",
+    "In src/components/About.tsx, change the ABOUT_IMG constant from pexels(3738088, 1000, 1250) to pexels(3807517, 1000, 1250) - a photo of a designer/seamstress working at a sewing machine with measuring tape (matches the steering request for About the Designer section).",
+    "Completely rewrite src/utils/chatbot.ts to make Joy AI sound significantly more human, warm, welcoming, and luxurious. Key improvements: (a) Make the greeting more personal and warm with Nigerian hospitality (use 'darling', 'sweetheart', welcoming Nigerian expressions). (b) Add more personality - Joy should sound like a luxury brand concierge who genuinely cares. (c) Beautify ALL response language - replace corporate/robotic phrasing with warm, flowing, poetic language. (d) Add new intents for: custom/bespoke requests, children's clothing, party planning guidance, fabric care, alteration queries, return policy, social media, 'what styles are trending'. (e) Make the fallback response warmer and more helpful. (f) Add emoji usage that feels natural, not forced. (g) Include Nigerian flavor (occasional Igbo/Yoruba greetings, Nigerian cultural references). Keep the same BotMessage interface and exports.",
+    "Verify all new Pexels image IDs return HTTP 200 by running curl checks."
+  ],
+  "acceptance_criteria": [
+    "HF-010 and HF-011 have new image IDs that better match their descriptions",
+    "8 new designs added to the catalog with Nigerian fashion focus",
+    "About section image shows a seamstress/designer at a sewing machine",
+    "Joy AI chatbot responses are significantly warmer, more human, with luxury language",
+    "Joy AI has at least 5 new intent patterns beyond the originals",
+    "All Pexels image IDs resolve to HTTP 200",
+    "TypeScript compiles without errors"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
