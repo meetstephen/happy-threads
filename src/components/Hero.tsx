@@ -51,6 +51,11 @@ export default function Hero() {
         className="pointer-events-none absolute right-[18%] bottom-[28%] z-0 animate-float text-wine-400 opacity-[0.12] [animation-delay:2s]"
       />
 
+      {/* Gold accent dots */}
+      <div aria-hidden className="pointer-events-none absolute left-[20%] top-[40%] h-2 w-2 rounded-full bg-bronze-400 opacity-[0.15] animate-pulse-gold" />
+      <div aria-hidden className="pointer-events-none absolute right-[25%] top-[60%] h-1.5 w-1.5 rounded-full bg-gold-500 opacity-[0.12] animate-pulse-gold [animation-delay:1s]" />
+      <div aria-hidden className="pointer-events-none absolute left-[70%] bottom-[30%] h-2.5 w-2.5 rounded-full bg-bronze-500 opacity-[0.10] animate-pulse-gold [animation-delay:2s]" />
+
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
         <div className="md:col-span-7">
           <motion.div

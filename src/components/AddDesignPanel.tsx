@@ -268,7 +268,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
             exit={{ scale: 0.96, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-3xl overflow-hidden rounded-3xl bg-cream-100 shadow-luxe dark:bg-ink-800"
+            className="relative w-full max-w-3xl sm:max-w-3xl max-h-[100dvh] sm:max-h-[88vh] overflow-hidden rounded-none sm:rounded-3xl m-0 sm:m-4 bg-cream-100 shadow-luxe dark:bg-ink-800"
           >
             <button
               type="button"
@@ -330,7 +330,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                   </div>
                 </header>
 
-                <div className="flex gap-1 border-b border-ink-800/10 px-6 dark:border-cream-100/10">
+                <div className="flex gap-1 overflow-x-auto border-b border-ink-800/10 px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden dark:border-cream-100/10">
                   <TabButton active={tab === 'add'} onClick={() => setTab('add')}>
                     <Plus size={14} /> {isEditing ? 'Edit design' : 'Add design'}
                   </TabButton>
@@ -345,7 +345,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                   </TabButton>
                 </div>
 
-                <div className="overflow-y-auto p-6 md:p-8">
+                <div className="overflow-y-auto p-6 pb-[env(safe-area-inset-bottom,0)] md:p-8">
                   {tab === 'qr' && <QrPanel />}
 
                   {tab === 'analytics' && <AnalyticsDashboard />}
@@ -436,7 +436,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. Sapphire Aso-Ebi"
-                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -447,7 +447,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                           <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value as DesignCategory)}
-                            className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
+                            className="w-full rounded-full border border-ink-800/15 bg-cream-100 px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-800"
                           >
                             {categories.map((c) => (
                               <option key={c} value={c}>
@@ -466,7 +466,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Tell clients what makes this piece special..."
-                            className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-2xl border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -479,7 +479,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                             value={tags}
                             onChange={(e) => setTags(e.target.value)}
                             placeholder="lace, embroidered, beaded"
-                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+                            className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
                           />
                         </div>
 
@@ -714,7 +714,7 @@ function UnlockScreen(p: UnlockScreenProps) {
               value={p.authEmail}
               onChange={(e) => p.onChangeEmail(e.target.value)}
               placeholder="atelier@happinessfashion.com"
-              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
               required
             />
           </div>
@@ -727,7 +727,7 @@ function UnlockScreen(p: UnlockScreenProps) {
               value={p.authPassword}
               onChange={(e) => p.onChangePassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+              className="w-full rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
               required
               minLength={6}
             />
@@ -796,7 +796,7 @@ function UnlockScreen(p: UnlockScreenProps) {
           value={p.passcodeInput}
           onChange={(e) => p.onChangePasscode(e.target.value)}
           placeholder="Passcode"
-          className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+          className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
         />
         <button type="submit" className="btn-primary">
           Unlock
@@ -825,7 +825,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${
+      className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${
         active
           ? 'border-bronze-500 text-bronze-500'
           : 'border-transparent text-ink-800/60 hover:text-ink-800 dark:text-cream-100/60 dark:hover:text-cream-100'

@@ -171,16 +171,17 @@ export default function App() {
       <FloatingIcons />
       {/* Admin mode banner — visible only when Happiness is signed in */}
       {admin && (
-        <div className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 bg-bronze-500 px-4 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-cream-100 sm:text-xs">
+        <div className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 bg-bronze-500 px-4 py-1.5 pt-[env(safe-area-inset-top,0)] text-[10px] font-medium uppercase tracking-[0.25em] text-cream-100 sm:text-xs">
           <span className="h-2 w-2 animate-pulse rounded-full bg-cream-100" />
-          Edit Mode — tap any text or image to change it
+          <span className="hidden sm:inline">Edit Mode — tap any text or image to change it</span>
+          <span className="sm:hidden">Edit Mode</span>
           <button
             type="button"
             onClick={() => {
               setEditingDesign(null);
               setAdminOpen(true);
             }}
-            className="ml-3 rounded-full border border-cream-100/40 px-2.5 py-0.5 text-[9px] transition-colors hover:bg-cream-100 hover:text-bronze-600"
+            className="ml-3 rounded-full border border-cream-100/40 px-2.5 py-1 text-[9px] transition-colors hover:bg-cream-100 hover:text-bronze-600 sm:py-0.5"
           >
             Add Design
           </button>
