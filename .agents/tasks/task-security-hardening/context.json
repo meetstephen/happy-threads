@@ -1,0 +1,29 @@
+{
+  "project_type": "Vite + React 18 SPA with Tailwind CSS, Framer Motion, Supabase optional backend",
+  "language": "TypeScript / TSX",
+  "build_system": "Vite 5 with npm scripts - npm run build calls tsc -b then vite build",
+  "test_framework": "None - no test runner configured. Validation is TypeScript type checking + successful build.",
+  "build_command": "npx tsc -b --noEmit && npx vite build",
+  "test_command": "npx tsc -b --noEmit",
+  "verification_instructions": "1. Run npx tsc -b --noEmit (zero errors). 2. Run npx vite build (success). 3. Check that no new TypeScript errors are introduced.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "npm install (node_modules already present, Node 22.22.3, npm 11.4.2)",
+  "environment_constraints": "OPEN_INTERNET - full network access. No Docker in use. Netlify handles deployment.",
+  "contribution_requirements": "No CONTRIBUTING.md found. Key constraint: TypeScript strict mode, Tailwind CSS for styling, maintain existing patterns.",
+  "key_patterns": "Components in src/components/, contexts in src/context/, utilities in src/utils/, services in src/services/, lib (supabase/auth) in src/lib/. Admin panel uses local passcode OR Supabase auth. SiteContentContext manages editable text/images with localStorage fallback. No dangerouslySetInnerHTML usage (React JSX escaping is default). Image upload via resizeImageFile() utility.",
+  "relevant_files": [
+    "netlify.toml",
+    "index.html",
+    "src/components/AddDesignPanel.tsx",
+    "src/utils/imageResize.ts",
+    "src/components/EditableText.tsx",
+    "src/components/EditableImage.tsx",
+    "src/context/SiteContentContext.tsx",
+    "src/lib/supabase.ts",
+    "src/lib/auth.ts",
+    "src/components/Lightbox.tsx",
+    "src/services/geminiChat.ts",
+    "package.json"
+  ],
+  "directory_structure": "Root: netlify.toml, index.html, package.json. src/: App.tsx entry, components/ (25+ components), context/ (4 contexts), data/ (static designs), utils/ (imageResize, categoryLabel, constants, etc.), services/ (analytics, designsService, geminiChat), lib/ (supabase, auth). public/ (favicon, manifest, _redirects). dist/ (build output)."
+}

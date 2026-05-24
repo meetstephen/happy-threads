@@ -19,6 +19,7 @@ import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { categories, type Design, type DesignCategory } from '../data/designs';
 import { resizeImageFile } from '../utils/imageResize';
+import { validateImageFile } from '../utils/sanitize';
 import { uploadDesignImage } from '../services/designsService';
 import { hasAdminConfigured, useAdminAuth } from '../lib/auth';
 import { ADMIN_EMAIL, isSupabaseEnabled } from '../lib/supabase';
@@ -33,6 +34,28 @@ interface Props {
 }
 
 const LOCAL_PASSCODE = 'happy2026';
+const ATTEMPT_STORAGE_KEY = 'hfw-admin-attempts';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 300000; // 5 minutes in ms
+
+interface AttemptState {
+  count: number;
+  lockedUntil: number | null;
+}
+
+function getAttemptState(): AttemptState {
+  try {
+    const raw = sessionStorage.getItem(ATTEMPT_STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return { count: 0, lockedUntil: null };
+}
+
+function setAttemptState(state: AttemptState) {
+  try {
+    sessionStorage.setItem(ATTEMPT_STORAGE_KEY, JSON.stringify(state));
+  } catch { /* ignore */ }
+}
 
 type Tab = 'add' | 'categories' | 'qr' | 'analytics';
 
@@ -42,6 +65,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
 
   const [localUnlocked, setLocalUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState('');
+  const [lockoutRemaining, setLockoutRemaining] = useState(0);
   const [tab, setTab] = useState<Tab>('add');
 
   const [error, setError] = useState<string | null>(null);
@@ -108,15 +132,60 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
     }
   }, [open]);
 
+  // ---- rate limiting lockout countdown ---------------------
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const state = getAttemptState();
+      if (state.lockedUntil) {
+        const remaining = state.lockedUntil - Date.now();
+        if (remaining <= 0) {
+          setAttemptState({ count: 0, lockedUntil: null });
+          setLockoutRemaining(0);
+          setError(null);
+        } else {
+          setLockoutRemaining(remaining);
+        }
+      } else {
+        setLockoutRemaining(0);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ---- local passcode flow ---------------------
 
   const tryLocalUnlock = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const state = getAttemptState();
+
+    // Check if currently locked out
+    if (state.lockedUntil && state.lockedUntil > Date.now()) {
+      const remaining = Math.ceil((state.lockedUntil - Date.now()) / 1000);
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      setError(`Too many failed attempts. Try again in ${mins}:${secs.toString().padStart(2, '0')}.`);
+      return;
+    }
+
     if (passcodeInput.trim() === LOCAL_PASSCODE) {
       setLocalUnlocked(true);
       setError(null);
+      setAttemptState({ count: 0, lockedUntil: null });
+      setLockoutRemaining(0);
     } else {
-      setError('Incorrect passcode.');
+      const newCount = state.count + 1;
+      if (newCount >= MAX_ATTEMPTS) {
+        const lockedUntil = Date.now() + LOCKOUT_DURATION;
+        setAttemptState({ count: newCount, lockedUntil });
+        setLockoutRemaining(LOCKOUT_DURATION);
+        setError('Too many failed attempts. Try again in 5:00.');
+      } else {
+        setAttemptState({ count: newCount, lockedUntil: null });
+        const remaining = MAX_ATTEMPTS - newCount;
+        setError(`Incorrect passcode. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`);
+      }
     }
   };
 
@@ -153,6 +222,12 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
     setBusy(true);
     setError(null);
     try {
+      const validation = await validateImageFile(file);
+      if (!validation.valid) {
+        setError(validation.error || 'Invalid image file.');
+        setBusy(false);
+        return;
+      }
       const resized = await resizeImageFile(file, 900, 0.82);
       setPendingFile(resized);
       if (pendingPreview) URL.revokeObjectURL(pendingPreview);
@@ -300,6 +375,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                 onPasscodeSubmit={tryLocalUnlock}
                 error={error}
                 info={info}
+                lockoutRemaining={lockoutRemaining}
               />
             ) : (
               <div className="grid max-h-[88vh] grid-rows-[auto_auto_1fr] overflow-hidden">
@@ -419,7 +495,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                           <input
                             ref={fileRef}
                             type="file"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/webp,image/heic"
                             className="hidden"
                             onChange={(e) =>
                               e.target.files?.[0] && onFileChosen(e.target.files[0])
@@ -685,6 +761,7 @@ interface UnlockScreenProps {
   onPasscodeSubmit: (e: React.FormEvent) => void;
   error: string | null;
   info: string | null;
+  lockoutRemaining: number;
 }
 
 function UnlockScreen(p: UnlockScreenProps) {
@@ -797,8 +874,9 @@ function UnlockScreen(p: UnlockScreenProps) {
           onChange={(e) => p.onChangePasscode(e.target.value)}
           placeholder="Passcode"
           className="flex-1 rounded-full border border-ink-800/15 bg-transparent px-5 py-3 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20"
+          disabled={p.lockoutRemaining > 0}
         />
-        <button type="submit" className="btn-primary">
+        <button type="submit" className="btn-primary" disabled={p.lockoutRemaining > 0}>
           Unlock
         </button>
       </form>

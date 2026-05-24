@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Check, Pencil, RotateCcw, X } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useAdminAuth } from '../lib/auth';
+import { sanitizeText } from '../utils/sanitize';
 
 interface Props {
   /** Unique key for this editable piece of content. */
@@ -42,7 +43,7 @@ export default function EditableText({
   };
 
   const save = async () => {
-    const trimmed = draft.trim();
+    const trimmed = sanitizeText(draft.trim());
     if (trimmed && trimmed !== defaultValue) {
       await set(contentKey, trimmed);
     } else if (!trimmed || trimmed === defaultValue) {

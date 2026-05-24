@@ -3,6 +3,7 @@ import { Camera, RotateCcw } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useAdminAuth } from '../lib/auth';
 import { resizeImageFile } from '../utils/imageResize';
+import { validateImageFile } from '../utils/sanitize';
 import { uploadDesignImage } from '../services/designsService';
 import { isSupabaseEnabled } from '../lib/supabase';
 
@@ -37,6 +38,11 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
     if (!file) return;
     setUploading(true);
     try {
+      const validation = await validateImageFile(file);
+      if (!validation.valid) {
+        console.warn('[EditableImage] invalid file:', validation.error);
+        return;
+      }
       const resized = await resizeImageFile(file, 1200, 0.85);
       let url: string;
       if (isSupabaseEnabled) {
@@ -99,7 +105,7 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/heic"
         className="hidden"
         onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
       />
