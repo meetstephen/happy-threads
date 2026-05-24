@@ -2,7 +2,7 @@
   "task_id": "task-rebrand-happiness-fashion-world",
   "task_description": "Complete rebrand of the fashion portfolio site from 'Happiness Fashion' to 'Happiness Fashion World'. Replace all imagery with authentic Nigerian/African models in Nigerian attire, redesign logo, add fashion-related icons throughout, elevate design to international luxury standard, add new sections (Craftsmanship process, Booking CTA), and enhance overall visual polish.",
   "status": "completed",
-  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
   "blocked_reason": null,
   "verification": {
     "build": "pass",

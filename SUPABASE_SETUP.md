@@ -1,42 +1,44 @@
-# Cloud Sync + Admin Auth Setup (Supabase) — 12-Minute Guide
+# Cloud Sync + Admin Auth Setup (Supabase) -- 12-Minute Guide
 
-The site works perfectly **without** this setup — designs Happiness adds in
+The site works perfectly **without** this setup -- designs Happiness adds in
 the admin panel are saved on her phone's browser only. To make them appear
 on **every visitor's device** (true cloud sync) AND restrict editing so that
 **only Happiness can add or remove designs** (no shared passcode), follow
 these steps.
 
-You only do this once. It's free forever for a small atelier — Supabase's
+You only do this once. It's free forever for a small atelier -- Supabase's
 free tier includes 500 MB database, 1 GB file storage, and 2 GB bandwidth/month
 (plenty for thousands of designs and visitors).
 
 > **Quick mental model:**
-> - **Public visitors** can READ designs.
+> - **Public visitors** can READ designs and site content.
 > - Only the signed-in admin (Happiness's email) can INSERT, UPDATE or DELETE.
-> - Auth is enforced by Supabase Row-Level Security (RLS) — not by client-side
->   code — so even if someone reads the JavaScript bundle, they cannot write.
+> - Auth is enforced by Supabase Row-Level Security (RLS) -- not by client-side
+>   code -- so even if someone reads the JavaScript bundle, they cannot write.
 
 ---
 
-## Step 1 — Create a Supabase account
+## Step 1 -- Create a Supabase account
 
 1. Go to **https://supabase.com** and click **"Start your project"**.
-2. Sign up with GitHub (easiest) — no credit card needed.
+2. Sign up with GitHub (easiest) -- no credit card needed.
 3. Click **"New project"**. Pick:
-   - **Name:** `happy-threads`
+   - **Name:** `happiness-fashion-world`
    - **Database password:** generate a strong one and save it somewhere safe
    - **Region:** closest to Nigeria (e.g. `eu-west-1` Ireland or `eu-central-1` Frankfurt)
 4. Click **"Create project"**. Wait ~2 minutes while it provisions.
 
 ---
 
-## Step 2 — Create the `designs` table with strict RLS
+## Step 2 -- Create the database tables with strict RLS
 
-1. In the Supabase dashboard, click **SQL Editor** (left sidebar) → **"New query"**.
+1. In the Supabase dashboard, click **SQL Editor** (left sidebar) then **"New query"**.
 2. Paste **all** of the SQL below and click **"Run"**.
 
 ```sql
--- 1. The designs table
+-- ============================================================
+-- TABLE 1: designs (the fashion catalog)
+-- ============================================================
 create table if not exists public.designs (
   id text primary key,
   name text not null,
@@ -51,10 +53,9 @@ create table if not exists public.designs (
   added_on timestamptz default now()
 );
 
--- 2. Row-Level Security: anyone can READ; only Happiness's authenticated
---    session can INSERT or DELETE. Update the email below to hers BEFORE
---    running this. (You'll set the same email as VITE_ADMIN_EMAIL in
---    Netlify env vars in Step 6.)
+-- Row-Level Security: anyone can READ; only Happiness's authenticated
+-- session can INSERT, UPDATE, or DELETE.
+-- >>> REPLACE the email below with Happiness's real email BEFORE running. <<<
 alter table public.designs enable row level security;
 
 -- Public read
@@ -75,25 +76,66 @@ create policy "only admin may delete"
   on public.designs for delete
   using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
 
--- Only the admin email may update (for future-proofing)
+-- Only the admin email may update
 drop policy if exists "only admin may update" on public.designs;
 create policy "only admin may update"
   on public.designs for update
   using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
 
--- 3. Realtime: visitors see new pieces appear without refreshing
+-- Realtime: visitors see new pieces appear without refreshing
 alter publication supabase_realtime add table public.designs;
+
+-- ============================================================
+-- TABLE 2: site_content (editable text & images across the site)
+-- ============================================================
+-- This table stores overrides for any text or image on the site.
+-- When Happiness edits a heading, paragraph, or swaps a photo from
+-- her phone, the new value is saved here and shown to all visitors.
+
+create table if not exists public.site_content (
+  key text primary key,
+  value text not null
+);
+
+alter table public.site_content enable row level security;
+
+-- Public read (visitors see the edited content)
+drop policy if exists "site_content is publicly readable" on public.site_content;
+create policy "site_content is publicly readable"
+  on public.site_content for select
+  using (true);
+
+-- Only admin may insert/upsert content
+drop policy if exists "only admin may insert site_content" on public.site_content;
+create policy "only admin may insert site_content"
+  on public.site_content for insert
+  with check (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+
+-- Only admin may update content
+drop policy if exists "only admin may update site_content" on public.site_content;
+create policy "only admin may update site_content"
+  on public.site_content for update
+  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+
+-- Only admin may delete content (revert to default)
+drop policy if exists "only admin may delete site_content" on public.site_content;
+create policy "only admin may delete site_content"
+  on public.site_content for delete
+  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+
+-- Realtime: content edits appear for all visitors instantly
+alter publication supabase_realtime add table public.site_content;
 ```
 
-**🔑 IMPORTANT:** Before clicking Run, replace
+**IMPORTANT:** Before clicking Run, replace every instance of
 `REPLACE_WITH_HAPPINESS_EMAIL@example.com` with Happiness's real email
-(the one she'll sign in with). The same email goes into Netlify in Step 6.
+(the one she will sign in with). The same email goes into Netlify in Step 6.
 
-You should see "Success. No rows returned." ✅
+You should see "Success. No rows returned." after running.
 
 ---
 
-## Step 3 — Create the `designs` storage bucket (for photos)
+## Step 3 -- Create the `designs` storage bucket (for photos)
 
 1. Click **Storage** in the left sidebar.
 2. Click **"New bucket"**.
@@ -102,7 +144,7 @@ You should see "Success. No rows returned." ✅
 5. Click **"Create bucket"**.
 
 Now lock down uploads so only the admin can upload, but anyone can view:
-go to **SQL Editor → New query** and run:
+go to **SQL Editor -> New query** and run:
 
 ```sql
 -- Public read of design photos
@@ -130,13 +172,13 @@ create policy "only admin may delete designs"
   );
 ```
 
-Again — replace the email with Happiness's real email before running.
+Again -- replace the email with Happiness's real email before running.
 
 ---
 
-## Step 4 — Configure Supabase Auth (one-time)
+## Step 4 -- Configure Supabase Auth (one-time)
 
-1. Click **Authentication** in the left sidebar → **Providers** → **Email**.
+1. Click **Authentication** in the left sidebar then **Providers** then **Email**.
 2. Make sure **"Email provider"** is enabled (it is by default).
 3. **Recommended for ease of use:** scroll down to "Confirm email" and
    **disable** it. This way Happiness can sign up and immediately use the
@@ -145,79 +187,96 @@ Again — replace the email with Happiness's real email before running.
 
 ---
 
-## Step 5 — Grab the API keys
+## Step 5 -- Grab the API keys
 
-1. In Supabase dashboard, click the **gear icon** (Project Settings) → **API**.
+1. In Supabase dashboard, click the **gear icon** (Project Settings) then **API**.
 2. Copy these two values:
-   - **Project URL** — looks like `https://abcdefghijklm.supabase.co`
-   - **anon public key** — a long string starting with `eyJ…`
+   - **Project URL** -- looks like `https://abcdefghijklm.supabase.co`
+   - **anon public key** -- a long string starting with `eyJ...`
 
-> ⚠️ Use **anon public** (NOT `service_role`). The anon key is safe to expose
+> WARNING: Use **anon public** (NOT `service_role`). The anon key is safe to expose
 > in the browser; the service-role key must never be.
 
 ---
 
-## Step 6 — Add the env vars to Netlify
+## Step 6 -- Add the env vars to Netlify
 
-1. Go to https://app.netlify.com → click your **happythreads** site.
-2. Go to **Site configuration → Environment variables → Add a variable**.
+1. Go to https://app.netlify.com then click your **Happiness Fashion World** site.
+2. Go to **Site configuration -> Environment variables -> Add a variable**.
 3. Add these **three** variables:
 
 | Key | Value |
 |---|---|
 | `VITE_SUPABASE_URL` | (paste your Project URL) |
 | `VITE_SUPABASE_ANON_KEY` | (paste your anon public key) |
-| `VITE_ADMIN_EMAIL` | (Happiness's email — must match the email in your SQL policies above) |
+| `VITE_ADMIN_EMAIL` | (Happiness's email -- must match the email in your SQL policies above) |
 
 4. Click **Save**.
-5. Go to **Deploys → Trigger deploy → Deploy site** to rebuild with the new env vars.
+5. Go to **Deploys -> Trigger deploy -> Deploy site** to rebuild with the new env vars.
 
-In ~90 seconds, your site is connected to the cloud with admin auth. 🎉
+In ~90 seconds, your site is connected to the cloud with admin auth.
 
 ---
 
-## Step 7 — Sign Happiness up as the admin
+## Step 7 -- Sign Happiness up as the admin
 
 1. On Happiness's phone (or any device), open
    **https://happythreads.netlify.app/#admin**
-   *(notice the `/#admin` at the end — this is the hidden admin URL)*
-2. The Atelier sign-in screen appears. Click **"Create your atelier account"**.
-3. Enter her admin email (the same one you put in `VITE_ADMIN_EMAIL`) and a
-   strong password.
-4. Click **"Create account"**.
+   *(notice the `/#admin` at the end -- this is the hidden admin URL)*
+2. The Atelier sign-in screen appears. Tap **"Create your atelier account"**.
+3. Enter her admin email (the same one you put in `VITE_ADMIN_EMAIL`) and choose a
+   strong password. **This becomes her permanent admin password.**
+   - Suggested initial password: something she can remember, e.g. `Happiness2026!`
+   - She can change it any time from the Supabase dashboard (see "Resetting password" below)
+4. Tap **"Create account"**.
 5. **Tell her to bookmark `https://happythreads.netlify.app/#admin` on her
-   phone home screen.** That's the only entry point — there is no visible
-   button anywhere on the site.
-6. Future visits: the site remembers her, so she's already signed in. The
-   admin form opens straight to "Add design" mode.
+   phone home screen.** That is the only entry point -- there is no visible
+   button anywhere on the public site.
+6. Future visits: the site remembers her login, so she is already signed in. The
+   admin panel opens straight to "Add design" mode.
+
+> **Switching from passcode mode to cloud admin:**
+> Once Supabase is configured and the env vars are deployed, the site
+> automatically switches from the local passcode (`happy2026`) to email/password
+> sign-in. The passcode is no longer used. Only the email set in
+> `VITE_ADMIN_EMAIL` can sign in as admin.
 
 ---
 
-## Step 8 — Test it
+## Step 8 -- Test it
 
 1. On Happiness's phone, open `/#admin`. The header should show:
-   - 🟢 **Live sync** badge
-   - "Signed in as happiness@…"
+   - A green **Live sync** badge
+   - "Signed in as happiness@..."
 2. Add a test design with a photo.
 3. On a different device (your computer, a different browser, or a friend's
-   phone), open https://happythreads.netlify.app — the new design should
-   appear automatically, even without refreshing. ✨
-4. **Test that random visitors can't add anything:** open `/#admin` in a
-   private/incognito browser → it should show the sign-in form, but signing
+   phone), open https://happythreads.netlify.app -- the new design should
+   appear automatically, even without refreshing.
+4. **Test that random visitors cannot add anything:** open `/#admin` in a
+   private/incognito browser -> it should show the sign-in form, but signing
    up with any email other than Happiness's will be rejected with
    "This email is not registered as the atelier admin."
+5. Test inline content editing: while signed in as admin, go to the main site
+   -- you should see a gold "Edit Mode" banner at the top. Tap any text
+   or image with a pencil/camera icon to edit it. Changes appear for all
+   visitors instantly.
 
 ---
 
 ## Resetting Happiness's password
 
-If she ever forgets:
+If she ever forgets her password:
 
-1. In Supabase dashboard → **Authentication → Users**.
-2. Find her email, click the three-dot menu → **"Send password recovery"**.
+**Option A -- From the Supabase dashboard (developer does this):**
+1. In Supabase dashboard -> **Authentication -> Users**.
+2. Find her email, click the three-dot menu -> **"Send password recovery"**.
 3. She gets an email with a reset link.
+4. Or: click the three-dot menu -> **"Update user"** -> type a new password directly.
 
-Or you can manually set a new password right there.
+**Option B -- She can do it herself (if email confirmation is enabled):**
+1. On the `/#admin` sign-in screen, she can request a password reset email
+   (if you add that flow in future -- currently password reset must be done
+   via the Supabase dashboard by the developer).
 
 ---
 
@@ -229,24 +288,31 @@ The email comparison is case-insensitive but trims spaces. Make sure
 (no leading/trailing space). Trigger a fresh deploy after editing.
 
 **Designs save locally but never appear on other devices.**
-Most likely the env vars aren't reaching the build. Check Netlify
-**Site configuration → Environment variables** — both `VITE_SUPABASE_URL`
+Most likely the env vars are not reaching the build. Check Netlify
+**Site configuration -> Environment variables** -- both `VITE_SUPABASE_URL`
 and `VITE_SUPABASE_ANON_KEY` must start with `VITE_` (Vite only exposes
 those). Then trigger a fresh deploy.
 
 **"Image upload failed: new row violates row-level security policy"**
-The storage policies in Step 3 weren't applied with Happiness's correct
+The storage policies in Step 3 were not applied with Happiness's correct
 email. Re-run that SQL block with the correct email.
 
-**Real-time updates don't work.**
-Run the last line from Step 2:
-`alter publication supabase_realtime add table public.designs;`
-You can also verify it under **Database → Replication** in the dashboard —
-the `designs` table should be toggled on.
+**Real-time updates do not work.**
+Run the realtime lines from Step 2:
+```sql
+alter publication supabase_realtime add table public.designs;
+alter publication supabase_realtime add table public.site_content;
+```
+You can also verify it under **Database -> Replication** in the dashboard --
+both `designs` and `site_content` tables should be toggled on.
+
+**Site content edits (text/images) not syncing.**
+Make sure the `site_content` table exists (Step 2) and has the correct RLS
+policies. Run the site_content SQL block from Step 2 again if needed.
 
 **She wants to use a different email later.**
 Update `VITE_ADMIN_EMAIL` in Netlify, redeploy, and re-run the SQL policies
-from Steps 2 and 3 with the new email. (She'll need to sign up the new
+from Steps 2 and 3 with the new email. (She will need to sign up the new
 account on `/#admin` first.)
 
 ---
@@ -254,20 +320,22 @@ account on `/#admin` first.)
 ## Architecture summary
 
 ```
-┌────────────────┐     ┌─────────────────┐     ┌───────────────────┐
-│ Public visitor │────▶│ Supabase  RLS:  │────▶│ public.designs    │
-│ (anon)         │     │ select=true     │     │  - id, name, ...  │
-└────────────────┘     └─────────────────┘     └───────────────────┘
+PUBLIC VISITORS (read only):
++-----------------+     +-------------------+     +--------------------+
+| Any browser     |---->| Supabase RLS:     |---->| public.designs     |
+| (anon key)      |     | select = true     |     | public.site_content|
++-----------------+     +-------------------+     +--------------------+
 
-┌────────────────┐     ┌─────────────────┐     ┌───────────────────┐
-│ Happiness      │     │ Supabase Auth   │     │ public.designs    │
-│ /#admin signs  │────▶│ + RLS:          │────▶│  insert/delete OK │
-│ in with email  │     │ jwt.email==hers │     │                   │
-└────────────────┘     └─────────────────┘     └───────────────────┘
+ADMIN (Happiness, full access):
++-----------------+     +-------------------+     +--------------------+
+| Happiness's     |     | Supabase Auth     |     | public.designs     |
+| phone at        |---->| + RLS:            |---->| public.site_content|
+| /#admin         |     | jwt.email = hers  |     | storage.designs    |
++-----------------+     +-------------------+     +--------------------+
 ```
 
 The admin email check happens **server-side** in Postgres, so even a
-malicious visitor can't bypass it by editing JavaScript.
+malicious visitor cannot bypass it by editing JavaScript.
 
 ---
 

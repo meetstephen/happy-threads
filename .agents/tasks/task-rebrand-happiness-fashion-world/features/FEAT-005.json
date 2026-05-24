@@ -1,0 +1,19 @@
+{
+  "id": "FEAT-005",
+  "type": "docs",
+  "description": "Update SUPABASE_SETUP.md and README.md with comprehensive owner's guide for phone-based admin management, site_content table SQL, and clear auth instructions.",
+  "status": "in_progress",
+  "steps": [
+    "Update SUPABASE_SETUP.md to add site_content table SQL in Step 2, ensure brand name is 'Happiness Fashion World' throughout",
+    "Replace the 'Adding new designs' section in README.md with a comprehensive 'Owner's Guide (for Happiness)' section covering phone-based admin workflow"
+  ],
+  "acceptance_criteria": [
+    "SUPABASE_SETUP.md includes site_content table creation SQL with RLS policies",
+    "README.md has a comprehensive Owner's Guide section explaining phone-based admin",
+    "Both files reference 'Happiness Fashion World' consistently",
+    "Instructions cover: accessing admin, auth modes, uploading photos, editing, removing, replacing, editing site text, renaming categories, QR codes"
+  ],
+  "verification": [],
+  "blocked_reason": null,
+  "findings": null
+}
