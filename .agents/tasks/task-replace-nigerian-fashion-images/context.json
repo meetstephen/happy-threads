@@ -1,0 +1,20 @@
+{
+  "project_type": "Vite + React 18 + TypeScript + Tailwind CSS SPA - Nigerian fashion house website",
+  "language": "TypeScript/React",
+  "build_system": "Vite with TypeScript compiler",
+  "test_framework": "No test framework configured (no tests directory)",
+  "build_command": "cd /projects/sandbox/happy-threads && npx tsc -b && npx vite build",
+  "test_command": "cd /projects/sandbox/happy-threads && npx tsc -b --noEmit",
+  "verification_instructions": "1. Run TypeScript compilation: npx tsc -b --noEmit. 2. Run Vite build: npx vite build. 3. Verify all new Pexels IDs return HTTP 200 via curl.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/happy-threads && npm install (already done, node_modules exists)",
+  "environment_constraints": "OPEN_INTERNET mode - full network access available. No Docker needed. No test framework.",
+  "contribution_requirements": "Create a NEW branch from feat/security-hardening for this PR. User explicitly wants a NEW PR.",
+  "key_patterns": "Images use the pexels() helper from src/utils/images.ts which constructs Pexels CDN URLs from numeric IDs. The designs catalog is in src/data/designs.ts as a static array. The About section image is in src/components/About.tsx.",
+  "relevant_files": [
+    "src/data/designs.ts",
+    "src/components/About.tsx",
+    "src/utils/images.ts"
+  ],
+  "directory_structure": "src/data/ - data catalog files, src/components/ - React components, src/utils/ - utility functions"
+}

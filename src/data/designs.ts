@@ -162,7 +162,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A modern shift dress in authentic hand-dyed adire textile from Abeokuta. The deep indigo Yoruba resist-dyed patterns tell a story of heritage, reimagined for everyday elegance. Effortless from the office to dinner.',
-    image: pexels(7095050),
+    image: pexels(29258125),
     tags: ['adire', 'indigo', 'shift dress', 'yoruba', 'handmade'],
     occasions: ['casual', 'work'],
     vibes: ['minimal', 'classic'],
@@ -176,7 +176,7 @@ export const designs: Design[] = [
     category: 'Aso-Ebi & Owambe',
     description:
       'Premium Indian George fabric styled in the Igbo tradition - a richly embellished blouse paired with expertly tied wrapper. The ultimate statement piece for a traditional marriage ceremony in Enugu or Calabar.',
-    image: pexels(7691070),
+    image: pexels(28453665),
     tags: ['george', 'wrapper', 'igbo', 'traditional', 'owambe'],
     occasions: ['traditional', 'wedding', 'party'],
     vibes: ['bold', 'romantic'],
@@ -204,7 +204,7 @@ export const designs: Design[] = [
     category: 'Aso-Ebi & Owambe',
     description:
       'A breathtaking aso-oke ensemble hand-woven in Ilorin and styled with modern flair. Rich jewel tones with metallic thread accents - perfect for that special owambe where you want all eyes on you.',
-    image: pexels(8191439),
+    image: pexels(11048042),
     tags: ['aso-oke', 'hand-woven', 'celebration', 'owambe', 'metallic'],
     occasions: ['traditional', 'wedding', 'party'],
     vibes: ['bold', 'classic'],
@@ -218,7 +218,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A show-stopping mermaid silhouette in vibrant Ankara wax print. Fitted through the bodice and hips with a dramatic flare below the knee. The bold print speaks volumes while the cut whispers pure elegance.',
-    image: pexels(8152356),
+    image: pexels(29076955),
     tags: ['mermaid', 'ankara', 'gown', 'fitted', 'dramatic'],
     occasions: ['party', 'gala', 'wedding'],
     vibes: ['bold', 'romantic'],
@@ -232,7 +232,7 @@ export const designs: Design[] = [
     category: "Men's Tailoring",
     description:
       'A majestic agbada in rich brocade with hand-embroidered collar and cuffs. Three-piece set includes the flowing outer robe, fitted undershirt, and matching trousers. Fit for a king attending his coronation.',
-    image: pexels(5876668),
+    image: pexels(8526759),
     tags: ['agbada', 'brocade', 'embroidered', 'three-piece', 'royalty'],
     occasions: ['traditional', 'wedding', 'party'],
     vibes: ['classic', 'bold'],
@@ -246,7 +246,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A playful yet sophisticated peplum blouse paired with a pencil skirt in coordinating Ankara prints. The structured peplum nips the waist beautifully while the skirt glides over curves. Church-ready, office-approved, owambe-perfect.',
-    image: pexels(11041780),
+    image: pexels(29076952),
     tags: ['peplum', 'ankara', 'blouse', 'skirt', 'two-piece'],
     occasions: ['work', 'traditional', 'party'],
     vibes: ['playful', 'classic'],
@@ -260,7 +260,7 @@ export const designs: Design[] = [
     category: 'Aso-Ebi & Owambe',
     description:
       'Luxurious crushed velvet in deep wine tones, draped into an off-shoulder masterpiece. Stone embellishments catch the light as you move through the reception hall. Your owambe moment, elevated.',
-    image: pexels(7679865),
+    image: pexels(29076956),
     tags: ['velvet', 'off-shoulder', 'owambe', 'stones', 'evening'],
     occasions: ['party', 'wedding', 'gala'],
     vibes: ['romantic', 'bold'],
@@ -274,7 +274,7 @@ export const designs: Design[] = [
     category: 'Bridal',
     description:
       'A second-look reception dress in premium French lace with illusion neckline and fitted bodice. Delicate beadwork traces the lace motifs while the trumpet skirt gives you room to dance all night at your reception.',
-    image: pexels(9255589),
+    image: pexels(33890252),
     tags: ['lace', 'bridal', 'reception', 'french-lace', 'beadwork'],
     occasions: ['wedding'],
     vibes: ['romantic', 'classic'],
@@ -288,7 +288,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A flirty A-line dress in cheerful Ankara print with cap sleeves and a twirl-worthy hem. Light, breezy, and joyful - the kind of dress that makes every Sunday morning feel like a celebration.',
-    image: pexels(6462630),
+    image: pexels(34625882),
     tags: ['a-line', 'ankara', 'sunday', 'flared', 'casual'],
     occasions: ['casual', 'traditional'],
     vibes: ['playful', 'romantic'],
@@ -302,7 +302,7 @@ export const designs: Design[] = [
     category: 'Corporate',
     description:
       'A refined take on the classic dashiki silhouette, reimagined for the modern boardroom. Structured shoulders, clean lines, and subtle embroidery at the collar. Power dressing with deep cultural roots.',
-    image: pexels(15664540),
+    image: pexels(29076960),
     tags: ['dashiki', 'corporate', 'structured', 'embroidered', 'power-dressing'],
     occasions: ['work', 'traditional'],
     vibes: ['classic', 'minimal'],

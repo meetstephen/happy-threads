@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Replace all 10 flagged Pexels image IDs in src/data/designs.ts and the About section image in src/components/About.tsx with verified IDs that feature Black/Nigerian models in authentic Nigerian clothing. Create a new git branch for this work.",
+  "status": "completed",
+  "steps": [
+    "Create a new git branch 'fix/nigerian-model-images-v2' from the current HEAD (feat/security-hardening).",
+    "In src/data/designs.ts, replace the image IDs for the following 10 designs:\n  - HF-010 'Adire Indigo Shift Dress': change pexels(7095050) to pexels(29258125)\n  - HF-011 'George Wrapper & Blouse': change pexels(7691070) to pexels(28453665)\n  - HF-013 'Aso-Oke Celebration Set': change pexels(8191439) to pexels(11048042)\n  - HF-014 'Ankara Mermaid Gown': change pexels(8152356) to pexels(29076955)\n  - HF-015 'Royal Chief Agbada': change pexels(5876668) to pexels(8526759)\n  - HF-016 'Ankara Peplum Blouse & Skirt': change pexels(11041780) to pexels(29076952)\n  - HF-017 'Velvet Owambe Dress': change pexels(7679865) to pexels(29076956)\n  - HF-018 'Lace Bridal Reception Dress': change pexels(9255589) to pexels(33890252)\n  - HF-019 'Ankara A-Line Sunday Dress': change pexels(6462630) to pexels(34625882)\n  - HF-020 'Dashiki Corporate Set': change pexels(15664540) to pexels(29076960)",
+    "In src/components/About.tsx, line 7, replace the About section image ID:\n  - Change pexels(3807517, 1000, 1250) to pexels(3852974, 1000, 1250)",
+    "Verify all 11 new Pexels IDs return HTTP 200 by running curl against each URL:\n  curl -s -o /dev/null -w '%{http_code}' 'https://images.pexels.com/photos/{ID}/pexels-photo-{ID}.jpeg'\n  for IDs: 29258125, 28453665, 11048042, 29076955, 8526759, 29076952, 29076956, 33890252, 34625882, 29076960, 3852974",
+    "Run TypeScript compilation: npx tsc -b --noEmit (must pass with zero errors)",
+    "Run Vite production build: npx vite build (must succeed)",
+    "Commit all changes with message: 'fix: replace non-Nigerian model images with verified African/Nigerian fashion photos'"
+  ],
+  "acceptance_criteria": [
+    "All 10 design entries (HF-010 through HF-020) in src/data/designs.ts use the new Pexels IDs",
+    "The About section in src/components/About.tsx uses Pexels ID 3852974",
+    "All 11 new image URLs return HTTP 200 from the Pexels CDN",
+    "TypeScript compilation passes with zero errors",
+    "Vite build succeeds",
+    "Changes are committed on a new branch 'fix/nigerian-model-images-v2'"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/happy-threads && npx tsc -b --noEmit",
+    "Run: cd /projects/sandbox/happy-threads && npx vite build",
+    "Run curl HEAD requests to verify each new Pexels ID returns HTTP 200"
+  ],
+  "blocked_reason": null,
+  "findings": "All 11 Pexels IDs verified HTTP 200. TypeScript and Vite build pass. Branch fix/nigerian-model-images-v2 created from feat/security-hardening HEAD."
+}
