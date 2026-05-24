@@ -1,0 +1,7 @@
+{
+  "task_id": "task-replace-nigerian-fashion-images",
+  "task_description": "Replace 10 flagged Pexels image IDs in designs.ts and the About section image with verified photos showing Black/Nigerian models in authentic Nigerian traditional clothing (ankara, adire, agbada, george wrapper, aso-oke, etc.)",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
