@@ -6,6 +6,8 @@ export interface AnalyticsData {
   dailyVisitors: { date: string; count: number }[];
   topDesigns: { id: string; name: string; views: number; likes: number }[];
   sectionEngagement: { section: string; avgSeconds: number }[];
+  /** True when data is from localStorage fallback (Supabase query failed or not configured). */
+  localOnly?: boolean;
 }
 
 interface AnalyticsEvent {
@@ -75,10 +77,21 @@ function queueEvent(event: AnalyticsEvent) {
 
 // ---------- Public API ----------
 
+let initialized = false;
+
 export function initAnalytics() {
-  // Flush any remaining events when the page unloads
+  if (initialized) return;
+  initialized = true;
+
+  // On beforeunload, synchronously write pending events to localStorage as a
+  // safety net. The periodic flush already sends most events to Supabase; this
+  // ensures the last few seconds of data are not lost when the browser tears
+  // down the page (async Supabase calls cannot complete in beforeunload).
   window.addEventListener('beforeunload', () => {
-    flush();
+    if (eventQueue.length === 0) return;
+    const batch = [...eventQueue];
+    eventQueue = [];
+    batch.forEach(pushLocalEvent);
   });
 }
 
@@ -116,7 +129,14 @@ export function trackDesignLike(designId: string) {
 
 export async function getAnalytics(): Promise<AnalyticsData> {
   if (isSupabaseEnabled && supabase) {
-    return getAnalyticsFromSupabase();
+    try {
+      return await getAnalyticsFromSupabase();
+    } catch {
+      // If Supabase query fails (e.g., no session / RLS denies), fall back to
+      // localStorage so the admin still sees per-device data.
+      const local = getAnalyticsFromLocal();
+      return { ...local, localOnly: true };
+    }
   }
   return getAnalyticsFromLocal();
 }
@@ -126,11 +146,15 @@ async function getAnalyticsFromSupabase(): Promise<AnalyticsData> {
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
   const since = fourteenDaysAgo.toISOString();
 
-  const { data: events } = await supabase!
+  const { data: events, error } = await supabase!
     .from('site_analytics')
     .select('event_type, event_data, created_at')
     .gte('created_at', since)
     .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   if (!events || events.length === 0) {
     return { dailyVisitors: [], topDesigns: [], sectionEngagement: [] };

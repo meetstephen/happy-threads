@@ -1,11 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Eye, Heart, Clock } from 'lucide-react';
+import { BarChart3, Eye, Heart, Clock, AlertCircle } from 'lucide-react';
 import { getAnalytics, type AnalyticsData } from '../services/analytics';
+import { designs as staticDesigns } from '../data/designs';
+import { useCustomDesigns } from '../context/CustomDesignsContext';
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const { customDesigns } = useCustomDesigns();
+
+  // Build a lookup map: design ID -> design name
+  const designNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const d of staticDesigns) map.set(d.id, d.name);
+    for (const d of customDesigns) map.set(d.id, d.name);
+    return map;
+  }, [customDesigns]);
+
+  function resolveDesignName(id: string): string {
+    return designNameMap.get(id) || id;
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -14,7 +30,7 @@ export default function AnalyticsDashboard() {
         const result = await getAnalytics();
         if (!cancelled) setData(result);
       } catch {
-        // silently fail
+        if (!cancelled) setError(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -32,9 +48,20 @@ export default function AnalyticsDashboard() {
 
   if (!data) {
     return (
-      <p className="py-8 text-center text-sm text-ink-800/60 dark:text-cream-100/60">
-        Could not load analytics data.
-      </p>
+      <div className="py-8 text-center">
+        {error ? (
+          <div className="inline-flex flex-col items-center gap-2">
+            <AlertCircle size={20} className="text-bronze-500/60" />
+            <p className="text-sm text-ink-800/60 dark:text-cream-100/60">
+              Showing local data only. Connect Supabase for full analytics.
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-ink-800/60 dark:text-cream-100/60">
+            No analytics data available yet.
+          </p>
+        )}
+      </div>
     );
   }
 
@@ -47,6 +74,13 @@ export default function AnalyticsDashboard() {
       transition={{ duration: 0.4 }}
       className="space-y-8"
     >
+      {data.localOnly && (
+        <div className="flex items-center gap-2 rounded-xl border border-bronze-500/20 bg-bronze-500/5 px-4 py-2.5 text-xs text-ink-800/70 dark:text-cream-100/70">
+          <AlertCircle size={14} className="shrink-0 text-bronze-500" />
+          <span>Showing local device data only. Sign in with Supabase for full cloud analytics.</span>
+        </div>
+      )}
+
       {/* Daily Visitors Chart */}
       <section>
         <div className="flex items-center gap-2 mb-4">
@@ -118,8 +152,13 @@ export default function AnalyticsDashboard() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-ink-800 dark:text-cream-100">
-                    {design.id}
+                    {resolveDesignName(design.id)}
                   </p>
+                  {designNameMap.has(design.id) && (
+                    <p className="truncate text-[10px] text-ink-800/40 dark:text-cream-100/40">
+                      {design.id}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-ink-800/60 dark:text-cream-100/60">
                   <span className="flex items-center gap-1">
