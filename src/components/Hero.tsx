@@ -5,7 +5,7 @@ import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const HERO_IMAGE = pexels(30030552, 1200, 1500);
+const HERO_IMAGE = pexels(7869226, 1200, 1500);
 
 const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
 const DEFAULT_SUBTEXT =
@@ -138,7 +138,7 @@ export default function Hero() {
                   <div className="text-xs uppercase tracking-[0.3em] text-bronze-500">
                     Featured
                   </div>
-                  <div className="font-display text-base">Royal Aso-Ebi Set</div>
+                  <div className="font-display text-base">Igbo Bridal Blouse & Wrapper</div>
                 </div>
                 <a
                   href="#collections"
