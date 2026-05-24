@@ -107,6 +107,7 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
               design={d}
               onOpen={onOpen}
               highlighted={highlightIds?.includes(d.id) ?? false}
+              featured={d.featured}
             />
           ))}
         </motion.div>

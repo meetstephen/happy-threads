@@ -31,9 +31,10 @@ interface Props {
   design: Design;
   onOpen: (d: Design) => void;
   highlighted?: boolean;
+  featured?: boolean;
 }
 
-export default function DesignCard({ design, onOpen, highlighted }: Props) {
+export default function DesignCard({ design, onOpen, highlighted, featured }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [copied, setCopied] = useState(false);
   const fav = isFavorite(design.id);
@@ -56,9 +57,9 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={`group relative overflow-hidden rounded-2xl bg-cream-50 shadow-soft transition-shadow duration-500 hover:shadow-luxe dark:bg-ink-800 ${
+      className={`group relative overflow-hidden rounded-2xl bg-cream-50 shadow-soft transition-all duration-500 hover:shadow-luxe hover:-translate-y-1 dark:bg-ink-800 ${
         highlighted ? 'ring-2 ring-bronze-500 ring-offset-4 ring-offset-cream-100 dark:ring-offset-ink-900' : ''
-      }`}
+      } ${featured ? 'border-t-2 border-t-bronze-500' : ''}`}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
@@ -71,6 +72,11 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
 
         {/* badges (top-left) */}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+          {featured && !highlighted && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500/90 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+              <Sparkles size={10} /> Featured
+            </span>
+          )}
           {highlighted && (
             <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
               <Sparkles size={10} /> Stylist Pick

@@ -49,7 +49,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-ink-800/15 bg-cream-100/40 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.32em] text-ink-800/70 backdrop-blur dark:border-cream-100/15 dark:bg-ink-800/40 dark:text-cream-100/70"
           >
             <MapPin size={12} className="text-bronze-500" />
-            Abakaliki • Ebonyi State • Nigeria
+            Est. 2019 &bull; Luxury Bespoke Couture &bull; Abakaliki
           </motion.div>
 
           <motion.h1
@@ -77,6 +77,14 @@ export default function Hero() {
               }}
             </EditableText>
           </motion.h1>
+
+          {/* Animated gold line */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-6 h-px w-24 origin-center bg-gradient-to-r from-transparent via-bronze-500 to-transparent"
+          />
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -112,8 +120,9 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="mt-10 flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 md:mt-12 dark:text-cream-100/70"
+            className="mt-10 inline-flex rounded-2xl border border-ink-800/10 bg-cream-100/60 px-6 py-4 backdrop-blur-md md:mt-12 dark:border-cream-100/10 dark:bg-ink-800/60"
           >
+            <div className="flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 dark:text-cream-100/70">
             <div>
               <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">200+</div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Clients dressed</div>
@@ -130,6 +139,7 @@ export default function Hero() {
                 AI
               </div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Stylist on site</div>
+            </div>
             </div>
           </motion.div>
         </div>

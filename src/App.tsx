@@ -7,6 +7,7 @@ import Collections from './components/Collections';
 import About from './components/About';
 import Craftsmanship from './components/Craftsmanship';
 import Services from './components/Services';
+import BookingCTA from './components/BookingCTA';
 import StyleQuiz from './components/StyleQuiz';
 import Testimonials from './components/Testimonials';
 import Faq from './components/Faq';
@@ -117,6 +118,7 @@ export default function App() {
         <About />
         <Craftsmanship />
         <Services />
+        <BookingCTA />
         <StyleQuiz onResult={(ids) => setQuizFilter(ids)} />
         <Testimonials />
         <Faq onOpenSizeGuide={() => setSizeGuideOpen(true)} />
