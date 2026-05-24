@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "docs",
   "description": "Update SUPABASE_SETUP.md and README.md with comprehensive owner's guide for phone-based admin management, site_content table SQL, and clear auth instructions.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Update SUPABASE_SETUP.md to add site_content table SQL in Step 2, ensure brand name is 'Happiness Fashion World' throughout",
     "Replace the 'Adding new designs' section in README.md with a comprehensive 'Owner's Guide (for Happiness)' section covering phone-based admin workflow"
@@ -15,5 +15,5 @@
   ],
   "verification": [],
   "blocked_reason": null,
-  "findings": null
+  "findings": "Both documentation files updated successfully. SUPABASE_SETUP.md now includes full site_content table SQL with RLS policies and realtime publication. README.md has a comprehensive Owner's Guide section covering all phone-based admin operations. All em dashes replaced with double hyphens per project conventions."
 }
