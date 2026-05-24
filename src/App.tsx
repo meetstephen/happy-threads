@@ -82,7 +82,7 @@ export default function App() {
   // Analytics: track section visibility time
   useEffect(() => {
     const sectionIds = [
-      'hero', 'collections', 'about', 'craftsmanship',
+      'top', 'collections', 'about', 'process',
       'services', 'what-we-sew', 'style-quiz', 'testimonials', 'faq', 'contact',
     ];
     const timers = new Map<string, number>();

@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "chore",
   "description": "Final integration pass - ensure all new components are properly wired together, all imports resolve, the build is clean, and everything works as a cohesive whole.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Run npx tsc -b --noEmit and fix any TypeScript errors that may have accumulated across the previous features.",
     "Run npx vite build and ensure the production build succeeds without warnings.",
