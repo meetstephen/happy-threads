@@ -41,7 +41,7 @@ export const designs: Design[] = [
     category: 'Aso-Ebi & Owambe',
     description:
       'A regal aso-ebi ensemble in rich Lagos teal - fitted corseted top with high-slit wrapper and matching gele headtie. Hand-beaded and finished in our Abakaliki atelier for your traditional marriage celebration.',
-    image: pexels(8386668),
+    image: pexels(29060624),
     tags: ['aso-ebi', 'gele', 'owambe', 'corseted'],
     occasions: ['traditional', 'party', 'wedding'],
     vibes: ['bold', 'romantic'],
@@ -56,7 +56,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'Tailored Ankara two-piece in bold Vlisco print - structured blazer with peak lapels and tapered trousers. Confidence in print, made for the Lagos boardroom and beyond. Perfect for the modern Nigerian woman who commands attention.',
-    image: pexels(3622614),
+    image: pexels(10919896),
     tags: ['ankara', 'co-ord', 'tailored', 'office'],
     occasions: ['work', 'traditional'],
     vibes: ['bold', 'classic'],
@@ -68,7 +68,7 @@ export const designs: Design[] = [
     category: 'Bridal',
     description:
       'A stunning Igbo traditional bridal set in premium George fabric with intricate hand-sewn beadwork. Fitted blouse with off-shoulder neckline and luxurious wrapper, crafted for your traditional marriage in Enugu, Calabar, or anywhere love takes you.',
-    image: pexels(7869226),
+    image: pexels(33890250),
     tags: ['george', 'bridal', 'igbo', 'traditional', 'beadwork'],
     occasions: ['traditional', 'wedding'],
     vibes: ['classic', 'romantic'],
@@ -82,7 +82,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A flowing day dress in vibrant Ankara prints with cinched waist and flared hem. Perfect for Sunday service in Abakaliki, a naming ceremony in Abuja, or a relaxed owambe with family.',
-    image: pexels(2220316),
+    image: pexels(34625880),
     tags: ['day dress', 'flared', 'casual', 'ankara'],
     occasions: ['casual', 'party', 'traditional'],
     vibes: ['playful', 'romantic'],
@@ -94,7 +94,7 @@ export const designs: Design[] = [
     category: 'Corporate',
     description:
       'Crisp tailored co-ord in monochrome suiting - structured blazer with sharp shoulders and wide-leg trouser. Confidence stitched into every seam, for the modern Nigerian executive making moves from Lagos to Abuja.',
-    image: pexels(2531734),
+    image: pexels(33120030),
     tags: ['suit', 'co-ord', 'corporate'],
     occasions: ['work'],
     vibes: ['minimal', 'classic'],
@@ -107,7 +107,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A breezy adire-inspired wrap dress with adjustable tie waist - flattering on every silhouette. Ready to throw on for service, a naming ceremony in Enugu, or an afternoon out on the town.',
-    image: pexels(3821386),
+    image: pexels(31880106),
     tags: ['wrap dress', 'easy', 'cotton', 'adire'],
     occasions: ['casual', 'work'],
     vibes: ['minimal', 'playful'],
@@ -121,7 +121,7 @@ export const designs: Design[] = [
     category: 'Kaftan & Boubou',
     description:
       'A floor-sweeping black gown with sculpted shoulder and bias-cut skirt. Quietly powerful - made for Lagos premieres, Abuja galas, and unforgettable nights that demand elegance.',
-    image: pexels(1536619),
+    image: pexels(33762215),
     tags: ['gala', 'evening', 'sculpted'],
     occasions: ['gala', 'party'],
     vibes: ['bold', 'minimal'],
@@ -133,7 +133,7 @@ export const designs: Design[] = [
     category: 'Bridal',
     description:
       'A made-to-measure piece crafted over multiple fittings in our Abakaliki atelier. Every stitch - from the fitted bodice to the hand-finished hem - drafted from your exact measurements. Perfect for your white wedding or engagement.',
-    image: pexels(2065195),
+    image: pexels(33942212),
     tags: ['bespoke', 'made-to-measure', 'fitting', 'bridal'],
     occasions: ['wedding', 'gala'],
     vibes: ['classic', 'romantic'],
@@ -148,7 +148,7 @@ export const designs: Design[] = [
     category: "Men's Tailoring",
     description:
       'A regal agbada with hand-embroidered neckline in flowing brocade. Crafted with matching fila cap for the modern Nigerian gentleman attending a chieftaincy title ceremony or traditional wedding in grand style.',
-    image: pexels(7275385),
+    image: pexels(30075301),
     tags: ['agbada', 'embroidered', 'brocade', 'cap', 'fila'],
     occasions: ['traditional', 'wedding', 'party'],
     vibes: ['classic', 'bold'],
@@ -162,7 +162,7 @@ export const designs: Design[] = [
     category: 'Ankara',
     description:
       'A modern shift dress in authentic hand-dyed adire textile from Abeokuta. The deep indigo Yoruba resist-dyed patterns tell a story of heritage, reimagined for everyday elegance. Effortless from the office to dinner.',
-    image: pexels(6831896),
+    image: pexels(29258125),
     tags: ['adire', 'indigo', 'shift dress', 'yoruba', 'handmade'],
     occasions: ['casual', 'work'],
     vibes: ['minimal', 'classic'],
@@ -176,7 +176,7 @@ export const designs: Design[] = [
     category: 'Aso-Ebi & Owambe',
     description:
       'Premium Indian George fabric styled in the Igbo tradition - a richly embellished blouse paired with expertly tied wrapper. The ultimate statement piece for a traditional marriage ceremony in Enugu or Calabar.',
-    image: pexels(8146962),
+    image: pexels(28453665),
     tags: ['george', 'wrapper', 'igbo', 'traditional', 'owambe'],
     occasions: ['traditional', 'wedding', 'party'],
     vibes: ['bold', 'romantic'],
@@ -190,7 +190,7 @@ export const designs: Design[] = [
     category: "Men's Tailoring",
     description:
       'A sharp senator-style kaftan in premium cashmere blend with clean lines and subtle embroidery at the collar. The go-to for Nigerian men who want understated power dressing - from Abuja political circles to Lagos business dinners.',
-    image: pexels(34660898),
+    image: pexels(31485635),
     tags: ['senator', 'kaftan', 'embroidered', 'cashmere'],
     occasions: ['work', 'traditional', 'party'],
     vibes: ['classic', 'minimal'],
