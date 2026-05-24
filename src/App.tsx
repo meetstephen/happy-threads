@@ -5,6 +5,7 @@ import Marquee from './components/Marquee';
 import PressStrip from './components/PressStrip';
 import Collections from './components/Collections';
 import About from './components/About';
+import Craftsmanship from './components/Craftsmanship';
 import Services from './components/Services';
 import StyleQuiz from './components/StyleQuiz';
 import Testimonials from './components/Testimonials';
@@ -114,6 +115,7 @@ export default function App() {
         />
         <PressStrip />
         <About />
+        <Craftsmanship />
         <Services />
         <StyleQuiz onResult={(ids) => setQuizFilter(ids)} />
         <Testimonials />

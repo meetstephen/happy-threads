@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, MapPin, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 import { pexels } from '../utils/images';
 import EditableText from './EditableText';
@@ -21,6 +21,23 @@ export default function Hero() {
       <div
         aria-hidden
         className="pointer-events-none absolute -bottom-40 -left-32 h-[460px] w-[460px] rounded-full bg-wine-500/15 blur-3xl"
+      />
+
+      {/* Floating fashion icons */}
+      <Scissors
+        aria-hidden
+        size={48}
+        className="pointer-events-none absolute right-[12%] top-[18%] z-0 animate-float text-bronze-400 opacity-[0.12]"
+      />
+      <Ruler
+        aria-hidden
+        size={40}
+        className="pointer-events-none absolute bottom-[22%] left-[8%] z-0 animate-float text-bronze-400 opacity-[0.10] [animation-delay:1.5s]"
+      />
+      <Pen
+        aria-hidden
+        size={36}
+        className="pointer-events-none absolute bottom-[35%] right-[6%] z-0 animate-float text-wine-400 opacity-[0.08] [animation-delay:3s]"
       />
 
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">

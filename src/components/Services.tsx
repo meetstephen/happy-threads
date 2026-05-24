@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Crown, Gem, Ruler, Shirt, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowUpRight, Crown, Gem, Layers, Palette, Pen, Ruler, Scissors, Shirt, Sparkles, Wand2 } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 
 const services = [
@@ -70,6 +70,18 @@ export default function Services() {
                 Enquire <ArrowUpRight size={14} />
               </a>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Decorative fashion tools strip */}
+        <div className="mt-14 flex items-center justify-center gap-4">
+          {[Scissors, Ruler, Palette, Layers, Pen].map((Icon, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <Icon size={18} className="text-bronze-400 opacity-50" />
+              {i < 4 && (
+                <span className="h-1 w-1 rounded-full bg-bronze-400/40" />
+              )}
+            </div>
           ))}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Award, Scissors, Sparkles } from 'lucide-react';
+import { Award, Layers, Palette, Pen, Ruler, Scissors, Shirt, Sparkles } from 'lucide-react';
 import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
@@ -87,6 +87,13 @@ export default function About() {
                 <h4 className="mt-3 font-display text-lg">{title}</h4>
                 <p className="mt-1 text-sm text-ink-800/65 dark:text-cream-100/65">{body}</p>
               </div>
+            ))}
+          </div>
+
+          {/* Tools of the Trade */}
+          <div className="mt-8 flex items-center justify-center gap-5">
+            {[Scissors, Ruler, Pen, Palette, Layers, Shirt].map((Icon, i) => (
+              <Icon key={i} size={20} className="text-bronze-400 opacity-40" />
             ))}
           </div>
         </motion.div>
