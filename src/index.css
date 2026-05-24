@@ -131,6 +131,16 @@
   filter: saturate(1.05) contrast(1.05);
 }
 
+/* shimmer keyframe */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 /* glow pulse keyframe */
 @keyframes glow-pulse {
   0%, 100% {

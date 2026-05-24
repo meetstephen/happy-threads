@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { MessageCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+import { BRAND_STATS } from '../utils/constants';
 
 export default function BookingCTA() {
   return (
@@ -30,7 +31,7 @@ export default function BookingCTA() {
         >
           <p className="eyebrow text-bronze-400">Your Journey Starts Here</p>
 
-          <h2 className="display-2 mt-5 text-cream-100">
+          <h2 className="display-2 mt-5 text-shimmer">
             Begin Your Bespoke Journey
           </h2>
 
@@ -52,7 +53,7 @@ export default function BookingCTA() {
               Book a Consultation
             </a>
             <a
-              href="#about"
+              href="#process"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-cream-100/30 px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 hover:border-cream-100 hover:bg-cream-100 hover:text-ink-900"
             >
               View Our Process
@@ -71,12 +72,12 @@ export default function BookingCTA() {
         >
           <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-bronze-400" />
-            <span className="text-xs uppercase tracking-[0.2em]">200+ Happy Clients</span>
+            <span className="text-xs uppercase tracking-[0.2em]">{BRAND_STATS.clientsDressed} Happy Clients</span>
           </div>
           <div className="hidden h-4 w-px bg-cream-100/20 sm:block" />
           <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-bronze-400" />
-            <span className="text-xs uppercase tracking-[0.2em]">7+ Years</span>
+            <span className="text-xs uppercase tracking-[0.2em]">{BRAND_STATS.yearsOfCraft} Years</span>
           </div>
           <div className="hidden h-4 w-px bg-cream-100/20 sm:block" />
           <div className="flex items-center gap-2">

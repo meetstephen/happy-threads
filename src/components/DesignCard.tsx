@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Maximize2, MessageCircle, Share2, Sparkles } from 'lucide-react';
+import { Heart, Maximize2, MessageCircle, Share2, Shirt, Sparkles } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
@@ -37,6 +37,7 @@ interface Props {
 export default function DesignCard({ design, onOpen, highlighted, featured }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const fav = isFavorite(design.id);
   const labelFor = useCategoryLabel();
 
@@ -62,12 +63,19 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
       } ${featured ? 'border-t-2 border-t-bronze-500' : ''}`}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
-        <img
-          src={design.image}
-          alt={design.name}
-          loading="lazy"
-          className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
-        />
+        {imgError ? (
+          <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
+            <Shirt size={48} className="text-bronze-400 opacity-60" />
+          </div>
+        ) : (
+          <img
+            src={design.image}
+            alt={design.name}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/0 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
         {/* badges (top-left) */}

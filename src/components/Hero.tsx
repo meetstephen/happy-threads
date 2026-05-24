@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 import { pexels } from '../utils/images';
+import { BRAND_STATS } from '../utils/constants';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
@@ -124,12 +125,12 @@ export default function Hero() {
           >
             <div className="flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 dark:text-cream-100/70">
             <div>
-              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">200+</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">{BRAND_STATS.clientsDressed}</div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Clients dressed</div>
             </div>
             <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />
             <div>
-              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">7 yrs</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">{BRAND_STATS.yearsOfCraft} yrs</div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Of craftsmanship</div>
             </div>
             <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />

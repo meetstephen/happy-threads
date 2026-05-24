@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, Scissors, Ruler, Pen, Shirt } from 'lucide-react';
+import { Palette, Scissors, Ruler, Pen, Shirt, Sparkles } from 'lucide-react';
 
 const steps = [
   {
@@ -36,7 +36,7 @@ export default function Craftsmanship() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">The Atelier Experience</p>
           <h2 className="display-2 mt-4">Our Process</h2>
-          <div className="gold-divider mt-8" />
+          <div className="section-divider mt-8"><Sparkles size={14} className="text-bronze-500" /></div>
         </div>
 
         {/* Desktop horizontal timeline */}

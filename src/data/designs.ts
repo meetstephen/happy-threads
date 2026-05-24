@@ -61,7 +61,6 @@ export const designs: Design[] = [
     occasions: ['work', 'traditional'],
     vibes: ['bold', 'classic'],
     colorMood: 'jewel',
-    featured: true,
   },
   {
     id: 'HF-003',
@@ -74,7 +73,6 @@ export const designs: Design[] = [
     occasions: ['traditional', 'wedding'],
     vibes: ['classic', 'romantic'],
     colorMood: 'jewel',
-    featured: true,
     isNew: true,
     addedOn: '2026-05-15',
   },

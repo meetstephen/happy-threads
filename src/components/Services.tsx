@@ -53,7 +53,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.07 }}
-              className="group relative overflow-hidden rounded-2xl border border-ink-800/10 bg-cream-50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-bronze-500 hover:shadow-luxe dark:border-cream-100/10 dark:bg-ink-800"
+              className="card-glow group relative overflow-hidden rounded-2xl border border-ink-800/10 bg-cream-50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-bronze-500 dark:border-cream-100/10 dark:bg-ink-800"
             >
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-bronze-400/15 transition-transform duration-700 group-hover:scale-150" />
               <Icon className="relative text-bronze-500" size={28} />
