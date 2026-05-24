@@ -6,7 +6,7 @@ import { BRAND_STATS } from '../utils/constants';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const HERO_IMAGE = pexels(7869226, 1200, 1500);
+const HERO_IMAGE = pexels(28988327, 1200, 1500);
 
 const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
 const DEFAULT_SUBTEXT =

@@ -1,0 +1,21 @@
+{
+  "project_type": "React Vite SPA - Fashion portfolio site (Happiness Fashion World)",
+  "language": "TypeScript/React",
+  "build_system": "Vite with TypeScript compilation",
+  "test_framework": "No test framework configured",
+  "build_command": "cd /projects/sandbox/happy-threads && npx tsc -b && npx vite build",
+  "test_command": "cd /projects/sandbox/happy-threads && npx tsc -b --noEmit",
+  "verification_instructions": "1. Run TypeScript compilation check. 2. Run vite build. 3. Verify all pexels IDs return HTTP 200 from CDN.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/happy-threads && npm install",
+  "environment_constraints": "OPEN_INTERNET mode. Pexels website is behind Cloudflare (403 on scrape) but CDN image URLs work fine for HEAD requests to verify IDs.",
+  "contribution_requirements": "Branch: rebrand/happiness-fashion-world. Replace Pexels image IDs with verified Nigerian/African fashion photos.",
+  "key_patterns": "pexels(id, width, height) helper in src/utils/images.ts builds CDN URLs. designs array in src/data/designs.ts uses pexels() for images. Hero.tsx and About.tsx also use pexels() directly.",
+  "relevant_files": [
+    "src/data/designs.ts",
+    "src/components/Hero.tsx",
+    "src/components/About.tsx",
+    "src/utils/images.ts"
+  ],
+  "directory_structure": "src/components/ - React components, src/data/ - static data, src/utils/ - utility functions"
+}

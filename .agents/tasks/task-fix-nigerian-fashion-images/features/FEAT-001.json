@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Replace all Pexels image IDs in the codebase with verified Nigerian/African fashion photos that match their design titles. Fix the broken hero image (ID 7869226 returns 404). Replace About section image with a fashion designer/seamstress at sewing machine.",
+  "status": "in_progress",
+  "steps": [
+    "Replace the HERO_IMAGE in src/components/Hero.tsx - current ID 7869226 is broken (HTTP 404). Replace with ID 28988327 (verified: 'elegant nigerian woman in traditional attire outdoors' - a beautiful Nigerian woman in traditional dress). The hero features 'Igbo Bridal Blouse & Wrapper' so it needs a Nigerian woman in bridal/traditional attire.",
+    "Replace ABOUT_IMG in src/components/About.tsx - current ID 3622614 shows a generic model. Replace with ID 3738088 (verified valid, a woman using a sewing machine - showing a fashion designer at work with sewing equipment, matching the user's request for a designer working on clothes).",
+    "Replace all image IDs in src/data/designs.ts with verified Nigerian/African fashion IDs that match each title. Use these mappings: HF-001 'Royal Aso-Ebi Set' -> 29060624 (from aso-ebi search results, Nigerian woman in aso-ebi). HF-002 'Ankara Power Co-ord' -> 10919896 (verified: woman in African fashion with vibrant colors and traditional attire). HF-003 'Igbo Bridal Blouse & Wrapper' -> 33890250 (verified: elegant nigerian woman in fashionable traditional attire, lace dress). HF-004 'Sunrise Day Dress' -> 34625880 (verified: elegant woman posing in traditional nigerian attire). HF-005 'Boardroom Power Suit' -> 33120030 (verified: elegant woman in black traditional Nigerian dress - can work for corporate). HF-006 'Sunday Service Wrap' -> 31880106 (verified: elegant nigerian fashion outfit portrait, beautiful woman in traditional Nigerian attire indoors). HF-007 'Onyx Gala Gown' -> 33762215 (verified: striking portrait of woman in traditional Nigerian dress, exuding grace and confidence). HF-008 'Atelier Custom Fit' -> 33942212 (verified: elegant woman in traditional Nigerian attire). HF-009 'Heritage Agbada (Men\\'s)' -> 30075301 (from agbada/men's African traditional search). HF-010 'Adire Indigo Shift Dress' -> 29258125 (from Nigerian aso-ebi/traditional search). HF-011 'George Wrapper & Blouse' -> 28453665 (from Nigerian aso-ebi/traditional search). HF-012 'Senator Kaftan' -> 31485635 (from African man senator/kaftan search).",
+    "After making changes, verify all new IDs return HTTP 200 by running curl HEAD requests against the Pexels CDN: https://images.pexels.com/photos/{id}/pexels-photo-{id}.jpeg",
+    "Run TypeScript compilation to ensure no type errors were introduced."
+  ],
+  "acceptance_criteria": [
+    "Hero image ID is no longer 7869226 (broken) and the new ID returns HTTP 200 from Pexels CDN",
+    "About section image shows a fashion designer/seamstress at sewing machine (ID 3738088 or similar)",
+    "All 12 design entries in designs.ts have new Pexels IDs that return HTTP 200",
+    "All image IDs are verified to return HTTP 200 status from the Pexels CDN",
+    "TypeScript compilation passes without errors",
+    "Vite build succeeds"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/happy-threads && npx tsc -b --noEmit",
+    "Run: cd /projects/sandbox/happy-threads && npx vite build",
+    "Run curl HEAD requests to verify each new Pexels ID returns HTTP 200"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

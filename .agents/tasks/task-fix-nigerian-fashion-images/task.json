@@ -1,0 +1,7 @@
+{
+  "task_id": "task-fix-nigerian-fashion-images",
+  "task_description": "Replace all Pexels image IDs with verified Nigerian/African fashion photos matching each design title. Fix the broken hero image (404), replace About section with seamstress photo, and ensure all images show Black African/Nigerian models in appropriate Nigerian clothing.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
