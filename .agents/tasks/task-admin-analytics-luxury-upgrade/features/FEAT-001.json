@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Admin Analytics Dashboard - Create a Supabase-backed analytics system that tracks visitor count per day, most viewed/liked designs, and section time-spent. Add a new 'Analytics' tab to the AddDesignPanel visible only to the admin. Update SUPABASE_SETUP.md with the new table SQL.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create src/services/analytics.ts - a lightweight analytics tracker that: (a) records page visits with a daily counter to Supabase 'site_analytics' table, (b) tracks section visibility time using IntersectionObserver, (c) tracks design views/likes from existing favorite toggles and lightbox opens. When Supabase is not configured, store in localStorage as fallback. The tracker should batch events and flush periodically.",
     "Create src/components/AnalyticsDashboard.tsx - a new component showing: (a) visitor count chart (last 7/14/30 days as a simple bar chart built with divs/CSS, no chart library), (b) top viewed/liked designs list, (c) section engagement ranking (which sections visitors spent most time in). Style it mobile-first with the existing Tailwind luxury theme (bronze-500 accents, cream backgrounds, font-display headings).",
@@ -23,5 +23,5 @@
     "npx vite build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All wired up correctly: analytics service tracks page views, section time (via IntersectionObserver), design views (lightbox opens), and design likes (favorites toggled). FavoritesProvider wraps App so useFavorites works. The Analytics tab in AddDesignPanel is available to admin. Build passes cleanly."
 }
