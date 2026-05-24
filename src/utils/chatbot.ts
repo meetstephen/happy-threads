@@ -26,7 +26,7 @@ const greet = (): BotMessage => ({
   id: makeId(),
   from: 'bot',
   text:
-    "Hi love! I'm Joy 💛 — Happiness's AI fashion assistant. Ask me about pricing, fabrics, lead time, or what's perfect for your event. How can I help today?",
+    "Hi love! I'm Joy \u{1F49B} — Happiness Fashion World's AI fashion assistant. Ask me about pricing, fabrics, lead time, or what's perfect for your event. How can I help today?",
   chips: QUICK_REPLIES,
 });
 
@@ -66,7 +66,7 @@ const intents: Intent[] = [
       chips: ['Book an appointment', 'How do I order?', 'Pricing'],
       cta: {
         label: 'Book on WhatsApp',
-        href: buildWhatsAppUrl('Hello Happiness! I would like to visit your atelier in Abakaliki for a fitting. When are you available?'),
+        href: buildWhatsAppUrl('Hello Happiness Fashion World! I would like to visit your atelier in Abakaliki for a fitting. When are you available?'),
         external: true,
       },
     }),
@@ -90,7 +90,7 @@ const intents: Intent[] = [
         cta: {
           label: 'Book bridal consultation',
           href: buildWhatsAppUrl(
-            'Hello Happiness! I am getting married soon and would love to book a bridal consultation. Could we discuss available dates?'
+            'Hello Happiness Fashion World! I am getting married soon and would love to book a bridal consultation. Could we discuss available dates?'
           ),
           external: true,
         },

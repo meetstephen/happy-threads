@@ -7,7 +7,7 @@ import EditableImage from './EditableImage';
 const ABOUT_IMG = pexels(5934222, 1000, 1250);
 
 const DEFAULT_ABOUT_P1 =
-  'I started Happiness Fashion seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
+  'I started Happiness Fashion World seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
 
 const DEFAULT_ABOUT_P2 =
   "I believe clothing is intimate. The way a sleeve sits, the weight of a hem, the way an Ankara print catches the light at an owambe — these details are what turn fabric into memory. That's the Happiness signature.";

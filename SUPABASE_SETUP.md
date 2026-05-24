@@ -271,4 +271,4 @@ malicious visitor can't bypass it by editing JavaScript.
 
 ---
 
-Built with care for Happiness Fashion, Abakaliki.
+Built with care for Happiness Fashion World, Abakaliki.

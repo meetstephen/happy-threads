@@ -11,7 +11,7 @@ async function shareDesign(d: Design) {
   url.searchParams.set('design', d.id);
   const shareUrl = url.toString();
   const shareData = {
-    title: `${d.name} · Happiness Fashion`,
+    title: `${d.name} · Happiness Fashion World`,
     text: `Check out this ${d.category} piece: ${d.name}`,
     url: shareUrl,
   };

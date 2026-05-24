@@ -1,6 +1,6 @@
-# Happiness Fashion — Bespoke Naija Couture
+# Happiness Fashion World - Luxury Bespoke Couture
 
-A luxury fashion-portfolio site for **Happiness**, an Abakaliki-based Nigerian
+A luxury fashion-portfolio site for **Happiness Fashion World**, an Abakaliki-based Nigerian
 fashion designer. Built to showcase her bespoke aso-ebi, owambe sets, bridal
 couture, Ankara tailoring, kaftans, and men's agbada — and to convert visitors
 into WhatsApp clients.
@@ -136,4 +136,4 @@ Without them the site falls back to localStorage-only design storage. See [SUPAB
 
 ---
 
-Built with care for Happiness Fashion, Abakaliki.
+Built with care for Happiness Fashion World, Abakaliki.

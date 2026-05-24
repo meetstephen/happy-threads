@@ -72,9 +72,9 @@ export default function QrPanel() {
       <div className="grid place-items-center">
         {qrDataUrl ? (
           <div className="rounded-3xl border border-bronze-500/30 bg-cream-50 p-5 shadow-soft dark:bg-cream-100">
-            <img src={qrDataUrl} alt="Happiness Fashion QR code" className="h-64 w-64" />
+            <img src={qrDataUrl} alt="Happiness Fashion World QR code" className="h-64 w-64" />
             <div className="mt-3 text-center font-display text-sm italic text-ink-800">
-              Happiness Fashion · Abakaliki
+              Happiness Fashion World · Abakaliki
             </div>
           </div>
         ) : (

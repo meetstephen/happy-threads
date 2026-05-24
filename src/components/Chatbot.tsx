@@ -136,7 +136,7 @@ export default function Chatbot() {
           setOpen((v) => !v);
           setUnread(false);
         }}
-        aria-label="Chat with Joy, Happiness's AI assistant"
+        aria-label="Chat with Joy, Happiness Fashion World's AI stylist"
         className={`fixed bottom-5 left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-all duration-500 hover:bg-bronze-500 sm:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
           launcherVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
         }`}

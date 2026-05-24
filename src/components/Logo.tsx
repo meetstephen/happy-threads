@@ -5,16 +5,16 @@ interface Props {
 }
 
 /**
- * Happiness Fashion brand mark — an interlocked HF monogram.
+ * Happiness Fashion World brand mark — an interlocked HFW monogram.
  *
- * The H and F share a central vertical stem. The H's crossbar continues
- * past that shared stem to become the F's middle arm, creating one
- * elegant, integrated mark instead of two separate letters.
+ * The H and F share a central vertical stem. The W is rendered as a
+ * classic serif W with angled strokes. Together the three letters form
+ * one elegant, integrated mark.
  *
  * Inspired by classic fashion-house typography (Vogue, Dior, Vera Wang)
  * — slab-serif terminals on the verticals, vertical gold gradient, subtle
- * inner ring for an embossed-luxury feel, and a small three-cowrie row
- * beneath as a quiet Nigerian accent.
+ * inner ring for an embossed-luxury feel, and a three-cowrie row beneath
+ * as a Nigerian cultural accent.
  *
  * Set on a warm deep-brown plate (#3D2B1F) so the gold pops at every size
  * — favicon, navbar, footer, social-share preview.
@@ -26,7 +26,7 @@ export default function Logo({ size = 44, withWordmark = false, className = '' }
         viewBox="0 0 120 120"
         width={size}
         height={size}
-        aria-label="Happiness Fashion"
+        aria-label="Happiness Fashion World"
         className="shrink-0"
       >
         <defs>
@@ -37,7 +37,7 @@ export default function Logo({ size = 44, withWordmark = false, className = '' }
           </linearGradient>
         </defs>
 
-        {/* Warm brown plate — same in light & dark mode */}
+        {/* Warm brown plate */}
         <rect width="120" height="120" rx="22" fill="#3D2B1F" />
 
         {/* Subtle inner ring for embossed luxury feel */}
@@ -53,43 +53,59 @@ export default function Logo({ size = 44, withWordmark = false, className = '' }
           opacity="0.35"
         />
 
-        {/* Interlocked HF monogram */}
+        {/* HFW monogram */}
         <g fill="url(#hf-gold)">
-          {/* H — left vertical (with subtle slab-serif terminals) */}
-          <rect x="22" y="28" width="14" height="2.5" rx="0.5" />
-          <rect x="25.5" y="28" width="7" height="64" rx="1.6" />
-          <rect x="22" y="89.5" width="14" height="2.5" rx="0.5" />
+          {/* H left vertical with slab terminals */}
+          <rect x="14" y="30" width="10" height="2.2" rx="0.5" />
+          <rect x="16.5" y="30" width="6" height="54" rx="1.4" />
+          <rect x="14" y="81.8" width="10" height="2.2" rx="0.5" />
 
-          {/* Shared central vertical (right of H, spine of F) */}
-          <rect x="58" y="28" width="14" height="2.5" rx="0.5" />
-          <rect x="61.5" y="28" width="7" height="64" rx="1.6" />
-          <rect x="58" y="89.5" width="14" height="2.5" rx="0.5" />
+          {/* H right vertical / F spine (shared stem) */}
+          <rect x="38" y="30" width="10" height="2.2" rx="0.5" />
+          <rect x="40.5" y="30" width="6" height="54" rx="1.4" />
+          <rect x="38" y="81.8" width="10" height="2.2" rx="0.5" />
 
-          {/* H crossbar — extends out past the shared stem to become F's middle arm */}
-          <rect x="29" y="58.5" width="65" height="6" rx="1.6" />
+          {/* H crossbar */}
+          <rect x="19.5" y="53.5" width="24" height="5" rx="1.4" />
 
-          {/* F top arm — extends right from the shared stem */}
-          <rect x="61.5" y="28" width="36" height="6" rx="1.6" />
+          {/* F top arm extending right from shared stem */}
+          <rect x="40.5" y="30" width="26" height="5" rx="1.4" />
 
-          {/* F top-arm terminal serif (a small vertical tick at the very end, classic Didone) */}
-          <rect x="95.5" y="26" width="2.5" height="10" rx="0.5" />
+          {/* F top-arm terminal serif */}
+          <rect x="64.5" y="28.5" width="2.2" height="8.5" rx="0.5" />
+
+          {/* F middle arm extending right */}
+          <rect x="43.5" y="53.5" width="20" height="5" rx="1.4" />
+
           {/* F middle-arm terminal serif */}
-          <rect x="91.5" y="56.5" width="2.5" height="10" rx="0.5" />
+          <rect x="61.5" y="52" width="2.2" height="8.5" rx="0.5" />
+
+          {/* W — four angled strokes */}
+          <rect x="70" y="30" width="5.5" height="54" rx="1.4" transform="rotate(-8 72.75 57)" />
+          <rect x="79" y="30" width="5.5" height="54" rx="1.4" transform="rotate(8 81.75 57)" />
+          <rect x="88" y="30" width="5.5" height="54" rx="1.4" transform="rotate(-8 90.75 57)" />
+          <rect x="97" y="30" width="5.5" height="54" rx="1.4" transform="rotate(8 99.75 57)" />
+
+          {/* W slab terminals top */}
+          <rect x="67" y="29" width="8" height="2.2" rx="0.5" transform="rotate(-8 71 30.1)" />
+          <rect x="77" y="29" width="8" height="2.2" rx="0.5" transform="rotate(8 81 30.1)" />
+          <rect x="86" y="29" width="8" height="2.2" rx="0.5" transform="rotate(-8 90 30.1)" />
+          <rect x="95" y="29" width="8" height="2.2" rx="0.5" transform="rotate(8 99 30.1)" />
         </g>
 
-        {/* Three-cowrie row — quiet Nigerian accent */}
+        {/* Three-cowrie row — Nigerian cultural accent */}
         <g fill="url(#hf-gold)">
-          <circle cx="47" cy="103" r="1.6" />
-          <circle cx="60" cy="103.5" r="2.2" />
-          <circle cx="73" cy="103" r="1.6" />
+          <circle cx="40" cy="97" r="2.4" />
+          <circle cx="60" cy="97.5" r="3" />
+          <circle cx="80" cy="97" r="2.4" />
         </g>
       </svg>
 
       {withWordmark && (
         <div className="leading-tight">
-          <div className="font-display text-lg italic tracking-wide">Happiness</div>
+          <div className="font-display text-lg italic tracking-wide">Happiness Fashion World</div>
           <div className="text-[10px] font-medium uppercase tracking-[0.34em] text-bronze-500">
-            Fashion · Nigeria
+            Luxury Couture · Nigeria
           </div>
         </div>
       )}

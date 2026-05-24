@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Complete brand rename from 'Happiness Fashion' to 'Happiness Fashion World' across all files, plus redesign the logo SVG to reflect the new name with an 'HFW' monogram.",
+  "status": "in_progress",
+  "steps": [
+    "Update index.html: change <title> to 'Happiness Fashion World - Luxury Bespoke Couture | Abakaliki, Nigeria', update meta description to reference 'Happiness Fashion World', update og:title to 'Happiness Fashion World - Luxury Bespoke Couture', update Schema.org 'name' to 'Happiness Fashion World', update apple-mobile-web-app-title to 'Happiness Fashion World'",
+    "Update public/manifest.webmanifest: change 'name' to 'Happiness Fashion World - Luxury Bespoke Couture', 'short_name' to 'HFW Couture'",
+    "Redesign public/favicon.svg: Replace the HF monogram with an elegant 'HFW' monogram (or stylized crown/needle integrated into HFW letters). Keep the warm brown plate (#3D2B1F) and gold gradient. Make the three-cowrie accent slightly more prominent as a Nigerian cultural element.",
+    "Redesign src/components/Logo.tsx: Update the SVG to match the new favicon (HFW monogram). Update the wordmark text from 'Happiness' / 'Fashion . Nigeria' to 'Happiness Fashion World' with a refined subtitle like 'Luxury Couture . Nigeria'. Update the aria-label.",
+    "Update src/components/Footer.tsx: Change the copyright text from 'Happiness Fashion' to 'Happiness Fashion World'",
+    "Update src/utils/chatbot.ts: Change Joy's greeting from referencing 'Happiness's AI fashion assistant' to 'Happiness Fashion World's AI fashion assistant'",
+    "Update src/components/Chatbot.tsx: Change the aria-label on the launcher button from 'Chat with Joy, Happiness's AI assistant' to 'Chat with Joy, Happiness Fashion World's AI stylist'",
+    "Update src/utils/whatsapp.ts: Update the generalEnquiryMessage and orderMessage to say 'Happiness Fashion World' instead of just 'Happiness'",
+    "Update src/components/Contact.tsx: Change 'atelier@happinessfashion.com' to 'hello@happinessfashionworld.com', update references to 'Happiness' as brand name to 'Happiness Fashion World' where contextually appropriate",
+    "Update README.md title and description references from 'Happiness Fashion' to 'Happiness Fashion World'"
+  ],
+  "acceptance_criteria": [
+    "No occurrence of the old brand name 'Happiness Fashion' as a standalone brand reference remains (contextual uses of 'Happiness' as a person name are fine)",
+    "The Logo SVG renders an elegant HFW monogram with Nigerian cultural accents",
+    "The favicon.svg matches the new Logo component",
+    "npx tsc -b passes with zero errors",
+    "npx vite build succeeds"
+  ],
+  "verification": [
+    "npx tsc -b",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -10,7 +10,7 @@ export default function Footer() {
         <Logo size={36} withWordmark />
 
         <p className="text-xs text-ink-800/55 dark:text-cream-100/55">
-          © {year} Happiness Fashion · Abakaliki, Nigeria. Stitched with love.
+          © {year} Happiness Fashion World · Abakaliki, Nigeria. Stitched with love.
         </p>
 
         <div className="flex items-center gap-3">

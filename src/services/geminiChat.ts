@@ -30,7 +30,7 @@ function buildSystemInstruction(designs: Design[]): string {
     .map((d) => `• ${d.name} [${d.id}] — ${d.category}: ${d.description}`)
     .join('\n');
 
-  return `You are Joy, the warm and professional AI fashion assistant for Happiness Fashion — a bespoke clothing atelier in Abakaliki, Ebonyi State, Nigeria, owned by a designer named Happiness.
+  return `You are Joy, the warm and professional AI fashion assistant for Happiness Fashion World — a bespoke clothing atelier in Abakaliki, Ebonyi State, Nigeria, owned by a designer named Happiness.
 
 PERSONALITY:
 - Warm, friendly, professional — like a knowledgeable stylist friend

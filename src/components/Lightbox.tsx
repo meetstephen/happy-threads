@@ -42,8 +42,8 @@ export default function Lightbox({ design, onClose }: Props) {
     url.searchParams.set('design', design.id);
     const shareUrl = url.toString();
     const shareData = {
-      title: `${design.name} · Happiness Fashion`,
-      text: `Check out this ${design.category} piece by Happiness Fashion: ${design.name}`,
+      title: `${design.name} · Happiness Fashion World`,
+      text: `Check out this ${design.category} piece by Happiness Fashion World: ${design.name}`,
       url: shareUrl,
     };
     try {
