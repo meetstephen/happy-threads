@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Happiness Fashion - bespoke clothing portfolio site",
+  "description": "Happiness Fashion World - bespoke clothing portfolio site",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

@@ -24,7 +24,7 @@ export default function Contact() {
                 Ready for something <span className="italic text-bronze-400">made for you?</span>
               </h2>
               <p className="mt-6 max-w-md text-cream-100/75 dark:text-ink-900/75">
-                WhatsApp is the fastest way to reach Happiness. Share inspiration photos,
+                WhatsApp is the fastest way to reach Happiness Fashion World. Share inspiration photos,
                 your event date, and your city — she'll take it from there.
               </p>
 
@@ -56,7 +56,7 @@ export default function Contact() {
               <ContactRow icon={MessageCircle} label="WhatsApp" value={WHATSAPP_DISPLAY} />
               <ContactRow icon={Phone} label="Phone" value={WHATSAPP_DISPLAY} />
               <ContactRow icon={Instagram} label="Instagram" value="@happiness.fashion" />
-              <ContactRow icon={Mail} label="Email" value="atelier@happinessfashion.com" />
+              <ContactRow icon={Mail} label="Email" value="hello@happinessfashionworld.com" />
               <ContactRow
                 icon={MapPin}
                 label="Atelier"

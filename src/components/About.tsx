@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
-import { Award, Scissors, Sparkles } from 'lucide-react';
+import { Award, Layers, Palette, Pen, Ruler, Scissors, Shirt, Sparkles } from 'lucide-react';
 import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const ABOUT_IMG = pexels(5934222, 1000, 1250);
+const ABOUT_IMG = pexels(3622614, 1000, 1250);
 
 const DEFAULT_ABOUT_P1 =
-  'I started Happiness Fashion seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
+  'I started Happiness Fashion World seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
 
 const DEFAULT_ABOUT_P2 =
   "I believe clothing is intimate. The way a sleeve sits, the weight of a hem, the way an Ankara print catches the light at an owambe — these details are what turn fabric into memory. That's the Happiness signature.";
@@ -87,6 +87,13 @@ export default function About() {
                 <h4 className="mt-3 font-display text-lg">{title}</h4>
                 <p className="mt-1 text-sm text-ink-800/65 dark:text-cream-100/65">{body}</p>
               </div>
+            ))}
+          </div>
+
+          {/* Tools of the Trade */}
+          <div className="mt-8 flex items-center justify-center gap-5">
+            {[Scissors, Ruler, Pen, Palette, Layers, Shirt].map((Icon, i) => (
+              <Icon key={i} size={20} className="text-bronze-400 opacity-40" />
             ))}
           </div>
         </motion.div>

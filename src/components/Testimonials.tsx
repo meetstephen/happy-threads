@@ -57,9 +57,10 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="relative rounded-3xl border border-ink-800/10 bg-cream-50 p-8 shadow-soft dark:border-cream-100/10 dark:bg-ink-800"
+              className="relative overflow-hidden rounded-3xl border border-ink-800/10 border-l-4 border-l-bronze-500 bg-cream-50 p-8 shadow-soft dark:border-cream-100/10 dark:border-l-bronze-400 dark:bg-ink-800"
             >
               <Quote className="absolute right-6 top-6 text-bronze-400/40" size={48} />
+              <Quote className="absolute left-6 bottom-6 rotate-180 text-bronze-400/20" size={32} />
               <div className="flex gap-1 text-bronze-500">
                 {Array.from({ length: 5 }).map((_, j) => (
                   <Star key={j} size={14} fill="currentColor" />

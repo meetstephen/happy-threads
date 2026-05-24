@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Maximize2, MessageCircle, Share2, Sparkles } from 'lucide-react';
+import { Heart, Maximize2, MessageCircle, Share2, Shirt, Sparkles } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
@@ -11,7 +11,7 @@ async function shareDesign(d: Design) {
   url.searchParams.set('design', d.id);
   const shareUrl = url.toString();
   const shareData = {
-    title: `${d.name} · Happiness Fashion`,
+    title: `${d.name} · Happiness Fashion World`,
     text: `Check out this ${d.category} piece: ${d.name}`,
     url: shareUrl,
   };
@@ -31,11 +31,13 @@ interface Props {
   design: Design;
   onOpen: (d: Design) => void;
   highlighted?: boolean;
+  featured?: boolean;
 }
 
-export default function DesignCard({ design, onOpen, highlighted }: Props) {
+export default function DesignCard({ design, onOpen, highlighted, featured }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const fav = isFavorite(design.id);
   const labelFor = useCategoryLabel();
 
@@ -56,21 +58,33 @@ export default function DesignCard({ design, onOpen, highlighted }: Props) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={`group relative overflow-hidden rounded-2xl bg-cream-50 shadow-soft transition-shadow duration-500 hover:shadow-luxe dark:bg-ink-800 ${
+      className={`group relative overflow-hidden rounded-2xl bg-cream-50 shadow-soft transition-all duration-500 hover:shadow-luxe hover:-translate-y-1 dark:bg-ink-800 ${
         highlighted ? 'ring-2 ring-bronze-500 ring-offset-4 ring-offset-cream-100 dark:ring-offset-ink-900' : ''
-      }`}
+      } ${featured ? 'border-t-2 border-t-bronze-500' : ''}`}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
-        <img
-          src={design.image}
-          alt={design.name}
-          loading="lazy"
-          className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
-        />
+        {imgError ? (
+          <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
+            <Shirt size={48} className="text-bronze-400 opacity-60" />
+          </div>
+        ) : (
+          <img
+            src={design.image}
+            alt={design.name}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/0 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
         {/* badges (top-left) */}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+          {featured && !highlighted && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500/90 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+              <Sparkles size={10} /> Featured
+            </span>
+          )}
           {highlighted && (
             <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
               <Sparkles size={10} /> Stylist Pick

@@ -8,7 +8,7 @@ export function buildWhatsAppUrl(message: string): string {
 }
 
 export function orderMessage(designName: string, designId: string): string {
-  return `Hello Happiness! 👋
+  return `Hello Happiness Fashion World! 👋
 
 I just discovered your portfolio and I love this piece:
 
@@ -19,13 +19,13 @@ Could you share availability, pricing, and how we can proceed with my measuremen
 }
 
 export function generalEnquiryMessage(): string {
-  return `Hello Happiness! 👋
+  return `Hello Happiness Fashion World! 👋
 
 I came across your beautiful collection and I'd love to ask a few questions about your designs and how to place an order. Thank you!`;
 }
 
 export function styleConsultMessage(stylePref: string): string {
-  return `Hello Happiness! 👋
+  return `Hello Happiness Fashion World! 👋
 
 I just took your AI Style Finder quiz and my recommended style is: ${stylePref}.
 

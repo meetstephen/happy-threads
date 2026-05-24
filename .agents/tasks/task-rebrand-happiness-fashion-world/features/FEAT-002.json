@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Replace all model imagery with authentic Nigerian/African models in true Nigerian attire, remove 'West African Heritage Set' and replace with a Nigerian-origin design, update the Hero featured image to a Nigerian model in a Nigerian gown, and enrich the designs catalog with authentic Nigerian fashion descriptions.",
+  "status": "completed",
+  "steps": [
+    "In src/data/designs.ts, replace the 'West African Heritage Set' (HF-003, pexels ID 31486360) with a new design called 'Igbo Bridal Blouse & Wrapper' or 'Aso-Oke Iro & Buba Set' - a truly Nigerian-origin design. Use a Pexels photo of a Black African/Nigerian woman in traditional Nigerian attire. Suggested Pexels IDs to research: search for 'african woman ankara', 'nigerian bride', 'african woman traditional dress'. Use IDs like 8386668, 7869226, 8146962, 6831896 or similar that show Black African women in authentic Nigerian attire.",
+    "Update the Hero section image (currently pexels ID 30030552) to a Pexels photo of a Nigerian/African woman in an elegant Nigerian gown (aso-ebi, or flowing Nigerian dinner gown). Change the featured text from 'Royal Aso-Ebi Set' to something like 'Emerald Aso-Oke Ensemble' or 'Luxury Ankara Gown'. Use pexels IDs that show Black African women: try 7869226, 6831896, 8386668, 5934222 (already used for About), or other verified Black African model photos.",
+    "Review ALL other pexels photo IDs used in designs.ts (IDs: 30030552, 3869639, 15020799, 19209599, 5248020, 17980365, 5934222, 34660898) and ensure they feature Black African/Nigerian models. Replace any that appear to show non-African models with alternatives. Specifically verify: 3869639 (Ankara Power Co-ord), 15020799 (Sunrise Day Dress), 19209599 (Boardroom Power Suit), 5248020 (Sunday Service Wrap), 17980365 (Onyx Gala Gown). Replace with Pexels photos of Black African models if needed.",
+    "Update the About section image (pexels ID 5934222 in src/components/About.tsx) - ensure it shows a Black African woman (designer at work or in her atelier). If the current one works, keep it; if not, replace with an appropriate alternative.",
+    "Update design descriptions in src/data/designs.ts to be more explicitly Nigerian in their language and cultural references. For example, reference specific Nigerian fabrics (george, aso-oke, adire), Nigerian ceremonies (traditional marriage, naming ceremony, chieftaincy), Nigerian cities (Lagos, Abuja, Enugu, Calabar).",
+    "Add 2-3 more designs to the catalog to make it richer - suggestions: 'Adire Shift Dress' (indigo-dyed Yoruba textile), 'George Wrapper & Blouse' (Igbo traditional), 'Senator Kaftan' (men's modern Nigerian). Use Pexels photos of Black African models in each case."
+  ],
+  "acceptance_criteria": [
+    "'West African Heritage Set' no longer exists in the catalog",
+    "A new Nigerian-origin design replaces it with an authentic name and description",
+    "Hero image shows a Black African model in Nigerian attire",
+    "All design images use Pexels IDs that feature Black African/Nigerian models",
+    "At least 11 designs total in the catalog (was 9, adding 2-3 new ones)",
+    "npx tsc -b passes with zero errors",
+    "npx vite build succeeds"
+  ],
+  "verification": [
+    "npx tsc -b",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 9 original Pexels photo IDs replaced with verified Black African/Nigerian model photos. Added 3 new designs (HF-010 through HF-012) bringing total to 12. Also updated OG image and schema.org image in index.html to match new hero photo. Build and TypeScript compilation both pass cleanly."
+}

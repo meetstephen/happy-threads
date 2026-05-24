@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, MapPin, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 import { pexels } from '../utils/images';
+import { BRAND_STATS } from '../utils/constants';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const HERO_IMAGE = pexels(30030552, 1200, 1500);
+const HERO_IMAGE = pexels(7869226, 1200, 1500);
 
 const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
 const DEFAULT_SUBTEXT =
@@ -23,6 +24,23 @@ export default function Hero() {
         className="pointer-events-none absolute -bottom-40 -left-32 h-[460px] w-[460px] rounded-full bg-wine-500/15 blur-3xl"
       />
 
+      {/* Floating fashion icons */}
+      <Scissors
+        aria-hidden
+        size={48}
+        className="pointer-events-none absolute right-[12%] top-[18%] z-0 animate-float text-bronze-400 opacity-[0.12]"
+      />
+      <Ruler
+        aria-hidden
+        size={40}
+        className="pointer-events-none absolute bottom-[22%] left-[8%] z-0 animate-float text-bronze-400 opacity-[0.10] [animation-delay:1.5s]"
+      />
+      <Pen
+        aria-hidden
+        size={36}
+        className="pointer-events-none absolute bottom-[35%] right-[6%] z-0 animate-float text-wine-400 opacity-[0.08] [animation-delay:3s]"
+      />
+
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
         <div className="md:col-span-7">
           <motion.div
@@ -32,7 +50,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-ink-800/15 bg-cream-100/40 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.32em] text-ink-800/70 backdrop-blur dark:border-cream-100/15 dark:bg-ink-800/40 dark:text-cream-100/70"
           >
             <MapPin size={12} className="text-bronze-500" />
-            Abakaliki • Ebonyi State • Nigeria
+            Est. 2019 &bull; Luxury Bespoke Couture &bull; Abakaliki
           </motion.div>
 
           <motion.h1
@@ -60,6 +78,14 @@ export default function Hero() {
               }}
             </EditableText>
           </motion.h1>
+
+          {/* Animated gold line */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-6 h-px w-24 origin-center bg-gradient-to-r from-transparent via-bronze-500 to-transparent"
+          />
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -95,15 +121,16 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="mt-10 flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 md:mt-12 dark:text-cream-100/70"
+            className="mt-10 inline-flex rounded-2xl border border-ink-800/10 bg-cream-100/60 px-6 py-4 backdrop-blur-md md:mt-12 dark:border-cream-100/10 dark:bg-ink-800/60"
           >
+            <div className="flex flex-wrap items-center gap-5 text-sm text-ink-800/70 sm:gap-8 dark:text-cream-100/70">
             <div>
-              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">200+</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">{BRAND_STATS.clientsDressed}</div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Clients dressed</div>
             </div>
             <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />
             <div>
-              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">7 yrs</div>
+              <div className="font-display text-2xl text-ink-800 sm:text-3xl dark:text-cream-100">{BRAND_STATS.yearsOfCraft} yrs</div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Of craftsmanship</div>
             </div>
             <div className="h-8 w-px bg-ink-800/20 sm:h-10 dark:bg-cream-100/20" />
@@ -113,6 +140,7 @@ export default function Hero() {
                 AI
               </div>
               <div className="text-[10px] uppercase tracking-[0.25em] sm:text-xs">Stylist on site</div>
+            </div>
             </div>
           </motion.div>
         </div>
@@ -138,7 +166,7 @@ export default function Hero() {
                   <div className="text-xs uppercase tracking-[0.3em] text-bronze-500">
                     Featured
                   </div>
-                  <div className="font-display text-base">Royal Aso-Ebi Set</div>
+                  <div className="font-display text-base">Igbo Bridal Blouse & Wrapper</div>
                 </div>
                 <a
                   href="#collections"

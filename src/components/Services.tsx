@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Crown, Gem, Ruler, Shirt, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowUpRight, Crown, Gem, Layers, Palette, Pen, Ruler, Scissors, Shirt, Sparkles, Wand2 } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 
 const services = [
@@ -53,7 +53,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.07 }}
-              className="group relative overflow-hidden rounded-2xl border border-ink-800/10 bg-cream-50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-bronze-500 hover:shadow-luxe dark:border-cream-100/10 dark:bg-ink-800"
+              className="card-glow group relative overflow-hidden rounded-2xl border border-ink-800/10 bg-cream-50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-bronze-500 dark:border-cream-100/10 dark:bg-ink-800"
             >
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-bronze-400/15 transition-transform duration-700 group-hover:scale-150" />
               <Icon className="relative text-bronze-500" size={28} />
@@ -70,6 +70,18 @@ export default function Services() {
                 Enquire <ArrowUpRight size={14} />
               </a>
             </motion.div>
+          ))}
+        </div>
+
+        {/* Decorative fashion tools strip */}
+        <div className="mt-14 flex items-center justify-center gap-4">
+          {[Scissors, Ruler, Palette, Layers, Pen].map((Icon, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <Icon size={18} className="text-bronze-400 opacity-50" />
+              {i < 4 && (
+                <span className="h-1 w-1 rounded-full bg-bronze-400/40" />
+              )}
+            </div>
           ))}
         </div>
       </div>
