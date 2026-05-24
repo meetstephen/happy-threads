@@ -77,9 +77,9 @@ export default function Services() {
         <div className="mt-14 flex items-center justify-center gap-4">
           {[Scissors, Ruler, Palette, Layers, Pen].map((Icon, i) => (
             <div key={i} className="flex items-center gap-4">
-              <Icon size={18} className="text-bronze-400 opacity-50" />
+              <Icon size={24} className="text-bronze-400 opacity-70" />
               {i < 4 && (
-                <span className="h-1 w-1 rounded-full bg-bronze-400/40" />
+                <span className="h-1.5 w-1.5 rounded-full bg-bronze-400/40" />
               )}
             </div>
           ))}

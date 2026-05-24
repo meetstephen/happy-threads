@@ -93,7 +93,7 @@ export default function About() {
           {/* Tools of the Trade */}
           <div className="mt-8 flex items-center justify-center gap-5">
             {[Scissors, Ruler, Pen, Palette, Layers, Shirt].map((Icon, i) => (
-              <Icon key={i} size={20} className="text-bronze-400 opacity-40" />
+              <Icon key={i} size={26} className="animate-float text-bronze-400 opacity-60" style={{ animationDelay: `${i * 0.7}s` }} />
             ))}
           </div>
         </motion.div>

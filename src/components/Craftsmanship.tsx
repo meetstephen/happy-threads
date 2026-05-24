@@ -102,6 +102,13 @@ export default function Craftsmanship() {
             ))}
           </div>
         </div>
+
+        {/* Decorative icons */}
+        <div className="mt-12 flex items-center justify-center gap-5">
+          {[Scissors, Ruler, Pen, Palette, Sparkles, Shirt].map((Icon, i) => (
+            <Icon key={i} size={24} className="animate-float text-bronze-400 opacity-60" style={{ animationDelay: `${i * 0.8}s` }} />
+          ))}
+        </div>
       </div>
     </section>
   );

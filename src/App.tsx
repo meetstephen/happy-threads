@@ -7,6 +7,7 @@ import Collections from './components/Collections';
 import About from './components/About';
 import Craftsmanship from './components/Craftsmanship';
 import Services from './components/Services';
+import WhatWeSew from './components/WhatWeSew';
 import BookingCTA from './components/BookingCTA';
 import StyleQuiz from './components/StyleQuiz';
 import Testimonials from './components/Testimonials';
@@ -16,6 +17,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Lightbox from './components/Lightbox';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import FloatingIcons from './components/FloatingIcons';
 import Chatbot from './components/Chatbot';
 import SizeGuide from './components/SizeGuide';
 import Lookbook from './components/Lookbook';
@@ -81,7 +83,7 @@ export default function App() {
   useEffect(() => {
     const sectionIds = [
       'hero', 'collections', 'about', 'craftsmanship',
-      'services', 'style-quiz', 'testimonials', 'faq', 'contact',
+      'services', 'what-we-sew', 'style-quiz', 'testimonials', 'faq', 'contact',
     ];
     const timers = new Map<string, number>();
 
@@ -166,6 +168,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
+      <FloatingIcons />
       {/* Admin mode banner — visible only when Happiness is signed in */}
       {admin && (
         <div className="fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 bg-bronze-500 px-4 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-cream-100 sm:text-xs">
@@ -197,6 +200,7 @@ export default function App() {
         <About />
         <Craftsmanship />
         <Services />
+        <WhatWeSew />
         <BookingCTA />
         <StyleQuiz onResult={(ids) => setQuizFilter(ids)} />
         <Testimonials />

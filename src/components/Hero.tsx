@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
+import { ArrowRight, Layers, MapPin, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 import { pexels } from '../utils/images';
 import { BRAND_STATS } from '../utils/constants';
@@ -27,18 +27,28 @@ export default function Hero() {
       {/* Floating fashion icons */}
       <Scissors
         aria-hidden
-        size={48}
-        className="pointer-events-none absolute right-[12%] top-[18%] z-0 animate-float text-bronze-400 opacity-[0.12]"
+        size={64}
+        className="pointer-events-none absolute right-[12%] top-[18%] z-0 animate-float text-bronze-400 opacity-[0.22]"
       />
       <Ruler
         aria-hidden
-        size={40}
-        className="pointer-events-none absolute bottom-[22%] left-[8%] z-0 animate-float text-bronze-400 opacity-[0.10] [animation-delay:1.5s]"
+        size={56}
+        className="pointer-events-none absolute bottom-[22%] left-[8%] z-0 animate-float text-bronze-400 opacity-[0.18] [animation-delay:1.5s]"
       />
       <Pen
         aria-hidden
-        size={36}
-        className="pointer-events-none absolute bottom-[35%] right-[6%] z-0 animate-float text-wine-400 opacity-[0.08] [animation-delay:3s]"
+        size={48}
+        className="pointer-events-none absolute bottom-[35%] right-[6%] z-0 animate-float text-wine-400 opacity-[0.15] [animation-delay:3s]"
+      />
+      <Sparkles
+        aria-hidden
+        size={44}
+        className="pointer-events-none absolute left-[15%] top-[30%] z-0 animate-float text-bronze-400 opacity-[0.14] [animation-delay:4.5s]"
+      />
+      <Layers
+        aria-hidden
+        size={38}
+        className="pointer-events-none absolute right-[18%] bottom-[28%] z-0 animate-float text-wine-400 opacity-[0.12] [animation-delay:2s]"
       />
 
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
