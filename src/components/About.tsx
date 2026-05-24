@@ -4,7 +4,7 @@ import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const ABOUT_IMG = pexels(3807517, 1000, 1250);
+const ABOUT_IMG = pexels(3852974, 1000, 1250);
 
 const DEFAULT_ABOUT_P1 =
   'I started Happiness Fashion World seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
