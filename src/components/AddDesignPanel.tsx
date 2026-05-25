@@ -5,6 +5,8 @@ import {
   Camera,
   Cloud,
   CloudOff,
+  Eye,
+  EyeOff,
   ImagePlus,
   Layers,
   Lock,
@@ -564,6 +566,7 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                 onChangeEmail={setAuthEmail}
                 onChangePassword={setAuthPassword}
                 onAuthSubmit={onAuthSubmit}
+                onResetPassword={(email) => auth.resetPassword(email)}
                 onSwitchMode={(m) => {
                   setAuthMode(m);
                   setError(null);
@@ -1328,6 +1331,7 @@ interface UnlockScreenProps {
   onChangeEmail: (s: string) => void;
   onChangePassword: (s: string) => void;
   onAuthSubmit: (e: React.FormEvent) => void;
+  onResetPassword: (email: string) => Promise<void>;
   onSwitchMode: (m: 'signin' | 'signup') => void;
   passcodeInput: string;
   onChangePasscode: (s: string) => void;
@@ -1338,6 +1342,33 @@ interface UnlockScreenProps {
 }
 
 function UnlockScreen(p: UnlockScreenProps) {
+  // Local UI state - only relevant inside the unlock screen.
+  const [showAuthPassword, setShowAuthPassword] = useState(false);
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+  const [resetErr, setResetErr] = useState<string | null>(null);
+
+  const handleForgotPassword = async () => {
+    setResetMsg(null);
+    setResetErr(null);
+    if (!p.authEmail.trim()) {
+      setResetErr('Type your admin email above first, then tap "Forgot password" again.');
+      return;
+    }
+    setResetting(true);
+    try {
+      await p.onResetPassword(p.authEmail);
+      setResetMsg(
+        `A password-reset link is on its way to ${p.authEmail.trim()}. Open it on this phone, then come back and sign in with the new password.`
+      );
+    } catch (err) {
+      setResetErr((err as Error).message ?? 'Could not send the reset email. Try again in a moment.');
+    } finally {
+      setResetting(false);
+    }
+  };
+
   if (p.cloudReady) {
     return (
       <div className="flex h-full flex-col overflow-y-auto p-6 pt-[max(env(safe-area-inset-top,0),2rem)] sm:p-10 md:p-12">
@@ -1376,18 +1407,49 @@ function UnlockScreen(p: UnlockScreenProps) {
             <label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">
               Password
             </label>
-            <input
-              type="password"
-              value={p.authPassword}
-              onChange={(e) => p.onChangePassword(e.target.value)}
-              placeholder="*********"
-              autoComplete={p.authMode === 'signin' ? 'current-password' : 'new-password'}
-              className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900"
-              required
-              minLength={6}
-            />
+            <div className="relative">
+              <input
+                type={showAuthPassword ? 'text' : 'password'}
+                value={p.authPassword}
+                onChange={(e) => p.onChangePassword(e.target.value)}
+                placeholder={showAuthPassword ? 'Your password' : '*********'}
+                autoComplete={p.authMode === 'signin' ? 'current-password' : 'new-password'}
+                className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 pr-12 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowAuthPassword((s) => !s)}
+                aria-label={showAuthPassword ? 'Hide password' : 'Show password'}
+                title={showAuthPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-1.5 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-ink-800/55 transition-colors hover:bg-bronze-500/10 hover:text-bronze-500 active:scale-95 dark:text-cream-100/55"
+              >
+                {showAuthPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {p.authMode === 'signin' && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetting}
+                className="mt-2 text-xs font-medium text-bronze-500 transition-colors hover:underline disabled:opacity-50"
+              >
+                {resetting ? 'Sending reset link...' : 'Forgot password?'}
+              </button>
+            )}
           </div>
 
+          {resetMsg && (
+            <p className="rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 p-3 text-sm text-[#1da851]">
+              {resetMsg}
+            </p>
+          )}
+          {resetErr && (
+            <p className="rounded-2xl border border-wine-500/30 bg-wine-500/10 p-3 text-sm text-wine-500">
+              {resetErr}
+            </p>
+          )}
           {p.error && (
             <p className="rounded-2xl border border-wine-500/30 bg-wine-500/10 p-3 text-sm text-wine-500">
               {p.error}
@@ -1451,16 +1513,27 @@ function UnlockScreen(p: UnlockScreenProps) {
         Enter the studio passcode to manage your collection.
       </p>
       <form onSubmit={p.onPasscodeSubmit} className="mt-6 flex flex-col gap-3">
-        <input
-          type="password"
-          autoFocus
-          value={p.passcodeInput}
-          onChange={(e) => p.onChangePasscode(e.target.value)}
-          placeholder="Passcode"
-          autoComplete="current-password"
-          className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900"
-          disabled={p.lockoutRemaining > 0}
-        />
+        <div className="relative">
+          <input
+            type={showPasscode ? 'text' : 'password'}
+            autoFocus
+            value={p.passcodeInput}
+            onChange={(e) => p.onChangePasscode(e.target.value)}
+            placeholder="Passcode"
+            autoComplete="current-password"
+            className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 pr-12 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900"
+            disabled={p.lockoutRemaining > 0}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPasscode((s) => !s)}
+            aria-label={showPasscode ? 'Hide passcode' : 'Show passcode'}
+            title={showPasscode ? 'Hide passcode' : 'Show passcode'}
+            className="absolute right-1.5 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-ink-800/55 transition-colors hover:bg-bronze-500/10 hover:text-bronze-500 active:scale-95 dark:text-cream-100/55"
+          >
+            {showPasscode ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
         <button type="submit" className="btn-primary w-full" disabled={p.lockoutRemaining > 0}>
           Unlock
         </button>
