@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Make ALL design card images editable via EditableImage, fix Lightbox mobile UX (close/back/swipe), fix Contact text overflow, fix Logo wordmark gap, update About designer image to show a designer at a sewing machine, and general mobile friendliness improvements.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "STEP 1 - DesignCard editable images: In src/components/DesignCard.tsx, import EditableImage and useSiteContent from their respective paths. For the image rendering section (where imgError is false), replace the raw <img> tag with an EditableImage component using contentKey=`design.image.${design.id}`, defaultSrc={design.image}, alt={design.name}, className='luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105'. Keep the onError fallback by wrapping in a container that detects load errors. Only apply EditableImage for NON-custom designs (design.custom !== true). Custom designs are already managed via the AddDesignPanel flow.",
     "STEP 2 - Lightbox mobile UX fix: In src/components/Lightbox.tsx: (a) Make the close button much larger on mobile with min-w-[44px] min-h-[44px] and add a visible 'X Close' text label next to the icon on mobile. (b) Add a second close button at the BOTTOM of the lightbox content for mobile users who scroll down. (c) Add a 'Tap outside to close' hint text below the lightbox on mobile. (d) Make the inner content div scrollable on mobile (max-h-[90vh] overflow-y-auto) so users can always see and reach the close button. (e) Add a swipe-down-to-close gesture using framer-motion's drag='y' with dragConstraints and onDragEnd detecting a downward swipe threshold to call onClose. (f) Also make the lightbox image use EditableImage with contentKey=`design.image.${design.id}` for admin editing from lightbox view.",
@@ -27,5 +27,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All changes pass TypeScript compilation and Vite build. The About designer image was updated to pexels ID 3738088 showing a seamstress at a sewing machine. The Lightbox uses framer-motion drag='y' for swipe-to-close gesture. EditableImage is now used in both DesignCard (non-custom only) and Lightbox for admin editing."
 }
