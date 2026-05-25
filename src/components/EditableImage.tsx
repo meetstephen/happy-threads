@@ -16,6 +16,8 @@ interface Props {
   alt: string;
   /** Extra classes for the <img> element. */
   className?: string;
+  /** Optional loading attribute for the img element. */
+  loading?: 'lazy' | 'eager';
 }
 
 /**
@@ -26,7 +28,7 @@ interface Props {
  * The new image is uploaded to Supabase Storage (if configured) or stored
  * as a base64 data URL in localStorage.
  */
-export default function EditableImage({ contentKey, defaultSrc, alt, className = '' }: Props) {
+export default function EditableImage({ contentKey, defaultSrc, alt, className = '', loading }: Props) {
   const { get, set, reset, hasOverride } = useSiteContent();
   const { admin } = useAdminAuth();
   const [uploading, setUploading] = useState(false);
@@ -72,13 +74,13 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
 
   // Visitors — plain image
   if (!admin) {
-    return <img src={currentSrc} alt={alt} className={className} />;
+    return <img src={currentSrc} alt={alt} className={className} loading={loading} />;
   }
 
   // Admin — image with swap overlay
   return (
     <span className="group/img relative inline-block">
-      <img src={currentSrc} alt={alt} className={className} />
+      <img src={currentSrc} alt={alt} className={className} loading={loading} />
 
       {/* Overlay for admin */}
       <span className="absolute inset-0 flex items-center justify-center gap-2 bg-ink-900/50 opacity-0 transition-opacity group-hover/img:opacity-100">

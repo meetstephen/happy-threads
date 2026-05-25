@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, MessageCircle, Share2, X } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Shirt, X } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
@@ -15,10 +15,13 @@ interface Props {
 export default function Lightbox({ design, onClose }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [shared, setShared] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const labelFor = useCategoryLabel();
+  const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     if (!design) return;
+    setImgError(false);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -75,17 +78,23 @@ export default function Lightbox({ design, onClose }: Props) {
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.4}
-            onDragEnd={(_e, info) => {
-              if (info.offset.y > 100) onClose();
-            }}
             onClick={(e) => e.stopPropagation()}
             className="relative grid w-full max-w-5xl gap-0 overflow-hidden rounded-3xl bg-cream-100 shadow-luxe max-h-[90vh] overflow-y-auto md:grid-cols-2 dark:bg-ink-800"
           >
-            {/* Mobile close hint bar */}
-            <div className="flex items-center justify-between border-b border-ink-800/10 px-4 py-2 md:hidden dark:border-cream-100/10">
+            {/* Mobile close hint bar - swipe down to close */}
+            <div
+              className="flex items-center justify-between border-b border-ink-800/10 px-4 py-2 md:hidden dark:border-cream-100/10"
+              onTouchStart={(e) => {
+                touchStartY.current = e.touches[0].clientY;
+              }}
+              onTouchEnd={(e) => {
+                if (touchStartY.current !== null) {
+                  const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+                  if (deltaY > 80) onClose();
+                  touchStartY.current = null;
+                }
+              }}
+            >
               <span className="text-[10px] uppercase tracking-[0.2em] text-ink-800/50 dark:text-cream-100/50">
                 Tap X or swipe down to close
               </span>
@@ -109,12 +118,27 @@ export default function Lightbox({ design, onClose }: Props) {
             </button>
 
             <div className="aspect-[3/4] w-full overflow-hidden md:aspect-auto md:h-[80vh]">
-              <EditableImage
-                contentKey={`design.image.${design.id}`}
-                defaultSrc={design.image}
-                alt={design.name}
-                className="h-full w-full object-cover"
-              />
+              {design.custom ? (
+                imgError ? (
+                  <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
+                    <Shirt size={48} className="text-bronze-400 opacity-60" />
+                  </div>
+                ) : (
+                  <img
+                    src={design.image}
+                    alt={design.name}
+                    onError={() => setImgError(true)}
+                    className="h-full w-full object-cover"
+                  />
+                )
+              ) : (
+                <EditableImage
+                  contentKey={`design.image.${design.id}`}
+                  defaultSrc={design.image}
+                  alt={design.name}
+                  className="h-full w-full object-cover"
+                />
+              )}
             </div>
 
             <div className="flex flex-col justify-between p-8 md:p-10">

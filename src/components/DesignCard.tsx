@@ -83,6 +83,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
             contentKey={`design.image.${design.id}`}
             defaultSrc={design.image}
             alt={design.name}
+            loading="lazy"
             className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
           />
         )}
