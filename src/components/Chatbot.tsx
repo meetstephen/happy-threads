@@ -196,7 +196,7 @@ export default function Chatbot() {
             </header>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-4">
+            <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-4" style={{ WebkitOverflowScrolling: 'touch' }}>
               {messages.map((m) => (
                 <MessageBubble key={m.id} m={m} onChip={onChip} onDesign={onDesignClick} />
               ))}
@@ -224,7 +224,7 @@ export default function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={isGeminiEnabled ? 'Ask Joy anything…' : 'Ask about the collection…'}
-                className="flex-1 rounded-full bg-cream-200/50 px-4 py-2.5 text-sm focus:outline-none dark:bg-ink-900/60"
+                className="flex-1 rounded-full bg-cream-200/50 px-4 py-2.5 text-base focus:outline-none dark:bg-ink-900/60"
               />
               <button
                 type="submit"
