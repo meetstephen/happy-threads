@@ -1,0 +1,7 @@
+{
+  "task_id": "task-mobile-ux-editable-images",
+  "task_description": "Fix critical UX issues: make all design images admin-editable via EditableImage, fix Lightbox mobile freeze/back navigation, fix Contact text overflow, fix Logo wordmark gap, update About designer image, and improve overall mobile friendliness.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

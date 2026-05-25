@@ -66,14 +66,14 @@ export default function Navbar({ onOpenLookbook }: Props) {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="grid h-10 w-10 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20"
+            className="grid h-10 w-10 min-h-[44px] min-w-[44px] place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <a
             href="#favorites"
             aria-label="View favorites"
-            className="relative grid h-10 w-10 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20"
+            className="relative grid h-10 w-10 min-h-[44px] min-w-[44px] place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20"
           >
             <Heart size={16} />
             {favorites.length > 0 && (
@@ -86,7 +86,7 @@ export default function Navbar({ onOpenLookbook }: Props) {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
-            className="grid h-10 w-10 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 md:hidden dark:border-cream-100/20"
+            className="grid h-10 w-10 min-h-[44px] min-w-[44px] place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 md:hidden dark:border-cream-100/20"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>

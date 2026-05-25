@@ -4,6 +4,7 @@ import { Heart, MessageCircle, Share2, X } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
+import EditableImage from './EditableImage';
 import type { Design } from '../data/designs';
 
 interface Props {
@@ -74,20 +75,46 @@ export default function Lightbox({ design, onClose }: Props) {
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.4}
+            onDragEnd={(_e, info) => {
+              if (info.offset.y > 100) onClose();
+            }}
             onClick={(e) => e.stopPropagation()}
-            className="relative grid w-full max-w-5xl gap-0 overflow-hidden rounded-3xl bg-cream-100 shadow-luxe md:grid-cols-2 dark:bg-ink-800"
+            className="relative grid w-full max-w-5xl gap-0 overflow-hidden rounded-3xl bg-cream-100 shadow-luxe max-h-[90vh] overflow-y-auto md:grid-cols-2 dark:bg-ink-800"
           >
+            {/* Mobile close hint bar */}
+            <div className="flex items-center justify-between border-b border-ink-800/10 px-4 py-2 md:hidden dark:border-cream-100/10">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-ink-800/50 dark:text-cream-100/50">
+                Tap X or swipe down to close
+              </span>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="grid h-8 w-8 place-items-center rounded-full text-ink-800 dark:text-cream-100"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-cream-100/90 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100 dark:bg-ink-900/90 dark:text-cream-100"
+              className="absolute right-4 top-4 z-10 hidden md:grid h-10 w-10 place-items-center rounded-full bg-cream-100/90 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100 dark:bg-ink-900/90 dark:text-cream-100"
             >
               <X size={18} />
             </button>
 
             <div className="aspect-[3/4] w-full overflow-hidden md:aspect-auto md:h-[80vh]">
-              <img src={design.image} alt={design.name} className="h-full w-full object-cover" />
+              <EditableImage
+                contentKey={`design.image.${design.id}`}
+                defaultSrc={design.image}
+                alt={design.name}
+                className="h-full w-full object-cover"
+              />
             </div>
 
             <div className="flex flex-col justify-between p-8 md:p-10">
@@ -149,6 +176,14 @@ export default function Lightbox({ design, onClose }: Props) {
                     {shared ? 'Link copied!' : 'Share'}
                   </button>
                 </div>
+                {/* Bottom close button for mobile */}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-4 w-full rounded-full border border-ink-800/20 py-3 text-center text-xs uppercase tracking-[0.18em] text-ink-800 transition-all hover:border-ink-800 md:hidden dark:border-cream-100/20 dark:text-cream-100"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </motion.div>

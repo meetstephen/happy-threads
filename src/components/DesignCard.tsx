@@ -4,6 +4,7 @@ import { Heart, Maximize2, MessageCircle, Share2, Shirt, Sparkles } from 'lucide
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
+import EditableImage from './EditableImage';
 import type { Design } from '../data/designs';
 
 async function shareDesign(d: Design) {
@@ -63,16 +64,25 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
       } ${featured ? 'border-t-2 border-t-bronze-500' : ''}`}
     >
       <div className="relative aspect-[3/4] overflow-hidden">
-        {imgError ? (
-          <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
-            <Shirt size={48} className="text-bronze-400 opacity-60" />
-          </div>
+        {design.custom ? (
+          imgError ? (
+            <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
+              <Shirt size={48} className="text-bronze-400 opacity-60" />
+            </div>
+          ) : (
+            <img
+              src={design.image}
+              alt={design.name}
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+            />
+          )
         ) : (
-          <img
-            src={design.image}
+          <EditableImage
+            contentKey={`design.image.${design.id}`}
+            defaultSrc={design.image}
             alt={design.name}
-            loading="lazy"
-            onError={() => setImgError(true)}
             className="luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
           />
         )}
@@ -111,7 +121,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
               toggleFavorite(design.id);
             }}
             aria-label={fav ? 'Remove from favorites' : 'Add to favorites'}
-            className={`grid h-9 w-9 place-items-center rounded-full backdrop-blur-md transition-all ${
+            className={`grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full backdrop-blur-md transition-all ${
               fav
                 ? 'bg-wine-500 text-cream-100'
                 : 'bg-cream-100/85 text-ink-800 hover:bg-cream-100'
@@ -126,7 +136,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
               onOpen(design);
             }}
             aria-label="View larger"
-            className="grid h-9 w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
+            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
           >
             <Maximize2 size={15} />
           </button>
@@ -134,7 +144,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
             type="button"
             onClick={onShareClick}
             aria-label="Share this design"
-            className="grid h-9 w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
+            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
             title={copied ? 'Link copied!' : 'Share'}
           >
             <Share2 size={15} />

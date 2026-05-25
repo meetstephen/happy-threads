@@ -108,7 +108,7 @@ export default function Newsletter() {
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="btn-primary disabled:opacity-50"
+                className="btn-primary w-full sm:w-auto disabled:opacity-50"
               >
                 <Send size={14} />
                 {status === 'submitting' ? 'Sending…' : 'Subscribe'}

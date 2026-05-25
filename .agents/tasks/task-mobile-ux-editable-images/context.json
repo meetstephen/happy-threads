@@ -1,0 +1,32 @@
+{
+  "project_type": "React 18 SPA with Vite, luxury fashion portfolio site",
+  "language": "TypeScript + TSX",
+  "build_system": "Vite with TypeScript compiler check (tsc -b) before build",
+  "test_framework": "No test framework configured - validation is TypeScript compilation + Vite build",
+  "build_command": "npm run build",
+  "test_command": "npx tsc --noEmit",
+  "verification_instructions": "1. Run npx tsc --noEmit to check types. 2. Run npm run build to verify production build succeeds.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "npm install (already done, node_modules exists)",
+  "environment_constraints": "OPEN_INTERNET - full network access available",
+  "contribution_requirements": "No CONTRIBUTING.md found. Changes must pass TypeScript compilation.",
+  "key_patterns": "EditableImage component wraps <img> tags for admin-swappable images using SiteContentContext. EditableText does the same for text. The admin sees a camera overlay on hover to replace images. SiteContentContext stores overrides keyed by string IDs (e.g., 'hero.image', 'about.image'). The DesignCard uses raw <img> without EditableImage, making design photos NOT admin-editable. Lightbox also uses raw <img>. Framer Motion is used for all animations.",
+  "relevant_files": [
+    "src/components/DesignCard.tsx",
+    "src/components/Lightbox.tsx",
+    "src/components/Contact.tsx",
+    "src/components/Logo.tsx",
+    "src/components/About.tsx",
+    "src/components/EditableImage.tsx",
+    "src/components/Navbar.tsx",
+    "src/components/BookingCTA.tsx",
+    "src/components/Newsletter.tsx",
+    "src/components/Hero.tsx",
+    "src/components/Collections.tsx",
+    "src/context/SiteContentContext.tsx",
+    "src/data/designs.ts",
+    "src/index.css",
+    "src/utils/images.ts"
+  ],
+  "directory_structure": "src/components/ - all UI components. src/context/ - React contexts (Theme, Favorites, SiteContent, Admin). src/data/ - static data (designs catalog). src/utils/ - utilities (images, whatsapp, sanitize). src/services/ - Supabase services. src/lib/ - auth, supabase client."
+}

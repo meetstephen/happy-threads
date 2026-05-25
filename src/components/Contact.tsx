@@ -84,11 +84,11 @@ function ContactRow({
       <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-bronze-400/20 text-bronze-400">
         <Icon size={16} />
       </div>
-      <div>
+      <div className="min-w-0">
         <div className="text-[10px] uppercase tracking-[0.3em] text-cream-100/60 dark:text-ink-900/60">
           {label}
         </div>
-        <div className="font-medium">{value}</div>
+        <div className="font-medium break-all">{value}</div>
       </div>
     </div>
   );

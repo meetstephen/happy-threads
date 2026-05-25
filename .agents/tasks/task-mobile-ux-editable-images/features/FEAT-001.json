@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Make ALL design card images editable via EditableImage, fix Lightbox mobile UX (close/back/swipe), fix Contact text overflow, fix Logo wordmark gap, update About designer image to show a designer at a sewing machine, and general mobile friendliness improvements.",
+  "status": "in_progress",
+  "steps": [
+    "STEP 1 - DesignCard editable images: In src/components/DesignCard.tsx, import EditableImage and useSiteContent from their respective paths. For the image rendering section (where imgError is false), replace the raw <img> tag with an EditableImage component using contentKey=`design.image.${design.id}`, defaultSrc={design.image}, alt={design.name}, className='luxe-image h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105'. Keep the onError fallback by wrapping in a container that detects load errors. Only apply EditableImage for NON-custom designs (design.custom !== true). Custom designs are already managed via the AddDesignPanel flow.",
+    "STEP 2 - Lightbox mobile UX fix: In src/components/Lightbox.tsx: (a) Make the close button much larger on mobile with min-w-[44px] min-h-[44px] and add a visible 'X Close' text label next to the icon on mobile. (b) Add a second close button at the BOTTOM of the lightbox content for mobile users who scroll down. (c) Add a 'Tap outside to close' hint text below the lightbox on mobile. (d) Make the inner content div scrollable on mobile (max-h-[90vh] overflow-y-auto) so users can always see and reach the close button. (e) Add a swipe-down-to-close gesture using framer-motion's drag='y' with dragConstraints and onDragEnd detecting a downward swipe threshold to call onClose. (f) Also make the lightbox image use EditableImage with contentKey=`design.image.${design.id}` for admin editing from lightbox view.",
+    "STEP 3 - Contact text overflow fix: In src/components/Contact.tsx, update the ContactRow component's value div to include 'break-all' or use the class 'break-words overflow-wrap-anywhere' so that long email addresses and atelier text wrap properly on small screens. Also add 'min-w-0' to the flex container to allow text shrinking.",
+    "STEP 4 - Logo wordmark gap fix: In src/components/Logo.tsx, change 'tracking-wide' to 'tracking-normal' on the 'Happiness Fashion World' text div to close the visual gap.",
+    "STEP 5 - About designer image update: In src/components/About.tsx, change the ABOUT_IMG pexels ID from 3852974 to a photo showing a fashion designer/seamstress working at a sewing machine with measuring tape around her neck. Use pexels(3738088, 1000, 1250) which shows a woman sewing/working in a fashion atelier. This is the default image that shows when no admin override exists.",
+    "STEP 6 - General mobile friendliness: (a) In src/components/Newsletter.tsx, ensure the form inputs and button stack properly on very small screens and don't overflow. Add 'w-full' to button on mobile. (b) In src/index.css, add a global rule to prevent horizontal overflow on the body/html. (c) In src/components/Navbar.tsx, ensure the mobile menu close/open button meets 44px touch target (it already uses h-10 w-10 which is 40px - bump to h-11 w-11 or add min-h-[44px] min-w-[44px]). (d) In src/components/BookingCTA.tsx, ensure the flex-wrap buttons don't overflow on small phones by adding 'w-full sm:w-auto' to the buttons on mobile. (e) In DesignCard.tsx, ensure the top-right action buttons (heart, expand, share) meet 44px minimum touch target on mobile by adding 'sm:h-9 sm:w-9 h-11 w-11' classes."
+  ],
+  "acceptance_criteria": [
+    "Running `npx tsc --noEmit` passes with no TypeScript errors",
+    "Running `npm run build` succeeds and produces a dist/ folder",
+    "DesignCard uses EditableImage for static (non-custom) designs, allowing admin to replace images",
+    "Lightbox has a large visible close button (44px+), supports swipe-down-to-close, has scrollable content on mobile, and uses EditableImage for the main photo",
+    "Contact section text wraps properly on 320px viewports - no horizontal overflow",
+    "Logo wordmark uses tracking-normal instead of tracking-wide",
+    "About section uses a new default image showing a designer at a sewing machine",
+    "All interactive elements meet 44px minimum touch target on mobile",
+    "No horizontal scrollbar appears on mobile viewports"
+  ],
+  "verification": [
+    "npx tsc --noEmit",
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
