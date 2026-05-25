@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, MessageCircle, Share2, X } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Shirt, X } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { buildWhatsAppUrl, orderMessage } from '../utils/whatsapp';
 import { useCategoryLabel } from '../utils/categoryLabel';
+import EditableImage from './EditableImage';
 import type { Design } from '../data/designs';
 
 interface Props {
@@ -14,16 +15,18 @@ interface Props {
 export default function Lightbox({ design, onClose }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [shared, setShared] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const labelFor = useCategoryLabel();
+  const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     if (!design) return;
+    setImgError(false);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
-    // Update URL so the lightbox is shareable. Replaces (no history entry).
     const url = new URL(window.location.href);
     url.searchParams.set('design', design.id);
     window.history.replaceState({}, '', url.toString());
@@ -55,7 +58,7 @@ export default function Lightbox({ design, onClose }: Props) {
         setTimeout(() => setShared(false), 1800);
       }
     } catch {
-      // user cancelled — ignore
+      // user cancelled
     }
   };
 
@@ -75,19 +78,67 @@ export default function Lightbox({ design, onClose }: Props) {
             exit={{ scale: 0.96, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="relative grid w-full max-w-5xl gap-0 overflow-hidden rounded-3xl bg-cream-100 shadow-luxe md:grid-cols-2 dark:bg-ink-800"
+            className="relative grid w-full max-w-5xl max-h-[90vh] gap-0 overflow-hidden overflow-y-auto rounded-3xl bg-cream-100 shadow-luxe md:grid-cols-2 dark:bg-ink-800"
           >
+            {/* Mobile close hint bar */}
+            <div
+              className="flex items-center justify-between border-b border-ink-800/10 px-4 py-3 md:hidden dark:border-cream-100/10 md:col-span-2"
+              onTouchStart={(e) => {
+                touchStartY.current = e.touches[0].clientY;
+              }}
+              onTouchEnd={(e) => {
+                if (touchStartY.current !== null) {
+                  const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+                  if (deltaY > 80) onClose();
+                  touchStartY.current = null;
+                }
+              }}
+            >
+              <span className="text-[10px] uppercase tracking-[0.2em] text-ink-800/50 dark:text-cream-100/50">
+                Tap X or swipe down to close
+              </span>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="grid h-10 w-10 place-items-center rounded-full text-ink-800 dark:text-cream-100"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Desktop close button */}
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-cream-100/90 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100 dark:bg-ink-900/90 dark:text-cream-100"
+              className="absolute right-4 top-4 z-10 hidden md:grid h-10 w-10 place-items-center rounded-full bg-cream-100/90 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100 dark:bg-ink-900/90 dark:text-cream-100"
             >
               <X size={18} />
             </button>
 
             <div className="aspect-[3/4] w-full overflow-hidden md:aspect-auto md:h-[80vh]">
-              <img src={design.image} alt={design.name} className="h-full w-full object-cover" />
+              {design.custom ? (
+                imgError ? (
+                  <div className="flex h-full w-full items-center justify-center bg-bronze-100 dark:bg-ink-700">
+                    <Shirt size={48} className="text-bronze-400 opacity-60" />
+                  </div>
+                ) : (
+                  <img
+                    src={design.image}
+                    alt={design.name}
+                    onError={() => setImgError(true)}
+                    className="h-full w-full object-cover"
+                  />
+                )
+              ) : (
+                <EditableImage
+                  contentKey={`design.image.${design.id}`}
+                  defaultSrc={design.image}
+                  alt={design.name}
+                  className="h-full w-full object-cover"
+                />
+              )}
             </div>
 
             <div className="flex flex-col justify-between p-8 md:p-10">
@@ -149,6 +200,14 @@ export default function Lightbox({ design, onClose }: Props) {
                     {shared ? 'Link copied!' : 'Share'}
                   </button>
                 </div>
+                {/* Bottom close button for mobile */}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-4 w-full rounded-full border border-ink-800/20 py-3.5 text-center text-xs uppercase tracking-[0.18em] text-ink-800 transition-all hover:border-ink-800 md:hidden dark:border-cream-100/20 dark:text-cream-100"
+                >
+                  Close & go back
+                </button>
               </div>
             </div>
           </motion.div>
