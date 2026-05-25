@@ -42,19 +42,19 @@ export default function BookingCTA() {
             Share your vision and let us bring it to life.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
             <a
               href={buildWhatsAppUrl(generalEnquiryMessage())}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-whatsapp"
+              className="btn-whatsapp w-full sm:w-auto"
             >
               <MessageCircle size={16} />
               Book a Consultation
             </a>
             <a
               href="#process"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-cream-100/30 px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 hover:border-cream-100 hover:bg-cream-100 hover:text-ink-900"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-cream-100/30 px-7 py-3.5 text-sm font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 hover:border-cream-100 hover:bg-cream-100 hover:text-ink-900"
             >
               View Our Process
               <ArrowRight size={14} />

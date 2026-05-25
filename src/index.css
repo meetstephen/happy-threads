@@ -22,6 +22,9 @@
     background: #B07A4C;
     color: #FAF6F1;
   }
+  button, a {
+    touch-action: manipulation;
+  }
 }
 
 @layer components {

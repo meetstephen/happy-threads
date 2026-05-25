@@ -1,7 +1,7 @@
 /**
  * Gemini AI Chat Service — powers "Joy", the intelligent fashion assistant.
  *
- * Uses Google's gemini-2.0-flash model (free tier: 15 RPM / 1M tokens/day).
+ * Uses Google's gemini-2.5-flash model (free tier: 15 RPM / 1M tokens/day).
  * When VITE_GEMINI_API_KEY is not set, the chatbot falls back to the
  * pattern-matching engine in utils/chatbot.ts.
  */
@@ -9,7 +9,7 @@
 import type { Design } from '../data/designs';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL = 'gemini-2.0-flash';
+const MODEL = 'gemini-2.5-flash';
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=`;
 
 export const isGeminiEnabled = Boolean(API_KEY?.trim());
