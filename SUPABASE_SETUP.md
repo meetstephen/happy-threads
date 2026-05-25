@@ -55,7 +55,7 @@ create table if not exists public.designs (
 
 -- Row-Level Security: anyone can READ; only Happiness's authenticated
 -- session can INSERT, UPDATE, or DELETE.
--- >>> REPLACE the email below with Happiness's real email BEFORE running. <<<
+-- >>> The admin email below is chukwufaithhappiness1@gmail.com <<<
 alter table public.designs enable row level security;
 
 -- Public read
@@ -68,19 +68,19 @@ create policy "designs are publicly readable"
 drop policy if exists "only admin may insert" on public.designs;
 create policy "only admin may insert"
   on public.designs for insert
-  with check (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  with check (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only the admin email may delete
 drop policy if exists "only admin may delete" on public.designs;
 create policy "only admin may delete"
   on public.designs for delete
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only the admin email may update
 drop policy if exists "only admin may update" on public.designs;
 create policy "only admin may update"
   on public.designs for update
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime: visitors see new pieces appear without refreshing
 alter publication supabase_realtime add table public.designs;
@@ -109,19 +109,19 @@ create policy "site_content is publicly readable"
 drop policy if exists "only admin may insert site_content" on public.site_content;
 create policy "only admin may insert site_content"
   on public.site_content for insert
-  with check (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  with check (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only admin may update content
 drop policy if exists "only admin may update site_content" on public.site_content;
 create policy "only admin may update site_content"
   on public.site_content for update
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only admin may delete content (revert to default)
 drop policy if exists "only admin may delete site_content" on public.site_content;
 create policy "only admin may delete site_content"
   on public.site_content for delete
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime: content edits appear for all visitors instantly
 alter publication supabase_realtime add table public.site_content;
@@ -148,7 +148,7 @@ create policy "anyone can insert analytics"
 drop policy if exists "only admin can read analytics" on public.site_analytics;
 create policy "only admin can read analytics"
   on public.site_analytics for select
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime not needed for analytics (batch reads only)
 
@@ -175,13 +175,13 @@ create policy "anyone can subscribe"
 drop policy if exists "only admin can read subscribers" on public.newsletter_subscribers;
 create policy "only admin can read subscribers"
   on public.newsletter_subscribers for select
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only the admin can DELETE a subscriber (for unsubscribes / cleanup)
 drop policy if exists "only admin can delete subscribers" on public.newsletter_subscribers;
 create policy "only admin can delete subscribers"
   on public.newsletter_subscribers for delete
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 ```
 
 > **Already deployed without the `newsletter_subscribers` table?** Just paste
@@ -189,9 +189,9 @@ create policy "only admin can delete subscribers"
 > need to re-run the earlier blocks. The site falls back to a `mailto:` link
 > to Faith if the table is missing, so signups never get lost either way.
 
-**IMPORTANT:** Before clicking Run, replace every instance of
-`REPLACE_WITH_HAPPINESS_EMAIL@example.com` with Happiness's real email
-(the one she will sign in with). The same email goes into Netlify in Step 6.
+**IMPORTANT:** The SQL above already uses Happiness's admin email
+(`chukwufaithhappiness1@gmail.com`). Verify it matches the email she will
+sign in with before clicking Run. The same email goes into Netlify in Step 6.
 
 You should see "Success. No rows returned." after running.
 
@@ -221,7 +221,7 @@ create policy "only admin may upload designs"
   on storage.objects for insert
   with check (
     bucket_id = 'designs'
-    and auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com'
+    and auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com'
   );
 
 -- Only the admin email may delete design photos
@@ -230,11 +230,11 @@ create policy "only admin may delete designs"
   on storage.objects for delete
   using (
     bucket_id = 'designs'
-    and auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com'
+    and auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com'
   );
 ```
 
-Again -- replace the email with Happiness's real email before running.
+The admin email (`chukwufaithhappiness1@gmail.com`) is already set in the SQL above.
 
 ---
 
@@ -271,7 +271,7 @@ Again -- replace the email with Happiness's real email before running.
 |---|---|
 | `VITE_SUPABASE_URL` | (paste your Project URL) |
 | `VITE_SUPABASE_ANON_KEY` | (paste your anon public key) |
-| `VITE_ADMIN_EMAIL` | (Happiness's email -- must match the email in your SQL policies above) |
+| `VITE_ADMIN_EMAIL` | `chukwufaithhappiness1@gmail.com` |
 
 4. Click **Save**.
 5. Go to **Deploys -> Trigger deploy -> Deploy site** to rebuild with the new env vars.
