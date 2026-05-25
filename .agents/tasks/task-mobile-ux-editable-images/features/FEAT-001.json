@@ -27,5 +27,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": "All changes pass TypeScript compilation and Vite build. The About designer image was updated to pexels ID 3738088 showing a seamstress at a sewing machine. The Lightbox uses framer-motion drag='y' for swipe-to-close gesture. EditableImage is now used in both DesignCard (non-custom only) and Lightbox for admin editing."
+  "findings": "All changes pass TypeScript compilation and Vite build. The About designer image was updated to pexels ID 3738088 showing a seamstress at a sewing machine. The Lightbox uses framer-motion drag='y' for swipe-to-close gesture. EditableImage is now used in both DesignCard (non-custom only) and Lightbox for admin editing. Post-review fixes applied: (1) Swipe gesture moved from drag='y' on outer div to touch handlers on hint bar only, eliminating conflict with overflow-y-auto. (2) EditableImage now accepts a loading prop, passed as loading='lazy' from DesignCard. (3) overflow-x: hidden removed from html rule in index.css (body retains it). (4) Lightbox renders custom designs with an onError fallback showing Shirt icon instead of using EditableImage unconditionally."
 }
