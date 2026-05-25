@@ -151,7 +151,43 @@ create policy "only admin can read analytics"
   using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
 
 -- Realtime not needed for analytics (batch reads only)
+
+-- ============================================================
+-- TABLE 4: newsletter_subscribers (mailing list signups)
+-- ============================================================
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  name text,
+  source text default 'website',
+  subscribed_at timestamptz default now()
+);
+
+alter table public.newsletter_subscribers enable row level security;
+
+-- Anyone can subscribe (public newsletter signup)
+drop policy if exists "anyone can subscribe" on public.newsletter_subscribers;
+create policy "anyone can subscribe"
+  on public.newsletter_subscribers for insert
+  with check (true);
+
+-- Only the admin can READ the subscriber list
+drop policy if exists "only admin can read subscribers" on public.newsletter_subscribers;
+create policy "only admin can read subscribers"
+  on public.newsletter_subscribers for select
+  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+
+-- Only the admin can DELETE a subscriber (for unsubscribes / cleanup)
+drop policy if exists "only admin can delete subscribers" on public.newsletter_subscribers;
+create policy "only admin can delete subscribers"
+  on public.newsletter_subscribers for delete
+  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
 ```
+
+> **Already deployed without the `newsletter_subscribers` table?** Just paste
+> the Table 4 block above into the SQL editor on its own and run it - no
+> need to re-run the earlier blocks. The site falls back to a `mailto:` link
+> to Faith if the table is missing, so signups never get lost either way.
 
 **IMPORTANT:** Before clicking Run, replace every instance of
 `REPLACE_WITH_HAPPINESS_EMAIL@example.com` with Happiness's real email

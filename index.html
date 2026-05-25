@@ -70,17 +70,6 @@
   <body class="bg-cream-100 text-ink-800 dark:bg-ink-900 dark:text-cream-100">
     <div id="root"></div>
 
-    <!--
-      Static mirror of the newsletter form so Netlify's build-time crawler can
-      detect and register it. This element is invisible to humans; the live
-      form is rendered by the React app.
-    -->
-    <form name="newsletter" data-netlify="true" netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <input type="text" name="bot-field" />
-    </form>
-
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
