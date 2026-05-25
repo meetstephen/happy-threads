@@ -68,19 +68,19 @@ create policy "designs are publicly readable"
 drop policy if exists "only admin may insert" on public.designs;
 create policy "only admin may insert"
   on public.designs for insert
-  with check (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  with check (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only the admin email may delete
 drop policy if exists "only admin may delete" on public.designs;
 create policy "only admin may delete"
   on public.designs for delete
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only the admin email may update
 drop policy if exists "only admin may update" on public.designs;
 create policy "only admin may update"
   on public.designs for update
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime: visitors see new pieces appear without refreshing
 alter publication supabase_realtime add table public.designs;
@@ -109,19 +109,19 @@ create policy "site_content is publicly readable"
 drop policy if exists "only admin may insert site_content" on public.site_content;
 create policy "only admin may insert site_content"
   on public.site_content for insert
-  with check (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  with check (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only admin may update content
 drop policy if exists "only admin may update site_content" on public.site_content;
 create policy "only admin may update site_content"
   on public.site_content for update
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Only admin may delete content (revert to default)
 drop policy if exists "only admin may delete site_content" on public.site_content;
 create policy "only admin may delete site_content"
   on public.site_content for delete
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime: content edits appear for all visitors instantly
 alter publication supabase_realtime add table public.site_content;
@@ -148,14 +148,15 @@ create policy "anyone can insert analytics"
 drop policy if exists "only admin can read analytics" on public.site_analytics;
 create policy "only admin can read analytics"
   on public.site_analytics for select
-  using (auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com');
+  using (auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com');
 
 -- Realtime not needed for analytics (batch reads only)
 ```
 
-**IMPORTANT:** Before clicking Run, replace every instance of
-`REPLACE_WITH_HAPPINESS_EMAIL@example.com` with Happiness's real email
-(the one she will sign in with). The same email goes into Netlify in Step 6.
+**IMPORTANT:** The SQL above already uses the placeholder
+`chukwufaithhappiness1@gmail.com` (Happiness's admin email). If you need a
+different email, replace every instance before running. The same email goes
+into Netlify in Step 6.
 
 You should see "Success. No rows returned." after running.
 
@@ -185,7 +186,7 @@ create policy "only admin may upload designs"
   on storage.objects for insert
   with check (
     bucket_id = 'designs'
-    and auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com'
+    and auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com'
   );
 
 -- Only the admin email may delete design photos
@@ -194,11 +195,11 @@ create policy "only admin may delete designs"
   on storage.objects for delete
   using (
     bucket_id = 'designs'
-    and auth.jwt() ->> 'email' = 'REPLACE_WITH_HAPPINESS_EMAIL@example.com'
+    and auth.jwt() ->> 'email' = 'chukwufaithhappiness1@gmail.com'
   );
 ```
 
-Again -- replace the email with Happiness's real email before running.
+The SQL above already uses Happiness's email (`chukwufaithhappiness1@gmail.com`).
 
 ---
 
@@ -235,7 +236,7 @@ Again -- replace the email with Happiness's real email before running.
 |---|---|
 | `VITE_SUPABASE_URL` | (paste your Project URL) |
 | `VITE_SUPABASE_ANON_KEY` | (paste your anon public key) |
-| `VITE_ADMIN_EMAIL` | (Happiness's email -- must match the email in your SQL policies above) |
+| `VITE_ADMIN_EMAIL` | `chukwufaithhappiness1@gmail.com` |
 
 4. Click **Save**.
 5. Go to **Deploys -> Trigger deploy -> Deploy site** to rebuild with the new env vars.
