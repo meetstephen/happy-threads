@@ -103,8 +103,8 @@ export default function Logo({ size = 44, withWordmark = false, className = '' }
 
       {withWordmark && (
         <div className="leading-tight">
-          <div className="font-display text-lg italic tracking-normal">Happiness Fashion World</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.34em] text-bronze-500">
+          <div className="font-display text-base sm:text-lg italic tracking-normal whitespace-nowrap">Happiness Fashion World</div>
+          <div className="text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.3em] sm:tracking-[0.34em] text-bronze-500">
             Luxury Couture · Nigeria
           </div>
         </div>
