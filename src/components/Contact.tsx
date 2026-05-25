@@ -6,6 +6,7 @@ import {
   WHATSAPP_DISPLAY,
   WHATSAPP_PHONE,
 } from '../utils/whatsapp';
+import { FAITH_EMAIL } from '../utils/constants';
 
 export default function Contact() {
   return (
@@ -53,14 +54,34 @@ export default function Contact() {
               transition={{ duration: 0.7, delay: 0.15 }}
               className="space-y-5"
             >
-              <ContactRow icon={MessageCircle} label="WhatsApp" value={WHATSAPP_DISPLAY} />
-              <ContactRow icon={Phone} label="Phone" value={WHATSAPP_DISPLAY} />
-              <ContactRow icon={Instagram} label="Instagram" value="@happiness.fashion" />
-              <ContactRow icon={Mail} label="Email" value="hello@happinessfashionworld.com" />
+              <ContactRow
+                icon={MessageCircle}
+                label="WhatsApp"
+                value={WHATSAPP_DISPLAY}
+                href={buildWhatsAppUrl(generalEnquiryMessage())}
+              />
+              <ContactRow
+                icon={Phone}
+                label="Phone"
+                value={WHATSAPP_DISPLAY}
+                href={`tel:+${WHATSAPP_PHONE}`}
+              />
+              <ContactRow
+                icon={Instagram}
+                label="Instagram"
+                value="@happiness.fashion"
+                href="https://instagram.com/happiness.fashion"
+              />
+              <ContactRow
+                icon={Mail}
+                label="Email"
+                value={FAITH_EMAIL}
+                href={`mailto:${FAITH_EMAIL}?subject=${encodeURIComponent('Enquiry from happythreads.netlify.app')}`}
+              />
               <ContactRow
                 icon={MapPin}
                 label="Atelier"
-                value="Abakaliki, Ebonyi State, Nigeria — by appointment"
+                value="Abakaliki, Ebonyi State, Nigeria - by appointment"
               />
             </motion.div>
           </div>
@@ -74,22 +95,44 @@ function ContactRow({
   icon: Icon,
   label,
   value,
+  href,
 }: {
   icon: typeof Mail;
   label: string;
   value: string;
+  href?: string;
 }) {
-  return (
-    <div className="flex items-center gap-4 border-b border-cream-100/15 pb-4 dark:border-ink-900/15">
+  const content = (
+    <>
       <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-bronze-400/20 text-bronze-400">
         <Icon size={16} />
       </div>
-      <div>
+      <div className="min-w-0 flex-1">
         <div className="text-[10px] uppercase tracking-[0.3em] text-cream-100/60 dark:text-ink-900/60">
           {label}
         </div>
-        <div className="font-medium">{value}</div>
+        <div className="break-words font-medium">{value}</div>
       </div>
+    </>
+  );
+
+  if (href) {
+    const isExternal = href.startsWith('http');
+    return (
+      <a
+        href={href}
+        target={isExternal ? '_blank' : undefined}
+        rel={isExternal ? 'noopener noreferrer' : undefined}
+        className="-mx-2 flex items-center gap-4 rounded-2xl border-b border-cream-100/15 px-2 pb-4 pt-2 transition-colors hover:bg-cream-100/5 dark:border-ink-900/15 dark:hover:bg-ink-900/5"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-4 border-b border-cream-100/15 pb-4 dark:border-ink-900/15">
+      {content}
     </div>
   );
 }

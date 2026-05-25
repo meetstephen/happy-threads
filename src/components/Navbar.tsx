@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BookOpen, Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { useAdminAuth } from '../lib/auth';
 import Logo from './Logo';
 
 const links = [
@@ -22,6 +23,7 @@ export default function Navbar({ onOpenLookbook }: Props) {
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { favorites } = useFavorites();
+  const { admin } = useAdminAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -34,8 +36,16 @@ export default function Navbar({ onOpenLookbook }: Props) {
     ? 'bg-cream-100/85 backdrop-blur-lg shadow-soft dark:bg-ink-900/85'
     : 'bg-transparent';
 
+  // When the gold "Edit Mode" admin banner is showing, push the navbar
+  // (which holds the brand wordmark) down by the banner's measured height
+  // so the wordmark is never covered. The CSS variable is set in App.tsx.
+  const navTopStyle = admin ? { top: 'var(--admin-banner-h, 0px)' } : { top: 0 };
+
   return (
-    <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${navBg}`}>
+    <header
+      style={navTopStyle}
+      className={`fixed inset-x-0 z-40 transition-all duration-500 ${navBg}`}
+    >
       <div className="container-luxe flex h-20 items-center justify-between">
         <a href="#top" className="group">
           <Logo size={42} withWordmark />

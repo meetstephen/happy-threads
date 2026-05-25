@@ -26,6 +26,14 @@ export function useAdminAuth(): AuthState & {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
+  /**
+   * Sends a password-reset email to the admin via Supabase Auth.
+   * The email contains a magic link that, when clicked, lands the user
+   * back on `/#admin` with a temporary session that lets them set a new
+   * password from the dashboard. Throws if `email` does not match the
+   * configured ADMIN_EMAIL.
+   */
+  resetPassword: (email: string) => Promise<void>;
 } {
   const [state, setState] = useState<AuthState>({ loading: true, admin: null });
 
@@ -89,7 +97,20 @@ export function useAdminAuth(): AuthState & {
     await supabase.auth.signOut();
   };
 
-  return { ...state, signIn, signUp, signOut };
+  const resetPassword = async (email: string) => {
+    if (!supabase) throw new Error('Cloud sync is not configured.');
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) throw new Error('Enter your email above first.');
+    if (ADMIN_EMAIL && trimmed !== ADMIN_EMAIL) {
+      throw new Error('Password reset is only available for the atelier admin email.');
+    }
+    const redirectTo =
+      typeof window !== 'undefined' ? `${window.location.origin}/#admin` : undefined;
+    const { error } = await supabase.auth.resetPasswordForEmail(trimmed, { redirectTo });
+    if (error) throw new Error(error.message);
+  };
+
+  return { ...state, signIn, signUp, signOut, resetPassword };
 }
 
 /** True when an admin email is configured (cloud + admin both ready). */
