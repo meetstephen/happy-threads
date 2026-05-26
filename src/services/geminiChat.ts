@@ -1,18 +1,17 @@
 /**
  * Gemini AI Chat Service — powers "Joy", the intelligent fashion assistant.
  *
- * Uses Google's gemini-2.5-flash model (free tier: 15 RPM / 1M tokens/day).
- * When VITE_GEMINI_API_KEY is not set, the chatbot falls back to the
- * pattern-matching engine in utils/chatbot.ts.
+ * Uses Google's gemini-2.5-flash model via a server-side proxy at /api/gemini.
+ * The API key is kept on the server (Netlify Edge Function) and never exposed
+ * in the client bundle. If the proxy returns 503, it means the key is not
+ * configured — the chatbot falls back to the pattern-matching engine.
  */
 
 import type { Design } from '../data/designs';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL = 'gemini-2.5-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=`;
+const API_URL = '/api/gemini';
 
-export const isGeminiEnabled = Boolean(API_KEY?.trim());
+export const isGeminiEnabled = true;
 
 /** Conversation turn for the Gemini API. */
 interface GeminiMessage {
@@ -41,6 +40,7 @@ PERSONALITY:
 - Show genuine enthusiasm for the customer's event or occasion
 - Ask follow-up questions to understand what the customer really wants (occasion, colour preference, budget)
 - Celebrate the customer's choices and make them feel confident about their style decisions
+- Use warm Nigerian-friendly expressions naturally ("Perfect choice, sis!", "This would look lovely on you!", "You have great taste!")
 
 BUSINESS FACTS:
 - Location: Abakaliki, Ebonyi State, Nigeria. Studio visits by appointment.
@@ -73,7 +73,7 @@ RULES:
 }
 
 /**
- * Send a message to Gemini and get a streaming-style response.
+ * Send a message to Gemini via the server-side proxy and get a response.
  * Maintains conversation history for context.
  */
 export async function chatWithGemini(
@@ -81,8 +81,6 @@ export async function chatWithGemini(
   history: GeminiMessage[],
   designs: Design[]
 ): Promise<{ reply: string; updatedHistory: GeminiMessage[] }> {
-  if (!API_KEY) throw new Error('Gemini API key not configured.');
-
   const systemInstruction = buildSystemInstruction(designs);
 
   const newHistory: GeminiMessage[] = [
@@ -108,11 +106,15 @@ export async function chatWithGemini(
     ],
   };
 
-  const response = await fetch(`${API_URL}${API_KEY}`, {
+  const response = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
+
+  if (response.status === 503) {
+    throw new Error('GEMINI_UNAVAILABLE');
+  }
 
   if (!response.ok) {
     const errText = await response.text().catch(() => '');

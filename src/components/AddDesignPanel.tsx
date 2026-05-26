@@ -40,7 +40,7 @@ interface Props {
   editingDesign?: Design | null;
 }
 
-const LOCAL_PASSCODE = 'happy2026';
+const LOCAL_PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined)?.trim() || '';
 const ATTEMPT_STORAGE_KEY = 'hfw-admin-attempts';
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 300000; // 5 minutes in ms

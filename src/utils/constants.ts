@@ -8,4 +8,4 @@ export const BRAND_STATS = {
  * newsletter signups, customer enquiries, and any "email Happiness directly"
  * fallback flows on the site.
  */
-export const FAITH_EMAIL = 'chukwufaithhappiness1@gmail.com';
+export const FAITH_EMAIL = (import.meta.env.VITE_CONTACT_EMAIL as string | undefined)?.trim() || 'hello@happinessfashionworld.com';

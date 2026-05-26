@@ -14,7 +14,16 @@ function makeId(): string {
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<BotMessage[]>(initialMessages);
+  const [messages, setMessages] = useState<BotMessage[]>(() => {
+    try {
+      const saved = sessionStorage.getItem('hfw-chat-messages');
+      if (saved) {
+        const parsed = JSON.parse(saved) as BotMessage[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch { /* ignore */ }
+    return initialMessages;
+  });
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
   const [unread, setUnread] = useState(false);
@@ -26,10 +35,34 @@ export default function Chatbot() {
   // Gemini conversation history (persists across messages in this session)
   const geminiHistory = useRef<GeminiMessage[]>([]);
 
+  // Track if Gemini proxy returned 503 (key not configured)
+  const geminiDisabled = useRef(false);
+
+  // Initialize geminiHistory from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('hfw-gemini-history');
+      if (saved) {
+        const parsed = JSON.parse(saved) as GeminiMessage[];
+        if (Array.isArray(parsed)) {
+          geminiHistory.current = parsed.slice(-40);
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
     [customDesigns]
   );
+
+  // Persist messages to sessionStorage (cap at 50)
+  useEffect(() => {
+    try {
+      const capped = messages.slice(-50);
+      sessionStorage.setItem('hfw-chat-messages', JSON.stringify(capped));
+    } catch { /* ignore */ }
+  }, [messages]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -51,14 +84,19 @@ export default function Chatbot() {
     setTyping(true);
 
     try {
-      if (isGeminiEnabled) {
+      if (isGeminiEnabled && !geminiDisabled.current) {
         // Use real AI
         const { reply, updatedHistory } = await chatWithGemini(
           trimmed,
           geminiHistory.current,
           allDesigns
         );
-        geminiHistory.current = updatedHistory;
+        geminiHistory.current = updatedHistory.slice(-40);
+
+        // Persist history to sessionStorage
+        try {
+          sessionStorage.setItem('hfw-gemini-history', JSON.stringify(geminiHistory.current));
+        } catch { /* ignore */ }
 
         // Check if Gemini mentioned a design by reference ID — show the card
         const mentionedDesign = allDesigns.find(
@@ -90,6 +128,10 @@ export default function Chatbot() {
       }
     } catch (err) {
       console.warn('[Chatbot] error:', err);
+      // If Gemini proxy reports key not configured, disable further calls
+      if (err instanceof Error && err.message === 'GEMINI_UNAVAILABLE') {
+        geminiDisabled.current = true;
+      }
       // On Gemini failure, fallback to pattern matcher for this message
       const reply = generateReply(trimmed, allDesigns);
       setMessages((m) => [...m, reply]);
