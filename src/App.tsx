@@ -23,6 +23,8 @@ import FloatingIcons from './components/FloatingIcons';
 import Chatbot from './components/Chatbot';
 import SizeGuide from './components/SizeGuide';
 import Lookbook from './components/Lookbook';
+import MobileBottomNav from './components/MobileBottomNav';
+import ScrollToTop from './components/ScrollToTop';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
@@ -278,6 +280,8 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      <MobileBottomNav onOpenLookbook={openLookbook} />
+      <ScrollToTop />
       <FloatingWhatsApp />
       <Chatbot />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />

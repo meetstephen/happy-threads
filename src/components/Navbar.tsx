@@ -96,9 +96,10 @@ export default function Navbar({ onOpenLookbook }: Props) {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
-            className="grid h-10 w-10 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 md:hidden dark:border-cream-100/20"
+            className="flex items-center gap-1.5 rounded-full border border-ink-800/15 bg-bronze-500/10 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-ink-800/80 transition-colors hover:border-bronze-500 hover:text-bronze-500 md:hidden dark:border-cream-100/20 dark:bg-bronze-500/10 dark:text-cream-100/80"
           >
-            {open ? <X size={18} /> : <Menu size={18} />}
+            {open ? <X size={16} /> : <Menu size={16} />}
+            Menu
           </button>
         </div>
       </div>

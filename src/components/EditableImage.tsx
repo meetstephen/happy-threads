@@ -111,7 +111,7 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
             fileRef.current?.click();
           }}
           disabled={uploading}
-          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-cream-100/95 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-ink-800 shadow-soft backdrop-blur-md transition-colors hover:bg-bronze-400 disabled:opacity-50 active:scale-95"
+          className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-cream-100/95 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-ink-800 shadow-soft backdrop-blur-md transition-colors hover:bg-bronze-400 disabled:opacity-50 active:scale-95 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
           title="Replace this image"
           aria-label={`Change ${alt} image`}
         >

@@ -125,7 +125,7 @@ export default function EditableText({
           <button
             type="button"
             onClick={startEdit}
-            className="ml-1.5 inline-flex h-7 w-7 shrink-0 translate-y-[-1px] items-center justify-center rounded-full bg-bronze-500/95 text-cream-100 align-middle shadow-soft ring-1 ring-bronze-500/20 transition-all hover:bg-bronze-600 active:scale-90"
+            className="ml-1.5 inline-flex h-10 w-10 shrink-0 translate-y-[-1px] items-center justify-center rounded-full bg-bronze-500/95 text-cream-100 align-middle shadow-soft ring-1 ring-bronze-500/20 transition-all hover:bg-bronze-600 active:scale-90 sm:h-7 sm:w-7"
             title="Edit this text"
             aria-label={`Edit ${contentKey}`}
           >

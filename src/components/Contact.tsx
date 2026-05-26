@@ -108,10 +108,10 @@ function ContactRow({
         <Icon size={16} />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[10px] uppercase tracking-[0.3em] text-cream-100/60 dark:text-ink-900/60">
+        <div className="text-[10px] uppercase tracking-[0.15em] text-cream-100/60 sm:tracking-[0.3em] dark:text-ink-900/60">
           {label}
         </div>
-        <div className="break-words font-medium">{value}</div>
+        <div className="text-sm break-words font-medium sm:text-base">{value}</div>
       </div>
     </>
   );

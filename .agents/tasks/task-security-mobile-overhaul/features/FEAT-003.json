@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Mobile UX overhaul: prominent mobile menu, fixed bottom navigation bar, text overflow fixes, scroll-to-top button, touch-friendly admin controls",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create `src/components/MobileBottomNav.tsx`: A fixed bottom navigation bar visible only on mobile (hidden on md: and above). Shows 5 icons/labels in a row: Collection (Grid icon, scrolls to #collections), Lookbook (BookOpen icon, triggers onOpenLookbook prop), AI Stylist (Sparkles icon, scrolls to #style-quiz), Contact (Phone icon, scrolls to #contact), More (Menu icon, opens a slide-up panel with remaining links: About, Services, FAQ, and admin link if signed in). Style: fixed bottom-0 inset-x-0, bg-cream-100/95 backdrop-blur, border-t, dark mode support, safe-area-inset-bottom padding. Each item is a button with an icon (20px) and tiny label (9px uppercase). Active state in bronze.",
     "In `src/App.tsx`: Import and render MobileBottomNav at the bottom of the component tree (after Footer, before FloatingWhatsApp). Pass onOpenLookbook prop. Adjust FloatingWhatsApp and Chatbot launcher positioning: add bottom padding (pb-16 or bottom-20) on mobile so they don't overlap with the new bottom nav.",

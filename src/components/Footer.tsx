@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="container-luxe flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
         <Logo size={36} withWordmark />
 
-        <p className="text-xs text-ink-800/55 dark:text-cream-100/55">
+        <p className="break-words text-xs text-ink-800/55 dark:text-cream-100/55">
           © {year} Happiness Fashion World · Abakaliki, Nigeria. Stitched with love.
         </p>
 
@@ -18,7 +18,7 @@ export default function Footer() {
             href={buildWhatsAppUrl(generalEnquiryMessage())}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs uppercase tracking-[0.22em] text-ink-800/70 transition-colors hover:text-bronze-500 dark:text-cream-100/70"
+            className="text-[10px] uppercase tracking-[0.22em] text-ink-800/70 transition-colors hover:text-bronze-500 sm:text-xs dark:text-cream-100/70"
           >
             {WHATSAPP_DISPLAY}
           </a>
