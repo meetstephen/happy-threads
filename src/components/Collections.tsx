@@ -5,6 +5,7 @@ import DesignCard from './DesignCard';
 import { categories, type Design, type DesignCategory } from '../data/designs';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCategoryLabel } from '../utils/categoryLabel';
+import { useCustomDesigns } from '../context/CustomDesignsContext';
 
 interface Props {
   designs: Design[];
@@ -18,6 +19,7 @@ type Filter = 'All' | 'New Arrivals' | DesignCategory | 'Favorites';
 export default function Collections({ designs, highlightIds, onOpen, onOpenLookbook }: Props) {
   const [filter, setFilter] = useState<Filter>('All');
   const { favorites } = useFavorites();
+  const { loading } = useCustomDesigns();
   const labelFor = useCategoryLabel();
 
   const newCount = useMemo(
@@ -100,6 +102,21 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
         </div>
 
         {/* grid */}
+        {loading && (
+          <motion.div layout className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={`skel-${i}`} className="animate-pulse rounded-2xl border border-ink-800/10 bg-cream-50 overflow-hidden dark:border-cream-100/10 dark:bg-ink-800">
+                <div className="aspect-[4/5] bg-ink-800/10 dark:bg-cream-100/10" />
+                <div className="p-4 space-y-3">
+                  <div className="h-4 w-3/4 rounded bg-ink-800/10 dark:bg-cream-100/10" />
+                  <div className="h-3 w-1/2 rounded bg-ink-800/10 dark:bg-cream-100/10" />
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        )}
+
+        {!loading && (
         <motion.div layout className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((d) => (
             <DesignCard
@@ -111,8 +128,9 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
             />
           ))}
         </motion.div>
+        )}
 
-        {visible.length === 0 && (
+        {!loading && visible.length === 0 && (
           <div className="mt-16 rounded-2xl border border-dashed border-ink-800/20 p-12 text-center text-ink-800/60 dark:border-cream-100/20 dark:text-cream-100/60">
             {filter === 'Favorites'
               ? 'No favorites yet — tap the heart on any design to save it for later.'

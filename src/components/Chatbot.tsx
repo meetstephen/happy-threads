@@ -31,6 +31,25 @@ export default function Chatbot() {
     [customDesigns]
   );
 
+  // Restore chat state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('joy-gemini-history');
+      if (saved) geminiHistory.current = JSON.parse(saved);
+      const savedMsgs = sessionStorage.getItem('joy-messages');
+      if (savedMsgs) setMessages(JSON.parse(savedMsgs));
+    } catch { /* ignore corrupt data */ }
+  }, []);
+
+  // Persist messages to sessionStorage whenever they change
+  useEffect(() => {
+    if (messages.length > initialMessages.length) {
+      try {
+        sessionStorage.setItem('joy-messages', JSON.stringify(messages));
+      } catch { /* ignore */ }
+    }
+  }, [messages]);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -59,6 +78,7 @@ export default function Chatbot() {
           allDesigns
         );
         geminiHistory.current = updatedHistory;
+        try { sessionStorage.setItem('joy-gemini-history', JSON.stringify(geminiHistory.current)); } catch { /* ignore */ }
 
         // Check if Gemini mentioned a design by reference ID — show the card
         const mentionedDesign = allDesigns.find(

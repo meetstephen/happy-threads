@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "UX improvements: Error Boundary, StyleQuiz fix to include custom designs, loading skeletons on Collections, chat history persistence in sessionStorage, WhatsApp URL encoding fix, enhanced Joy chatbot personality",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create `src/components/ErrorBoundary.tsx`: A React class component that catches render errors. Shows a friendly fallback UI with the brand styling (centered card, bronze accent, message like 'Something went wrong', a 'Refresh Page' button that calls window.location.reload()). Export it as default.",
     "In `src/App.tsx`: Import ErrorBoundary and wrap the entire returned JSX (the root div) with <ErrorBoundary>. This catches any unhandled render errors across the app.",

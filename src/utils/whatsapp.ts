@@ -12,8 +12,8 @@ export function orderMessage(designName: string, designId: string): string {
 
 I just discovered your portfolio and I love this piece:
 
-✨ Design: ${designName}
-🔖 Reference: ${designId}
+✨ Design: ${designName.trim()}
+🔖 Reference: ${designId.trim()}
 
 Could you share availability, pricing, and how we can proceed with my measurements? Thank you!`;
 }
@@ -27,7 +27,7 @@ I came across your beautiful collection and I'd love to ask a few questions abou
 export function styleConsultMessage(stylePref: string): string {
   return `Hello Happiness Fashion World! 👋
 
-I just took your AI Style Finder quiz and my recommended style is: ${stylePref}.
+I just took your AI Style Finder quiz and my recommended style is: ${stylePref.trim()}.
 
 I'd love to book a consultation. When are you available?`;
 }
