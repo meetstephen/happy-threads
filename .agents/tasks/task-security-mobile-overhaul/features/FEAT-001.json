@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Security hardening: Gemini API key proxy via Netlify Edge Function, remove hardcoded admin passcode, move admin email to env var",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create directory `netlify/edge-functions/` and file `netlify/edge-functions/gemini-proxy.ts` - a Deno-based Netlify Edge Function that: reads GEMINI_API_KEY from Deno.env.get(), accepts POST to /api/gemini with the chat payload body, forwards it to https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=KEY, returns the Gemini response. Include CORS headers for same-origin and proper error handling.",
     "Update `netlify.toml`: add [[edge_functions]] block mapping path='/api/gemini' to function='gemini-proxy'. Also update the Content-Security-Policy header connect-src to remove generativelanguage.googleapis.com (since calls now go through /api/gemini on same origin).",
@@ -31,5 +31,5 @@
     "grep 'chukwufaithhappiness1' src/utils/constants.ts should return nothing"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All changes compile and build successfully. Removed VITE_GEMINI_API_KEY from vite-env.d.ts. Also updated the SUPABASE_SETUP.md reference to happy2026 to use env var instead. Edge function uses Deno runtime and reads GEMINI_API_KEY from Deno.env.get(). The chatbot always reports isGeminiEnabled=true; if the server key is missing, the proxy returns 503 which triggers fallback."
 }
