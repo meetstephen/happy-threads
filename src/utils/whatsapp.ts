@@ -31,3 +31,15 @@ I just took your AI Style Finder quiz and my recommended style is: ${stylePref}.
 
 I'd love to book a consultation. When are you available?`;
 }
+
+/**
+ * Opens a WhatsApp URL in a way that works across all mobile browsers
+ * (Chrome, Firefox, Safari, Opera, Samsung Browser).
+ */
+export function openWhatsApp(message: string): void {
+  const url = buildWhatsAppUrl(message);
+  const opened = window.open(url, '_blank');
+  if (!opened) {
+    window.location.href = url;
+  }
+}

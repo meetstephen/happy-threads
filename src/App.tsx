@@ -18,6 +18,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Lightbox from './components/Lightbox';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import ScrollToTop from './components/ScrollToTop';
 import FloatingIcons from './components/FloatingIcons';
 import Chatbot from './components/Chatbot';
 import SizeGuide from './components/SizeGuide';
@@ -277,6 +278,7 @@ export default function App() {
       </main>
       <Footer />
       <FloatingWhatsApp />
+      <ScrollToTop />
       <Chatbot />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />
       <SizeGuide

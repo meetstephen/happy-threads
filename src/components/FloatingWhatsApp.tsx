@@ -14,18 +14,24 @@ export default function FloatingWhatsApp() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Visible only after the user has scrolled in (so it doesn't crowd the hero)
-  // AND when they are NOT near the footer (so it never blocks footer links).
   const visible = scrolled && !nearBottom;
 
+  const handleClick = () => {
+    const url = buildWhatsAppUrl(generalEnquiryMessage());
+    // Try window.open first (works in Chrome, Firefox, Safari)
+    const opened = window.open(url, '_blank');
+    // Fallback for browsers where window.open fails (Opera, Samsung Browser)
+    if (!opened) {
+      window.location.href = url;
+    }
+  };
+
   return (
-    <a
-      href={buildWhatsAppUrl(generalEnquiryMessage())}
-      target="_blank"
-      rel="noopener noreferrer"
+    <button
+      type="button"
+      onClick={handleClick}
       aria-label="Chat with Happiness on WhatsApp"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
-      className={`fixed right-4 z-30 flex items-center gap-2 rounded-full bg-[#25D366] px-3.5 py-2.5 text-xs font-medium text-white shadow-luxe transition-all duration-500 hover:bg-[#1da851] sm:right-6 sm:gap-3 sm:px-5 sm:py-3.5 sm:text-sm ${
+      className={`fixed right-4 bottom-20 md:bottom-6 z-30 flex items-center gap-2 rounded-full bg-[#25D366] px-3.5 py-2.5 text-xs font-medium text-white shadow-luxe transition-all duration-500 hover:bg-[#1da851] sm:right-6 sm:gap-3 sm:px-5 sm:py-3.5 sm:text-sm ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
       }`}
     >
@@ -35,6 +41,6 @@ export default function FloatingWhatsApp() {
       </span>
       <MessageCircle size={16} className="sm:h-[18px] sm:w-[18px]" />
       <span className="hidden md:inline">Chat with Happiness</span>
-    </a>
+    </button>
   );
 }
