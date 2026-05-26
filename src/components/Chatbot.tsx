@@ -179,7 +179,7 @@ export default function Chatbot() {
           setUnread(false);
         }}
         aria-label="Chat with Joy, Happiness Fashion World's AI stylist"
-        className={`fixed bottom-5 left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-all duration-500 hover:bg-bronze-500 sm:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
+        className={`fixed bottom-20 left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-all duration-500 hover:bg-bronze-500 md:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
           launcherVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
         }`}
       >
@@ -201,7 +201,7 @@ export default function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.96 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-20 left-4 right-4 z-40 flex h-[min(640px,78vh)] max-w-md flex-col overflow-hidden rounded-3xl border border-ink-800/10 bg-cream-100 shadow-luxe sm:bottom-24 sm:left-6 sm:right-auto sm:w-[400px] dark:border-cream-100/10 dark:bg-ink-800"
+            className="fixed bottom-[5.5rem] left-4 right-4 z-40 flex h-[min(640px,78vh)] max-w-md flex-col overflow-hidden rounded-3xl border border-ink-800/10 bg-cream-100 shadow-luxe md:bottom-24 sm:left-6 sm:right-auto sm:w-[400px] dark:border-cream-100/10 dark:bg-ink-800"
           >
             {/* Header */}
             <header className="flex items-center justify-between gap-3 border-b border-ink-800/10 bg-ink-800 p-4 text-cream-100 dark:border-cream-100/10 dark:bg-ink-900">
