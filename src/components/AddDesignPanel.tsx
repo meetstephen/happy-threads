@@ -40,7 +40,7 @@ interface Props {
   editingDesign?: Design | null;
 }
 
-const LOCAL_PASSCODE = 'happy2026';
+const LOCAL_PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined) || '';
 const ATTEMPT_STORAGE_KEY = 'hfw-admin-attempts';
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 300000; // 5 minutes in ms
@@ -202,6 +202,11 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
       const mins = Math.floor(remaining / 60);
       const secs = remaining % 60;
       setError(`Too many failed attempts. Try again in ${mins}:${secs.toString().padStart(2, '0')}.`);
+      return;
+    }
+
+    if (!LOCAL_PASSCODE) {
+      setError('Admin access requires Supabase configuration or the VITE_ADMIN_PASSCODE environment variable to be set.');
       return;
     }
 

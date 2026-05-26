@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Security hardening: Gemini API key proxy via Netlify Edge Function, remove hardcoded admin passcode, move admin email to env var",
+  "status": "in_progress",
+  "steps": [
+    "Create directory `netlify/edge-functions/` and file `netlify/edge-functions/gemini-proxy.ts` - a Deno-based Netlify Edge Function that: reads GEMINI_API_KEY from Deno.env.get(), accepts POST to /api/gemini with the chat payload body, forwards it to https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=KEY, returns the Gemini response. Include CORS headers for same-origin and proper error handling.",
+    "Update `netlify.toml`: add [[edge_functions]] block mapping path='/api/gemini' to function='gemini-proxy'. Also update the Content-Security-Policy header connect-src to remove generativelanguage.googleapis.com (since calls now go through /api/gemini on same origin).",
+    "Refactor `src/services/geminiChat.ts`: Remove the API_KEY constant and API_URL that exposes the key. Change to call `/api/gemini` (relative URL). The isGeminiEnabled flag should be set to true always (the proxy handles whether the key is configured server-side). Adjust error handling so if the proxy returns 503 (key not configured), it falls back gracefully. Remove all references to VITE_GEMINI_API_KEY.",
+    "In `src/components/AddDesignPanel.tsx`: Change `const LOCAL_PASSCODE = 'happy2026';` to `const LOCAL_PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined) || '';`. Update the tryLocalUnlock function so that if LOCAL_PASSCODE is empty string, show a message saying admin access requires Supabase configuration or VITE_ADMIN_PASSCODE env var. The passcode check should still work if VITE_ADMIN_PASSCODE is set.",
+    "In `src/utils/constants.ts`: Change the hardcoded email to `export const FAITH_EMAIL = (import.meta.env.VITE_CONTACT_EMAIL as string | undefined) || 'hello@happinessfashionworld.com';` - using a generic business email as fallback instead of the personal Gmail.",
+    "Update `SUPABASE_SETUP.md`: In the SQL policy examples, change `REPLACE_WITH_HAPPINESS_EMAIL@example.com` instructions to note that the admin email should be `chukwufaithhappiness1@gmail.com` (Faith's actual email). Also update Step 6 env vars table to include GEMINI_API_KEY (without VITE_ prefix) and VITE_ADMIN_PASSCODE (optional local fallback). Mention VITE_CONTACT_EMAIL as optional.",
+    "Update `README.md` environment variables table: add GEMINI_API_KEY (server-side, for Netlify Edge Function), VITE_ADMIN_PASSCODE (optional), VITE_CONTACT_EMAIL (optional). Remove any mention of VITE_GEMINI_API_KEY."
+  ],
+  "acceptance_criteria": [
+    "No hardcoded API key (VITE_GEMINI_API_KEY) appears anywhere in client source",
+    "No hardcoded passcode 'happy2026' appears anywhere in source",
+    "No personal email 'chukwufaithhappiness1@gmail.com' appears in constants.ts (only in SUPABASE_SETUP.md as instructed)",
+    "netlify/edge-functions/gemini-proxy.ts exists and reads key from Deno.env",
+    "netlify.toml has the edge_functions mapping for /api/gemini",
+    "geminiChat.ts calls /api/gemini instead of the Google API directly",
+    "AddDesignPanel reads passcode from env var with empty string fallback",
+    "TypeScript compiles without errors: npx tsc -b --noEmit",
+    "Vite build succeeds: npx vite build"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build",
+    "grep -r 'VITE_GEMINI_API_KEY' src/ should return nothing",
+    "grep -r 'happy2026' src/ should return nothing",
+    "grep 'chukwufaithhappiness1' src/utils/constants.ts should return nothing"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -4,8 +4,8 @@ export const BRAND_STATS = {
 } as const;
 
 /**
- * Faith Chukwu's primary inbox - the real, monitored email used for
- * newsletter signups, customer enquiries, and any "email Happiness directly"
- * fallback flows on the site.
+ * Primary contact email for the business - used for newsletter signups,
+ * customer enquiries, and "email Happiness directly" fallback flows.
+ * Defaults to a generic business email; override with VITE_CONTACT_EMAIL.
  */
-export const FAITH_EMAIL = 'chukwufaithhappiness1@gmail.com';
+export const FAITH_EMAIL = (import.meta.env.VITE_CONTACT_EMAIL as string | undefined) || 'hello@happinessfashionworld.com';

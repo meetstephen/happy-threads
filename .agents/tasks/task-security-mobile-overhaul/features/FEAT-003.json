@@ -1,0 +1,39 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Mobile UX overhaul: prominent mobile menu, fixed bottom navigation bar, text overflow fixes, scroll-to-top button, touch-friendly admin controls",
+  "status": "pending",
+  "steps": [
+    "Create `src/components/MobileBottomNav.tsx`: A fixed bottom navigation bar visible only on mobile (hidden on md: and above). Shows 5 icons/labels in a row: Collection (Grid icon, scrolls to #collections), Lookbook (BookOpen icon, triggers onOpenLookbook prop), AI Stylist (Sparkles icon, scrolls to #style-quiz), Contact (Phone icon, scrolls to #contact), More (Menu icon, opens a slide-up panel with remaining links: About, Services, FAQ, and admin link if signed in). Style: fixed bottom-0 inset-x-0, bg-cream-100/95 backdrop-blur, border-t, dark mode support, safe-area-inset-bottom padding. Each item is a button with an icon (20px) and tiny label (9px uppercase). Active state in bronze.",
+    "In `src/App.tsx`: Import and render MobileBottomNav at the bottom of the component tree (after Footer, before FloatingWhatsApp). Pass onOpenLookbook prop. Adjust FloatingWhatsApp and Chatbot launcher positioning: add bottom padding (pb-16 or bottom-20) on mobile so they don't overlap with the new bottom nav.",
+    "In `src/components/Navbar.tsx`: Make the hamburger button more prominent on mobile - increase size to h-11 w-11, add a visible background (bg-bronze-500/10), and add text label 'Menu' next to the icon on small screens. Also ensure the mobile menu dropdown has enough z-index to not conflict with bottom nav.",
+    "In `src/components/FloatingWhatsApp.tsx`: Adjust mobile positioning to account for bottom nav - change bottom-5 to bottom-20 on mobile (so it sits above the new bottom nav bar).",
+    "In `src/components/Chatbot.tsx`: Adjust the launcher button positioning - change bottom-5/left-4 to bottom-20/left-4 on mobile so it clears the bottom nav. Also adjust the chat panel bottom position similarly.",
+    "Create `src/components/ScrollToTop.tsx`: A floating button that appears after scrolling down 400px. Uses ArrowUp icon from lucide-react. Fixed position, bottom-20 right-4 on mobile (above bottom nav), bottom-6 right-6 on desktop. Smooth scroll to top on click. Animated entrance/exit with opacity and translate.",
+    "In `src/App.tsx`: Import and render ScrollToTop component.",
+    "Fix text overflow in `src/components/Contact.tsx`: The ContactRow component's value text should have `break-all` or `overflow-wrap: anywhere` class to prevent email addresses from overflowing on narrow screens. Add `text-sm` to the value text on mobile. The tracking-[0.3em] labels should be reduced on mobile: use `tracking-[0.15em] sm:tracking-[0.3em]`.",
+    "Fix text overflow in `src/components/Footer.tsx`: Ensure the footer text wraps properly on 320px screens. Add `break-words` to the copyright text. Make the WhatsApp display number use `text-[10px] sm:text-xs` to fit narrow screens.",
+    "Fix text overflow in `src/components/Newsletter.tsx`: The FAITH_EMAIL display at the bottom should have `break-all` class. Ensure the form inputs don't overflow on very narrow screens.",
+    "Touch-friendly admin controls: In `src/components/EditableImage.tsx` make the 'Change' button larger on mobile (min-h-[44px] min-w-[44px]). In `src/components/EditableText.tsx` make the pencil icon button at least 44x44px tap target on mobile. Use classes like `h-10 w-10 sm:h-8 sm:w-8`.",
+    "Ensure About.tsx still uses pexels(3852974) for the designer image (a Black woman seamstress at sewing machine with measuring tape) - do NOT change this."
+  ],
+  "acceptance_criteria": [
+    "MobileBottomNav.tsx exists with 5-item fixed bottom navigation",
+    "Bottom nav is hidden on md: screens and above (desktop)",
+    "FloatingWhatsApp and Chatbot launcher are positioned above the bottom nav on mobile",
+    "ScrollToTop button appears after scrolling and works correctly",
+    "Contact section email/address text does not overflow on 320px mobile",
+    "Footer text does not overflow on narrow screens",
+    "Admin edit buttons (EditableImage, EditableText) have 44px minimum touch targets on mobile",
+    "Navbar hamburger is more visible with background and larger size",
+    "About.tsx designer image remains pexels(3852974)",
+    "TypeScript compiles without errors",
+    "Vite build succeeds"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

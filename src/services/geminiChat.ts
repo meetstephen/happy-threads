@@ -1,18 +1,17 @@
 /**
- * Gemini AI Chat Service — powers "Joy", the intelligent fashion assistant.
+ * Gemini AI Chat Service -- powers "Joy", the intelligent fashion assistant.
  *
  * Uses Google's gemini-2.0-flash model (free tier: 15 RPM / 1M tokens/day).
- * When VITE_GEMINI_API_KEY is not set, the chatbot falls back to the
- * pattern-matching engine in utils/chatbot.ts.
+ * The API key lives server-side in the Netlify Edge Function at /api/gemini.
+ * If the key is not configured server-side, the proxy returns 503 and the
+ * chatbot falls back to the pattern-matching engine in utils/chatbot.ts.
  */
 
 import type { Design } from '../data/designs';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL = 'gemini-2.0-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=`;
+const API_URL = '/api/gemini';
 
-export const isGeminiEnabled = Boolean(API_KEY?.trim());
+export const isGeminiEnabled = true;
 
 /** Conversation turn for the Gemini API. */
 interface GeminiMessage {
@@ -77,8 +76,6 @@ export async function chatWithGemini(
   history: GeminiMessage[],
   designs: Design[]
 ): Promise<{ reply: string; updatedHistory: GeminiMessage[] }> {
-  if (!API_KEY) throw new Error('Gemini API key not configured.');
-
   const systemInstruction = buildSystemInstruction(designs);
 
   const newHistory: GeminiMessage[] = [
@@ -104,11 +101,15 @@ export async function chatWithGemini(
     ],
   };
 
-  const response = await fetch(`${API_URL}${API_KEY}`, {
+  const response = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
+
+  if (response.status === 503) {
+    throw new Error('Gemini API key is not configured on the server.');
+  }
 
   if (!response.ok) {
     const errText = await response.text().catch(() => '');

@@ -191,7 +191,8 @@ create policy "only admin can delete subscribers"
 
 **IMPORTANT:** Before clicking Run, replace every instance of
 `REPLACE_WITH_HAPPINESS_EMAIL@example.com` with Happiness's real email
-(the one she will sign in with). The same email goes into Netlify in Step 6.
+(the one she will sign in with). For this project, that email is
+`chukwufaithhappiness1@gmail.com`. The same email goes into Netlify in Step 6.
 
 You should see "Success. No rows returned." after running.
 
@@ -272,6 +273,9 @@ Again -- replace the email with Happiness's real email before running.
 | `VITE_SUPABASE_URL` | (paste your Project URL) |
 | `VITE_SUPABASE_ANON_KEY` | (paste your anon public key) |
 | `VITE_ADMIN_EMAIL` | (Happiness's email -- must match the email in your SQL policies above) |
+| `GEMINI_API_KEY` | (your Google AI Studio API key -- powers the Joy chatbot) |
+| `VITE_ADMIN_PASSCODE` | (optional -- fallback passcode if Supabase is not configured) |
+| `VITE_CONTACT_EMAIL` | (optional -- public contact email shown on site, defaults to hello@happinessfashionworld.com) |
 
 4. Click **Save**.
 5. Go to **Deploys -> Trigger deploy -> Deploy site** to rebuild with the new env vars.
@@ -299,7 +303,7 @@ In ~90 seconds, your site is connected to the cloud with admin auth.
 
 > **Switching from passcode mode to cloud admin:**
 > Once Supabase is configured and the env vars are deployed, the site
-> automatically switches from the local passcode (`happy2026`) to email/password
+> automatically switches from the local passcode (set via `VITE_ADMIN_PASSCODE`) to email/password
 > sign-in. The passcode is no longer used. Only the email set in
 > `VITE_ADMIN_EMAIL` can sign in as admin.
 

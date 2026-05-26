@@ -78,10 +78,12 @@ The site supports two authentication modes depending on setup:
 
 If Supabase is NOT configured, you see a simple passcode screen:
 
-- **Default passcode:** `happy2026`
-- Enter it and tap "Unlock"
-- To change the passcode: edit the `LOCAL_PASSCODE` value in
-  `src/components/AddDesignPanel.tsx` (ask your developer)
+- The passcode is read from the `VITE_ADMIN_PASSCODE` environment variable
+- If `VITE_ADMIN_PASSCODE` is not set, the passcode screen will show a message
+  directing you to configure Supabase or set the env var
+- Enter the passcode and tap "Unlock"
+- To change the passcode: update the `VITE_ADMIN_PASSCODE` variable in your
+  Netlify environment settings and redeploy
 
 #### Mode B: Cloud email/password (with Supabase)
 
@@ -317,9 +319,13 @@ SUPABASE_SETUP.md                cloud-sync guide
 | `VITE_SUPABASE_URL` | optional | Your Supabase project URL -- enables cloud sync |
 | `VITE_SUPABASE_ANON_KEY` | optional | Your Supabase anon public key |
 | `VITE_ADMIN_EMAIL` | optional | Admin email address -- gates who can sign in to manage the site |
+| `GEMINI_API_KEY` | optional | Google AI Studio API key (server-side, powers the Joy chatbot via Netlify Edge Function) |
+| `VITE_ADMIN_PASSCODE` | optional | Fallback admin passcode when Supabase is not configured |
+| `VITE_CONTACT_EMAIL` | optional | Public contact email shown on site (defaults to hello@happinessfashionworld.com) |
 
-Without them the site falls back to localStorage-only design storage and local
-passcode authentication. See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for
+Without the Supabase vars the site falls back to localStorage-only design storage and
+the VITE_ADMIN_PASSCODE for authentication. Without GEMINI_API_KEY the chatbot
+falls back to the built-in pattern-matching engine. See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for
 full setup instructions.
 
 ---

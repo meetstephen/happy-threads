@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "UX improvements: Error Boundary, StyleQuiz fix to include custom designs, loading skeletons on Collections, chat history persistence in sessionStorage, WhatsApp URL encoding fix, enhanced Joy chatbot personality",
+  "status": "pending",
+  "steps": [
+    "Create `src/components/ErrorBoundary.tsx`: A React class component that catches render errors. Shows a friendly fallback UI with the brand styling (centered card, bronze accent, message like 'Something went wrong', a 'Refresh Page' button that calls window.location.reload()). Export it as default.",
+    "In `src/App.tsx`: Import ErrorBoundary and wrap the entire returned JSX (the root div) with <ErrorBoundary>. This catches any unhandled render errors across the app.",
+    "In `src/components/StyleQuiz.tsx`: The `recommend()` function currently only scores the imported static `designs`. Fix it to accept a `designs` parameter. The component should use allDesigns (custom + static). Import `useCustomDesigns` from context, merge with static designs using useMemo, and pass the merged array to recommend(). This ensures custom cloud designs are also scored by the quiz.",
+    "In `src/components/Collections.tsx`: Import `useCustomDesigns` to get the `loading` state. When loading is true, render 6 skeleton placeholder cards before the real grid. Each skeleton: a div with `animate-pulse` class, a gray rectangle for the image area (aspect-[4/5]), and two smaller gray bars for text. Show these instead of (or before) the real cards when loading.",
+    "In `src/components/Chatbot.tsx`: Persist chat state to sessionStorage. On mount, read geminiHistory from sessionStorage key 'joy-gemini-history' and messages from 'joy-messages'. After each message exchange (both user and bot messages added), save both to sessionStorage. This way chat survives page reloads within the same tab session.",
+    "In `src/utils/whatsapp.ts`: The `orderMessage()` function embeds designName and designId directly into the message string, and then `buildWhatsAppUrl()` encodes the whole message. However, verify that designName with special chars (emojis, &, #, etc.) is safe. The current pattern is already correct (buildWhatsAppUrl does encodeURIComponent on the full message). But add a safety check: in `orderMessage` and `styleConsultMessage`, sanitize the inputs by trimming them. Also ensure any other place that builds WhatsApp URLs (like in Chatbot or Lightbox) uses buildWhatsAppUrl properly.",
+    "Enhance Joy chatbot personality in `src/services/geminiChat.ts` buildSystemInstruction(): Add to the PERSONALITY section: 'Always complete your thoughts fully - never cut off mid-sentence. If recommending multiple options, present them clearly. Use warm Nigerian-friendly language occasionally (like ''This would look lovely on you, sis!''). When a customer seems undecided, offer to narrow it down with gentle questions about their budget, event date, or color preference. End messages with a helpful next step or question to keep the conversation flowing.'"
+  ],
+  "acceptance_criteria": [
+    "ErrorBoundary.tsx exists and is wrapped around the app content in App.tsx",
+    "StyleQuiz recommend() function scores both static and custom designs",
+    "Collections shows loading skeletons (animate-pulse divs) while cloud designs are loading",
+    "Chatbot reads/writes gemini history and messages to/from sessionStorage",
+    "WhatsApp URL building properly encodes all dynamic content",
+    "Joy chatbot system prompt includes enhanced personality traits",
+    "TypeScript compiles without errors",
+    "Vite build succeeds"
+  ],
+  "verification": [
+    "npx tsc -b --noEmit",
+    "npx vite build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

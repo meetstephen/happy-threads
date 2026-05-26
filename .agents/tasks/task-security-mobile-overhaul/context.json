@@ -1,0 +1,33 @@
+{
+  "project_type": "Vite + React 18 + TypeScript SPA with Tailwind CSS, Framer Motion, Supabase (optional cloud sync), deployed to Netlify",
+  "language": "TypeScript / TSX",
+  "build_system": "Vite 5 with tsc -b for type checking; npm scripts: dev, build, preview, lint",
+  "test_framework": "No test framework configured - verification is via tsc and vite build",
+  "build_command": "npx tsc -b --noEmit && npx vite build",
+  "test_command": "npx tsc -b --noEmit",
+  "verification_instructions": "Run `npx tsc -b --noEmit` to check types, then `npx vite build` to confirm production build succeeds",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "npm install (already done, node_modules present)",
+  "environment_constraints": "OPEN_INTERNET - full network access. Netlify Edge Functions use Deno runtime (server-side). No test suite exists.",
+  "contribution_requirements": "Branch fix/security-mobile-overhaul from main. Run tsc and vite build after changes. Keep existing patterns (Tailwind classes, Framer Motion, Lucide icons).",
+  "key_patterns": "Components in src/components/. Context providers in src/context/. Services in src/services/. Utils in src/utils/. Supabase client in src/lib/supabase.ts. Auth hook in src/lib/auth.ts. Static designs in src/data/designs.ts. Custom designs loaded via CustomDesignsContext. Admin panel lazy-loaded. The ABOUT_IMG uses pexels(3852974) - a Black woman seamstress at sewing machine.",
+  "relevant_files": [
+    "src/services/geminiChat.ts",
+    "src/components/AddDesignPanel.tsx",
+    "src/utils/constants.ts",
+    "src/components/Navbar.tsx",
+    "src/components/Chatbot.tsx",
+    "src/components/StyleQuiz.tsx",
+    "src/components/Collections.tsx",
+    "src/components/Contact.tsx",
+    "src/components/Footer.tsx",
+    "src/components/Newsletter.tsx",
+    "src/components/About.tsx",
+    "src/utils/whatsapp.ts",
+    "src/App.tsx",
+    "netlify.toml",
+    "SUPABASE_SETUP.md",
+    "src/lib/supabase.ts"
+  ],
+  "directory_structure": "src/ contains App.tsx (root), components/ (all UI), context/ (React contexts), data/ (static catalog), lib/ (supabase, auth), services/ (designsService, geminiChat, analytics, newsletterService), utils/ (constants, whatsapp, images, scroll, chatbot, categoryLabel, imageResize, sanitize). public/ has _redirects, favicon, manifest. netlify.toml has build config + security headers."
+}
