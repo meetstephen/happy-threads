@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, MessageCircle, RefreshCw, Sparkles } from 'lucide-react';
-import { designs, type ColorMood, type Occasion, type Vibe } from '../data/designs';
+import { designs as staticDesigns, type ColorMood, type Design, type Occasion, type Vibe } from '../data/designs';
 import { buildWhatsAppUrl, styleConsultMessage } from '../utils/whatsapp';
+import { useCustomDesigns } from '../context/CustomDesignsContext';
 
 interface Props {
   onResult: (designIds: string[] | null) => void;
@@ -54,7 +55,7 @@ const questions = [
   },
 ];
 
-function recommend(a: Required<Answers>): { ids: string[]; styleLabel: string } {
+function recommend(a: Required<Answers>, designs: Design[]): { ids: string[]; styleLabel: string } {
   // simple weighted scoring — explainable, runs entirely on-device
   const scored = designs.map((d) => {
     let score = 0;
@@ -82,6 +83,8 @@ export default function StyleQuiz({ onResult }: Props) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [result, setResult] = useState<{ ids: string[]; styleLabel: string } | null>(null);
+  const { customDesigns } = useCustomDesigns();
+  const allDesigns = [...customDesigns, ...staticDesigns];
 
   const total = questions.length;
   const isDone = result !== null;
@@ -93,7 +96,7 @@ export default function StyleQuiz({ onResult }: Props) {
     if (step < total - 1) {
       setStep(step + 1);
     } else {
-      const r = recommend(next as Required<Answers>);
+      const r = recommend(next as Required<Answers>, allDesigns);
       setResult(r);
       onResult(r.ids);
       // smooth scroll to collection so they can see picks

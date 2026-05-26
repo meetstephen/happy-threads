@@ -22,6 +22,9 @@ import FloatingIcons from './components/FloatingIcons';
 import Chatbot from './components/Chatbot';
 import SizeGuide from './components/SizeGuide';
 import Lookbook from './components/Lookbook';
+import ErrorBoundary from './components/ErrorBoundary';
+import MobileBottomNav from './components/MobileBottomNav';
+import ScrollToTop from './components/ScrollToTop';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
@@ -200,7 +203,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
+    <ErrorBoundary>
+    <div className="min-h-screen pb-16 md:pb-0 bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
       <FloatingIcons />
       {/*
         Admin mode banner - visible only when Happiness is signed in.
@@ -278,6 +282,8 @@ export default function App() {
       <Footer />
       <FloatingWhatsApp />
       <Chatbot />
+      <MobileBottomNav onOpenLookbook={openLookbook} />
+      <ScrollToTop />
       <Lightbox design={lightboxDesign} onClose={() => setLightboxDesign(null)} />
       <SizeGuide
         open={sizeGuideOpen}
@@ -315,5 +321,6 @@ export default function App() {
         />
       </Suspense>
     </div>
+    </ErrorBoundary>
   );
 }
