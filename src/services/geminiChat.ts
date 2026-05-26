@@ -97,7 +97,7 @@ export async function chatWithGemini(
     generationConfig: {
       temperature: 0.7,
       topP: 0.9,
-      maxOutputTokens: 400,
+      maxOutputTokens: 1024,
     },
     safetySettings: [
       { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
