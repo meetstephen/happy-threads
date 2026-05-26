@@ -25,6 +25,8 @@ export default function Chatbot() {
 
   // Gemini conversation history (persists across messages in this session)
   const geminiHistory = useRef<GeminiMessage[]>([]);
+  // Cache 503 "not configured" result to avoid repeated failed network calls
+  const geminiDisabled = useRef(false);
 
   const allDesigns = useMemo(
     () => [...customDesigns, ...staticDesigns],
@@ -45,7 +47,9 @@ export default function Chatbot() {
   useEffect(() => {
     if (messages.length > initialMessages.length) {
       try {
-        sessionStorage.setItem('joy-messages', JSON.stringify(messages));
+        // Cap persisted messages to prevent sessionStorage overflow
+        const toSave = messages.length > 50 ? messages.slice(-50) : messages;
+        sessionStorage.setItem('joy-messages', JSON.stringify(toSave));
       } catch { /* ignore */ }
     }
   }, [messages]);
@@ -70,7 +74,7 @@ export default function Chatbot() {
     setTyping(true);
 
     try {
-      if (isGeminiEnabled) {
+      if (isGeminiEnabled && !geminiDisabled.current) {
         // Use real AI
         const { reply, updatedHistory } = await chatWithGemini(
           trimmed,
@@ -78,7 +82,12 @@ export default function Chatbot() {
           allDesigns
         );
         geminiHistory.current = updatedHistory;
-        try { sessionStorage.setItem('joy-gemini-history', JSON.stringify(geminiHistory.current)); } catch { /* ignore */ }
+        try {
+          const historyToSave = geminiHistory.current.length > 40
+            ? geminiHistory.current.slice(-40)
+            : geminiHistory.current;
+          sessionStorage.setItem('joy-gemini-history', JSON.stringify(historyToSave));
+        } catch { /* ignore */ }
 
         // Check if Gemini mentioned a design by reference ID — show the card
         const mentionedDesign = allDesigns.find(
@@ -110,6 +119,10 @@ export default function Chatbot() {
       }
     } catch (err) {
       console.warn('[Chatbot] error:', err);
+      // If Gemini is not configured server-side, disable for the rest of this session
+      if (err instanceof Error && err.message.includes('not configured')) {
+        geminiDisabled.current = true;
+      }
       // On Gemini failure, fallback to pattern matcher for this message
       const reply = generateReply(trimmed, allDesigns);
       setMessages((m) => [...m, reply]);

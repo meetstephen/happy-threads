@@ -14,6 +14,18 @@ export default async function handler(request: Request) {
     });
   }
 
+  // Origin / Referer check to prevent external abuse
+  const origin = request.headers.get('origin') || '';
+  const referer = request.headers.get('referer') || '';
+  const allowedPatterns = ['.netlify.app', 'localhost', '127.0.0.1'];
+  const isAllowed = allowedPatterns.some(p => origin.includes(p) || referer.includes(p));
+  if (!isAllowed) {
+    return new Response(JSON.stringify({ error: 'Forbidden' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const apiKey = Deno.env.get('GEMINI_API_KEY');
 
   if (!apiKey) {
@@ -25,12 +37,31 @@ export default async function handler(request: Request) {
 
   try {
     const body = await request.text();
+
+    // Body shape validation
+    let payload: unknown;
+    try {
+      payload = JSON.parse(body);
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!payload || typeof payload !== 'object' || !Array.isArray((payload as Record<string, unknown>).contents)) {
+      return new Response(JSON.stringify({ error: 'Invalid request shape' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body,
+      body: JSON.stringify(payload),
     });
 
     const responseBody = await geminiResponse.text();
