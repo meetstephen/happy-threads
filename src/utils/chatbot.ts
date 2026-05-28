@@ -22,11 +22,16 @@ export const QUICK_REPLIES = [
   'Show me something beautiful',
 ];
 
+const GREETINGS = [
+  "Welcome, darling! \u2728 I'm Joy \u2014 your personal style concierge here at Happiness Fashion World. Think of me as that friend who always knows what you should wear. Whether you're dreaming of the perfect bridal look, planning your owambe entrance, or just want something that makes you feel like the queen you are \u2014 I'm here to help. Nno, welcome! \uD83D\uDC9B What's on your mind today, love?",
+  "Ndewo! \uD83D\uDC9B Welcome to Happiness Fashion World, beautiful! I'm Joy, your style bestie. Whether na bridal gown, aso-ebi for owambe, or corporate slay you dey find \u2014 I go help you find am. No stress at all, darling! What can I do for you today?",
+  "Hey there, gorgeous! \u2728 I'm Joy and I'm so happy you stopped by Happiness Fashion World. E kaabo! Think of this as your personal fashion consultation \u2014 no appointment needed. What style dream can I help you with today? \uD83D\uDC9B",
+];
+
 const greet = (): BotMessage => ({
   id: makeId(),
   from: 'bot',
-  text:
-    "Welcome, darling! \u2728 I'm Joy \u2014 your personal style concierge here at Happiness Fashion World. Think of me as that friend who always knows what you should wear. Whether you're dreaming of the perfect bridal look, planning your owambe entrance, or just want something that makes you feel like the queen you are \u2014 I'm here to help. Nno, welcome! \uD83D\uDC9B What's on your mind today, love?",
+  text: GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
   chips: QUICK_REPLIES,
 });
 
@@ -42,6 +47,23 @@ interface Intent {
 }
 
 const intents: Intent[] = [
+  // Wahala / Problem / Issue
+  {
+    patterns: [/\b(wahala|problem|issue|trouble|stress|frustrated|complain|wrong|bad)\b/],
+    reply: () => ({
+      text: "No wahala at all, darling! \uD83D\uDC9B Whatever the issue is, we go sort am together. At Happiness Fashion World, your satisfaction is everything to us. Tell me what happened and let me see how I can help \u2014 or if you prefer, I can connect you directly with Happiness on WhatsApp. She fixes everything with grace.",
+      cta: { label: 'Chat with Happiness \uD83D\uDC8C', href: buildWhatsAppUrl('Hello Happiness! I have a concern about my order and would appreciate your help.'), external: true },
+      chips: ['How to order', 'Where are you?', 'Pricing & timeline'],
+    }),
+  },
+  // Abeg / Please / Beg
+  {
+    patterns: [/\b(abeg|please|beg|help me|assist|kindly)\b/],
+    reply: () => ({
+      text: "Of course, my darling! \uD83E\uDD79 Anything for you \u2014 abeg no worry at all. Whatever you need, I'm here to make it happen with love. Just tell me what your heart desires and consider it done. That's the Happiness Fashion World promise!",
+      chips: QUICK_REPLIES,
+    }),
+  },
   // Greeting
   {
     patterns: [/\b(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|holla|ekaro|bawo ni|kedu)\b/],
@@ -324,12 +346,12 @@ export function generateReply(input: string, designs: Design[]): BotMessage {
       return { id: makeId(), from: 'bot', ...r };
     }
   }
-  // Warm, helpful fallback
+  // Warm, helpful fallback with Nigerian pidgin
   return {
     id: makeId(),
     from: 'bot',
     text:
-      "Oh darling, I want to make sure I understand you perfectly. \uD83D\uDC9B Let me connect you with Happiness directly \u2014 she has a gift for reading exactly what a woman needs and turning it into something breathtaking. One WhatsApp message and she'll take beautiful care of you.",
+      "No worry at all, darling! \uD83D\uDC9B I want to make sure I understand you perfectly. Let me connect you with Happiness directly \u2014 she has a gift for reading exactly what a woman needs and turning it into something breathtaking. One WhatsApp message and she'll take beautiful care of you. E go be alright!",
     cta: { label: 'Chat with Happiness \uD83D\uDC8C', href: buildWhatsAppUrl(generalEnquiryMessage()), external: true },
     chips: QUICK_REPLIES,
   };

@@ -34,7 +34,8 @@ import { useFavorites } from './context/FavoritesContext';
 
 // Admin panel is only opened via the hidden /#admin URL — load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
-const AddDesignPanel = lazy(() => import('./components/AddDesignPanel'));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+import AnnouncementBar from './components/admin/AnnouncementBar';
 
 export default function App() {
   const [lightboxDesign, setLightboxDesign] = useState<Design | null>(null);
@@ -258,6 +259,7 @@ export default function App() {
         </button>
       )}
       <Navbar onOpenLookbook={openLookbook} />
+      <AnnouncementBar />
       <main>
         <Hero />
         <Marquee />
@@ -308,7 +310,7 @@ export default function App() {
         onEditDesign={openAdminEdit}
       />
       <Suspense fallback={null}>
-        <AddDesignPanel
+        <AdminDashboard
           open={adminOpen}
           editingDesign={editingDesign}
           onClose={() => {
