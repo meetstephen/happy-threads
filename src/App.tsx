@@ -259,8 +259,8 @@ export default function App() {
         </button>
       )}
       <Navbar onOpenLookbook={openLookbook} />
-      <AnnouncementBar />
       <main>
+        <AnnouncementBar />
         <Hero />
         <Marquee />
         <Collections

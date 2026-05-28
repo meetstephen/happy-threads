@@ -47,23 +47,6 @@ interface Intent {
 }
 
 const intents: Intent[] = [
-  // Wahala / Problem / Issue
-  {
-    patterns: [/\b(wahala|problem|issue|trouble|stress|frustrated|complain|wrong|bad)\b/],
-    reply: () => ({
-      text: "No wahala at all, darling! \uD83D\uDC9B Whatever the issue is, we go sort am together. At Happiness Fashion World, your satisfaction is everything to us. Tell me what happened and let me see how I can help \u2014 or if you prefer, I can connect you directly with Happiness on WhatsApp. She fixes everything with grace.",
-      cta: { label: 'Chat with Happiness \uD83D\uDC8C', href: buildWhatsAppUrl('Hello Happiness! I have a concern about my order and would appreciate your help.'), external: true },
-      chips: ['How to order', 'Where are you?', 'Pricing & timeline'],
-    }),
-  },
-  // Abeg / Please / Beg
-  {
-    patterns: [/\b(abeg|please|beg|help me|assist|kindly)\b/],
-    reply: () => ({
-      text: "Of course, my darling! \uD83E\uDD79 Anything for you \u2014 abeg no worry at all. Whatever you need, I'm here to make it happen with love. Just tell me what your heart desires and consider it done. That's the Happiness Fashion World promise!",
-      chips: QUICK_REPLIES,
-    }),
-  },
   // Greeting
   {
     patterns: [/\b(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|holla|ekaro|bawo ni|kedu)\b/],
@@ -320,6 +303,23 @@ const intents: Intent[] = [
         chips: ['View Collection', 'Take Style Quiz', 'How to order'],
       };
     },
+  },
+  // Wahala / Problem / Issue
+  {
+    patterns: [/\b(wahala|problem|issue|trouble|stress|frustrated|complain|wrong|bad)\b/],
+    reply: () => ({
+      text: "No wahala at all, darling! \uD83D\uDC9B Whatever the issue is, we go sort am together. At Happiness Fashion World, your satisfaction is everything to us. Tell me what happened and let me see how I can help \u2014 or if you prefer, I can connect you directly with Happiness on WhatsApp. She fixes everything with grace.",
+      cta: { label: 'Chat with Happiness \uD83D\uDC8C', href: buildWhatsAppUrl('Hello Happiness! I have a concern about my order and would appreciate your help.'), external: true },
+      chips: ['How to order', 'Where are you?', 'Pricing & timeline'],
+    }),
+  },
+  // Abeg / Please / Beg
+  {
+    patterns: [/\b(abeg|beg|help me|assist me)\b/],
+    reply: () => ({
+      text: "Of course, my darling! \uD83E\uDD79 Anything for you \u2014 abeg no worry at all. Whatever you need, I'm here to make it happen with love. Just tell me what your heart desires and consider it done. That's the Happiness Fashion World promise!",
+      chips: QUICK_REPLIES,
+    }),
   },
   // Thanks
   {
