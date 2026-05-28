@@ -1,15 +1,32 @@
+import { useRef } from 'react';
 import { Instagram } from 'lucide-react';
 import Logo from './Logo';
 import { WHATSAPP_DISPLAY, buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const tapCount = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSecretTap = () => {
+    tapCount.current += 1;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    tapTimer.current = setTimeout(() => { tapCount.current = 0; }, 3000);
+    if (tapCount.current >= 5) {
+      tapCount.current = 0;
+      window.location.hash = 'admin';
+    }
+  };
+
   return (
     <footer className="border-t border-ink-800/10 py-12 pb-24 sm:pb-12 dark:border-cream-100/10">
       <div className="container-luxe flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
         <Logo size={36} withWordmark />
 
-        <p className="text-xs text-ink-800/55 dark:text-cream-100/55">
+        <p
+          className="text-xs text-ink-800/55 select-none dark:text-cream-100/55"
+          onClick={handleSecretTap}
+        >
           © {year} Happiness Fashion World · Abakaliki, Nigeria. Stitched with love.
         </p>
 

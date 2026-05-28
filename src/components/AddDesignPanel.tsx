@@ -594,6 +594,19 @@ export default function AddDesignPanel({ open, onClose, editingDesign }: Props) 
                         <span className="break-all">{auth.admin.email}</span>
                       </p>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        if (window.location.hash === '#admin') {
+                          history.replaceState(null, '', window.location.pathname + window.location.search);
+                        }
+                      }}
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-ink-800/15 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-800/70 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/70"
+                    >
+                      ← Back to site
+                    </button>
                   </div>
                   <div className="flex shrink-0 items-center gap-1.5">
                     <CloudStatus enabled={cloudEnabled} loading={loading} />
