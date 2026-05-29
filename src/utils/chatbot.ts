@@ -291,6 +291,26 @@ const intents: Intent[] = [
       chips: ['Where are you?', 'Pricing & timeline'],
     }),
   },
+  // First-time / nervous customer reassurance
+  {
+    patterns: [/\b(first[\s-]?time|never (ordered|bought|done)|nervous|not sure|how does (this|it) work|new (here|customer)|scared|worried|trust)\b/],
+    reply: () => ({
+      text:
+        "Aww, welcome, darling — and relax, you're in the safest hands. \uD83D\uDC9B So many of our happiest clients started exactly where you are now. Here's how gentle it is:\n\n1\uFE0F\u20E3 You tell us your vision (even just a vibe or a photo).\n2\uFE0F\u20E3 We agree on the design, fabric, and a clear price — no surprises.\n3\uFE0F\u20E3 We take your measurements (in studio or by video call).\n4\uFE0F\u20E3 We sew with love and you do a fitting before it's final.\n\nThere's no pressure and no silly questions. Shall we start with something small, or are you dreaming big?",
+      cta: { label: 'Say hello to Happiness \uD83D\uDC8C', href: buildWhatsAppUrl(generalEnquiryMessage()), external: true },
+      chips: ['How to order', 'Pricing & timeline', 'Show me something beautiful'],
+    }),
+  },
+  // Gift / surprise
+  {
+    patterns: [/\b(gift|surprise|present|for (my|her|him)|birthday|anniversary|valentine|mother|wife|sister|friend)\b/],
+    reply: () => ({
+      text:
+        "What a thoughtful soul you are! \uD83C\uDF81 A bespoke piece is the kind of gift people never forget. We can work from a photo or even just their usual size, and we'll wrap it beautifully so the unboxing feels like a celebration.\n\nNot sure of their measurements? No wahala — a gift note lets them come in for their own fitting. Tell me who it's for and the occasion, and I'll help you pick something they'll adore.",
+      cta: { label: 'Plan a gift with Happiness \u2728', href: buildWhatsAppUrl('Hello Happiness Fashion World! I would love to order a bespoke piece as a gift. Can you help me choose something special?'), external: true },
+      chips: ['Pricing & timeline', 'How long does it take?', 'Show me something beautiful'],
+    }),
+  },
   // Show a design
   {
     patterns: [/\b(show|see|recommend|suggest|design|piece|outfit|something|inspire|inspiration|browse)\b/],
