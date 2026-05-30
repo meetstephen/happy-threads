@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Camera, RotateCcw, Loader2, X as XIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Camera, RotateCcw, Loader2, Shirt, X as XIcon } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useAdminAuth } from '../lib/auth';
 import { resizeImageFile } from '../utils/imageResize';
@@ -41,9 +41,16 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
   const { admin } = useAdminAuth();
   const [uploading, setUploading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const currentSrc = get(contentKey, defaultSrc);
+
+  // Reset the broken-image flag whenever the source changes (e.g. the admin
+  // swaps in a new photo, or an override loads from the cloud).
+  useEffect(() => {
+    setImgError(false);
+  }, [currentSrc]);
 
   const onFile = async (file: File) => {
     if (!file) return;
@@ -91,9 +98,27 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
 
   const dismissError = () => setValidationError(null);
 
-  // Visitors - plain image
+  // Visitors - plain image, with a graceful fallback if the photo fails to load
   if (!admin) {
-    return <img src={currentSrc} alt={alt} className={className} />;
+    if (imgError) {
+      return (
+        <span
+          role="img"
+          aria-label={alt}
+          className={`flex items-center justify-center bg-bronze-100 dark:bg-ink-700 ${className}`}
+        >
+          <Shirt size={40} className="text-bronze-400 opacity-60" />
+        </span>
+      );
+    }
+    return (
+      <img
+        src={currentSrc}
+        alt={alt}
+        className={className}
+        onError={() => setImgError(true)}
+      />
+    );
   }
 
   // Admin - image with always-visible swap controls

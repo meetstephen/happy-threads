@@ -311,6 +311,26 @@ const intents: Intent[] = [
       chips: ['Pricing & timeline', 'How long does it take?', 'Show me something beautiful'],
     }),
   },
+  // Opening hours / availability
+  {
+    patterns: [/\b(opening|open|closing|closed|hours|business hours|working hours|what days|weekend|saturdays?|sundays?|public holiday)\b/],
+    reply: () => ({
+      text:
+        "So glad you asked, darling! \uD83D\uDD52 Here's when you'll find us at the atelier:\n\n\uD83D\uDCC5 Monday \u2013 Saturday: 9:00am \u2013 6:00pm\n\uD83D\uDE4F Sundays: we rest (and go to church!) \u2013 closed\n\nStudio visits are by appointment so Happiness can give you her full attention. And the sweetest part? My WhatsApp never sleeps \u2014 message any time, day or night, and we'll reply first thing. \uD83D\uDC9B",
+      cta: { label: 'Message us anytime \uD83D\uDC8C', href: buildWhatsAppUrl(generalEnquiryMessage()), external: true },
+      chips: ['Book an appointment', 'Where are you?', 'How to order'],
+    }),
+  },
+  // Returns / exchange / satisfaction policy
+  {
+    patterns: [/\b(return|returns|refund|exchange|money[\s-]?back|cancel|guarantee|warranty|not satisfied|change my mind|swap|policy)\b/],
+    reply: () => ({
+      text:
+        "Great question, love \u2014 and here's our promise to you. \uD83E\uDD0D Because every piece is made-to-measure, just for your body, we don't do off-the-rack style returns. BUT your happiness is everything to us, so:\n\n\u2728 We guarantee the fit \u2014 if anything doesn't sit the way we agreed, bring it back within 7 days and we'll adjust it, free of charge.\n\uD83E\uDEA1 Any genuine fault in our workmanship? We fix or remake it, no stress.\n\uD83D\uDC8C We confirm fabric, colour and design with you before we ever cut \u2014 so there are no surprises.\n\nYou'll never be left unhappy on our watch, darling. If something's worrying you, just talk to Happiness directly.",
+      cta: { label: 'Talk to Happiness \uD83D\uDC8C', href: buildWhatsAppUrl('Hello Happiness Fashion World! I have a question about your fit guarantee / returns policy.'), external: true },
+      chips: ['How to order', 'Alterations', 'Pricing & timeline'],
+    }),
+  },
   // Show a design
   {
     patterns: [/\b(show|see|recommend|suggest|design|piece|outfit|something|inspire|inspiration|browse)\b/],

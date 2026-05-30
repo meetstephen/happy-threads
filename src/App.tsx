@@ -25,6 +25,8 @@ import Lookbook from './components/Lookbook';
 import ErrorBoundary from './components/ErrorBoundary';
 import MobileBottomNav from './components/MobileBottomNav';
 import ScrollToTop from './components/ScrollToTop';
+import ScrollProgress from './components/ScrollProgress';
+import RecentlyViewed, { recordRecentlyViewed } from './components/RecentlyViewed';
 import { designs as staticDesigns } from './data/designs';
 import type { Design } from './data/designs';
 import { useCustomDesigns } from './context/CustomDesignsContext';
@@ -186,6 +188,8 @@ export default function App() {
     setLightboxDesign(design);
     if (design) {
       trackDesignView(design.id);
+      // Remember this piece so it shows in the "Recently Viewed" row.
+      recordRecentlyViewed(design.id);
     }
   };
 
@@ -206,6 +210,7 @@ export default function App() {
   return (
     <ErrorBoundary>
     <div className="min-h-screen pb-16 md:pb-0 bg-cream-100 text-ink-800 transition-colors duration-500 dark:bg-ink-900 dark:text-cream-100">
+      <ScrollProgress />
       <FloatingIcons />
       {/*
         Admin mode banner - visible only when Happiness is signed in.
@@ -269,6 +274,7 @@ export default function App() {
           onOpen={openDesignLightbox}
           onOpenLookbook={openLookbook}
         />
+        <RecentlyViewed designs={allDesigns} onOpen={openDesignLightbox} />
         <PressStrip />
         <About />
         <Craftsmanship />

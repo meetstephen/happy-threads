@@ -1,7 +1,8 @@
 import { useRef } from 'react';
-import { Instagram } from 'lucide-react';
+import { Instagram, Mail } from 'lucide-react';
 import Logo from './Logo';
 import { WHATSAPP_DISPLAY, buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+import { FAITH_EMAIL } from '../utils/constants';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -30,7 +31,7 @@ export default function Footer() {
           © {year} Happiness Fashion World · Abakaliki, Nigeria. Stitched with love.
         </p>
 
-        <div className="flex items-center gap-3">
+        <div className="flex max-w-full flex-wrap items-center justify-center gap-x-4 gap-y-2 md:justify-end">
           <a
             href={buildWhatsAppUrl(generalEnquiryMessage())}
             target="_blank"
@@ -40,11 +41,19 @@ export default function Footer() {
             {WHATSAPP_DISPLAY}
           </a>
           <a
+            href={`mailto:${FAITH_EMAIL}?subject=${encodeURIComponent('Enquiry from Happiness Fashion World')}`}
+            className="inline-flex min-w-0 max-w-full items-center gap-1.5 break-words text-xs lowercase tracking-wide text-ink-800/70 transition-colors hover:text-bronze-500 dark:text-cream-100/70"
+            aria-label={`Email Happiness at ${FAITH_EMAIL}`}
+          >
+            <Mail size={13} className="shrink-0" />
+            <span className="break-all">{FAITH_EMAIL}</span>
+          </a>
+          <a
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="grid h-9 w-9 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/15"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-ink-800/15 transition-colors hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/15"
           >
             <Instagram size={14} />
           </a>

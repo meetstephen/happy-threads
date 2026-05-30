@@ -1,5 +1,10 @@
 # Cloud Sync + Admin Auth Setup (Supabase) -- 12-Minute Guide
 
+> **Admin email for this atelier:** `chukwufaithhappiness1@gmail.com`
+> This is the address Happiness signs in with, and the one baked into every
+> Row-Level Security policy and `VITE_ADMIN_EMAIL` value below. If you ever
+> change it, update it consistently in **every** SQL block and in Netlify.
+
 The site works perfectly **without** this setup -- designs Happiness adds in
 the admin panel are saved on her phone's browser only. To make them appear
 on **every visitor's device** (true cloud sync) AND restrict editing so that
