@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BookOpen, Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdminAuth } from '../lib/auth';
+import { useScrollY } from '../utils/scroll';
 import Logo from './Logo';
 
 const links = [
@@ -19,32 +20,28 @@ interface Props {
 }
 
 export default function Navbar({ onOpenLookbook }: Props) {
-  const [scrolled, setScrolled] = useState(false);
+  // Derive scroll state from the singleton listener — no local scroll handler needed.
+  const scrollY = useScrollY();
+  const scrolled = scrollY > 24;
+
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { favorites } = useFavorites();
   const { admin } = useAdminAuth();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
+  // Only transition background-color and box-shadow, NOT backdrop-filter.
+  // Transitioning backdrop-filter is not GPU-compositable and was causing a
+  // 500ms repaint storm every time the navbar became "scrolled".
   const navBg = scrolled
     ? 'bg-cream-100/85 backdrop-blur-lg shadow-soft dark:bg-ink-900/85'
     : 'bg-transparent';
 
-  // When the gold "Edit Mode" admin banner is showing, push the navbar
-  // (which holds the brand wordmark) down by the banner's measured height
-  // so the wordmark is never covered. The CSS variable is set in App.tsx.
   const navTopStyle = admin ? { top: 'var(--admin-banner-h, 0px)' } : { top: 0 };
 
   return (
     <header
       style={navTopStyle}
-      className={`fixed inset-x-0 z-40 transition-all duration-500 ${navBg}`}
+      className={`fixed inset-x-0 z-40 transition-[background-color,box-shadow] duration-500 ${navBg}`}
     >
       <div className="container-luxe flex h-20 items-center justify-between">
         <a href="#top" className="group">
