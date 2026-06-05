@@ -1,20 +1,15 @@
-import { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
-import { useNearBottom } from '../utils/scroll';
+import { useScrollY, useNearBottom } from '../utils/scroll';
 
 export default function FloatingWhatsApp() {
-  const [scrolled, setScrolled] = useState(false);
+  // Both hooks share the same singleton scroll listener — no extra listeners added.
+  const scrollY = useScrollY();
   const nearBottom = useNearBottom();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 600);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const visible = scrolled && !nearBottom;
+  // Only visible after scrolling 600 px down, and hidden near the footer
+  // so the button never covers the contact section or footer links.
+  const visible = scrollY > 600 && !nearBottom;
 
   const handleClick = () => {
     const url = buildWhatsAppUrl(generalEnquiryMessage());
@@ -29,7 +24,7 @@ export default function FloatingWhatsApp() {
       type="button"
       onClick={handleClick}
       aria-label="Chat with Happiness on WhatsApp"
-      className={`fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 z-30 flex items-center gap-2 rounded-full bg-[#25D366] px-3.5 py-2.5 text-xs font-medium text-white shadow-luxe transition-all duration-500 hover:bg-[#1da851] sm:right-6 sm:gap-3 sm:px-5 sm:py-3.5 sm:text-sm ${
+      className={`fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 z-30 flex items-center gap-2 rounded-full bg-[#25D366] px-3.5 py-2.5 text-xs font-medium text-white shadow-luxe transition-[opacity,transform] duration-500 hover:bg-[#1da851] sm:right-6 sm:gap-3 sm:px-5 sm:py-3.5 sm:text-sm ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
       }`}
     >
