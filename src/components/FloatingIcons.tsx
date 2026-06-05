@@ -1,12 +1,12 @@
 import { Layers, Palette, Pen, Ruler, Scissors, Sparkles } from 'lucide-react';
 
 const icons = [
-  { Icon: Scissors, className: 'left-[5%] top-[15%] text-bronze-400 opacity-[0.06]', delay: '0s', size: 36 },
-  { Icon: Ruler, className: 'right-[8%] top-[35%] text-bronze-400 opacity-[0.05]', delay: '2s', size: 30 },
-  { Icon: Pen, className: 'left-[12%] bottom-[25%] text-wine-400 opacity-[0.05]', delay: '4s', size: 28 },
+  { Icon: Scissors, className: 'left-[5%] top-[15%] text-bronze-400 opacity-[0.06]', delay: '0s',   size: 36 },
+  { Icon: Ruler,    className: 'right-[8%] top-[35%] text-bronze-400 opacity-[0.05]', delay: '2s',   size: 30 },
+  { Icon: Pen,      className: 'left-[12%] bottom-[25%] text-wine-400 opacity-[0.05]', delay: '4s',  size: 28 },
   { Icon: Sparkles, className: 'right-[15%] bottom-[40%] text-bronze-400 opacity-[0.06]', delay: '1.5s', size: 32 },
-  { Icon: Palette, className: 'left-[45%] top-[60%] text-bronze-400 opacity-[0.04]', delay: '3s', size: 26 },
-  { Icon: Layers, className: 'right-[35%] top-[10%] text-wine-400 opacity-[0.05]', delay: '5s', size: 28 },
+  { Icon: Palette,  className: 'left-[45%] top-[60%] text-bronze-400 opacity-[0.04]', delay: '3s',  size: 26 },
+  { Icon: Layers,   className: 'right-[35%] top-[10%] text-wine-400 opacity-[0.05]', delay: '5s',   size: 28 },
 ];
 
 export default function FloatingIcons() {
@@ -17,7 +17,13 @@ export default function FloatingIcons() {
           key={i}
           size={size}
           className={`absolute animate-float ${className}`}
-          style={{ animationDelay: delay }}
+          style={{
+            animationDelay: delay,
+            // Promote each animated SVG to its own GPU compositor layer.
+            // Without this, the browser repaints the entire fixed container
+            // (and everything behind it) on every animation frame.
+            willChange: 'transform',
+          }}
         />
       ))}
     </div>
