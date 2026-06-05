@@ -163,22 +163,23 @@
   filter: saturate(1.05) contrast(1.05);
 }
 
-/* shimmer keyframe */
+/* ─── Keyframes ─────────────────────────────────────────────────────────── */
+
+/* shimmer — used by .text-shimmer and .border-shimmer */
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
+/*
+ * pulse-gold — used by animate-pulse-gold (gold accent dots in Hero).
+ *
+ * CHANGED: was animating box-shadow, which is NOT GPU-compositable and forced
+ * a repaint on every animation frame. Now uses transform:scale which runs
+ * entirely on the compositor thread with zero main-thread paint cost.
+ * The base opacity is set by the element's Tailwind opacity-[...] class.
+ */
 @keyframes pulse-gold {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(176, 122, 76, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 16px 4px rgba(176, 122, 76, 0.15);
-  }
+  0%, 100% { transform: scale(1) translateZ(0); }
+  50%       { transform: scale(2.5) translateZ(0); }
 }
-
