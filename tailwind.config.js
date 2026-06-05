@@ -44,27 +44,31 @@ export default {
         'luxury-gradient': 'linear-gradient(135deg, rgba(176, 122, 76, 0.03) 0%, transparent 50%, rgba(139, 41, 66, 0.02) 100%)',
       },
       animation: {
-        'fade-up': 'fadeUp 0.8s ease-out forwards',
-        'shimmer': 'shimmer 2.5s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
+        'fade-up':    'fadeUp 0.8s ease-out forwards',
+        'shimmer':    'shimmer 2.5s linear infinite',
+        'float':      'float 6s ease-in-out infinite',
         'pulse-gold': 'pulse-gold 2.5s ease-in-out infinite',
       },
       keyframes: {
         fadeUp: {
-          '0%': { opacity: 0, transform: 'translateY(20px)' },
-          '100%': { opacity: 1, transform: 'translateY(0)' },
+          '0%':   { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         shimmer: {
-          '0%': { backgroundPosition: '-200% 0' },
+          '0%':   { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        // translateZ(0) forces GPU-layer promotion from frame 0 so the
+        // animation never triggers a main-thread repaint.
         float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-12px)' },
+          '0%, 100%': { transform: 'translateY(0px) translateZ(0)' },
+          '50%':      { transform: 'translateY(-12px) translateZ(0)' },
         },
+        // Replaced box-shadow (not GPU-compositable, caused repaints) with
+        // a transform:scale pulse — runs entirely on the compositor.
         'pulse-gold': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(176, 122, 76, 0.3)' },
-          '50%': { boxShadow: '0 0 16px 4px rgba(176, 122, 76, 0.15)' },
+          '0%, 100%': { transform: 'scale(1) translateZ(0)' },
+          '50%':      { transform: 'scale(2.5) translateZ(0)' },
         },
       },
     },
