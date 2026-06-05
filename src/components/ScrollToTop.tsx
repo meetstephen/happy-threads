@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
+import { useScrollY } from '../utils/scroll';
 
 export default function ScrollToTop() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 400);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  // No local scroll listener — shares the singleton RAF-throttled listener.
+  const scrollY = useScrollY();
+  const visible = scrollY > 400;
 
   return (
     <AnimatePresence>
