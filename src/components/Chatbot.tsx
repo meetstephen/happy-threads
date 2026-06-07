@@ -171,7 +171,11 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Launcher */}
+      {/* Launcher button
+          FIXED: was transition-all duration-500 which animates every CSS property,
+          including non-GPU-compositable ones (box-shadow from shadow-luxe) on a
+          fixed element. Now scoped to only opacity, transform, and background-color
+          — all three run on the compositor with zero main-thread paint cost. */}
       <button
         type="button"
         onClick={() => {
@@ -179,7 +183,7 @@ export default function Chatbot() {
           setUnread(false);
         }}
         aria-label="Chat with Joy, Happiness Fashion World's AI stylist"
-        className={`fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-all duration-500 hover:bg-bronze-500 md:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
+        className={`fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] left-4 z-30 flex items-center gap-2 rounded-full bg-ink-800 px-3.5 py-2.5 text-xs font-medium text-cream-100 shadow-luxe transition-[opacity,transform,background-color] duration-500 hover:bg-bronze-500 md:bottom-6 sm:left-6 sm:gap-2.5 sm:px-5 sm:py-3.5 sm:text-sm dark:bg-cream-100 dark:text-ink-900 dark:hover:bg-bronze-400 ${
           launcherVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
         }`}
       >
