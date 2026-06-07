@@ -150,7 +150,10 @@ async function getAnalyticsFromSupabase(): Promise<AnalyticsData> {
     .from('site_analytics')
     .select('event_type, event_data, created_at')
     .gte('created_at', since)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    // Limit prevents unbounded result sets from exhausting memory or
+    // timing out as event volume grows over time.
+    .limit(5000);
 
   if (error) {
     throw new Error(error.message);
@@ -160,7 +163,9 @@ async function getAnalyticsFromSupabase(): Promise<AnalyticsData> {
     return { dailyVisitors: [], topDesigns: [], sectionEngagement: [] };
   }
 
-  return aggregateEvents(events as { event_type: string; event_data: Record<string, unknown>; created_at: string }[]);
+  return aggregateEvents(
+    events as { event_type: string; event_data: Record<string, unknown>; created_at: string }[]
+  );
 }
 
 function getAnalyticsFromLocal(): AnalyticsData {
@@ -208,7 +213,7 @@ function aggregateEvents(
   const topDesigns = Array.from(allDesignIds)
     .map((id) => ({
       id,
-      name: id, // Name resolved in the dashboard component
+      name: id, // Name resolved in the dashboard component using the design catalog
       views: designViews.get(id) || 0,
       likes: designLikes.get(id) || 0,
     }))
