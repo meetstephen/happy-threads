@@ -4,6 +4,13 @@
  * Keeps the GEMINI_API_KEY server-side so it is never exposed in the
  * client bundle. The front-end POSTs the generateContent payload to
  * /api/gemini and this function forwards it to the Gemini API.
+ *
+ * CUSTOM_DOMAIN env var (optional):
+ *   If Happiness moves to a custom domain (e.g. happinessfashionworld.com)
+ *   add it in Netlify → Site configuration → Environment variables as
+ *   CUSTOM_DOMAIN=happinessfashionworld.com. Without it the origin check
+ *   would reject requests from any domain not in the default allow-list and
+ *   Joy AI would silently fail with 403 on the live site.
  */
 
 export default async function handler(request: Request) {
@@ -14,11 +21,23 @@ export default async function handler(request: Request) {
     });
   }
 
-  // Origin / Referer check to prevent external abuse
-  const origin = request.headers.get('origin') || '';
+  // ── Origin / Referer check ────────────────────────────────────────────────
+  // Prevents external sites from piggy-backing on this proxy.
+  // Always-allowed: *.netlify.app (preview & production deployments),
+  //                 localhost / 127.0.0.1 (local dev).
+  // Optional:       CUSTOM_DOMAIN env var for production custom domains.
+  const origin  = request.headers.get('origin')  || '';
   const referer = request.headers.get('referer') || '';
+
+  const customDomain = Deno.env.get('CUSTOM_DOMAIN')?.trim() || '';
+
   const allowedPatterns = ['.netlify.app', 'localhost', '127.0.0.1'];
-  const isAllowed = allowedPatterns.some(p => origin.includes(p) || referer.includes(p));
+  if (customDomain) allowedPatterns.push(customDomain);
+
+  const isAllowed = allowedPatterns.some(
+    (p) => origin.includes(p) || referer.includes(p)
+  );
+
   if (!isAllowed) {
     return new Response(JSON.stringify({ error: 'Forbidden' }), {
       status: 403,
@@ -26,6 +45,7 @@ export default async function handler(request: Request) {
     });
   }
 
+  // ── API key ───────────────────────────────────────────────────────────────
   const apiKey = Deno.env.get('GEMINI_API_KEY');
 
   if (!apiKey) {
@@ -35,6 +55,7 @@ export default async function handler(request: Request) {
     );
   }
 
+  // ── Proxy the request ─────────────────────────────────────────────────────
   try {
     const body = await request.text();
 
@@ -49,14 +70,19 @@ export default async function handler(request: Request) {
       });
     }
 
-    if (!payload || typeof payload !== 'object' || !Array.isArray((payload as Record<string, unknown>).contents)) {
+    if (
+      !payload ||
+      typeof payload !== 'object' ||
+      !Array.isArray((payload as Record<string, unknown>).contents)
+    ) {
       return new Response(JSON.stringify({ error: 'Invalid request shape' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const geminiUrl =
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
