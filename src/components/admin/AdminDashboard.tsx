@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, BarChart3, BookOpen, CalendarCheck, ChevronUp, Cloud, CloudOff, Eye, EyeOff, Home, Image, Layout, LogOut, Megaphone, MessageSquare, MoreHorizontal, Quote, Settings, ShieldCheck, Star, Users, X } from 'lucide-react';
+import { ArrowLeft, BarChart3, BookOpen, CalendarCheck, ChevronUp, Cloud, CloudOff, Eye, EyeOff, Home, Image, Layout, LogOut, Megaphone, MoreHorizontal, Quote, Settings, ShieldCheck, Star, Users, X } from 'lucide-react';
 import { useCustomDesigns } from '../../context/CustomDesignsContext';
 import { hasAdminConfigured, useAdminAuth } from '../../lib/auth';
 import { ADMIN_EMAIL, isSupabaseEnabled } from '../../lib/supabase';
@@ -40,7 +40,7 @@ const SIDEBAR_ITEMS: { section: Section; label: string; icon: typeof Home }[] = 
   { section: 'announcements', label: 'Announcements', icon: Megaphone },
   { section: 'testimonials', label: 'Testimonials', icon: Quote },
   { section: 'analytics', label: 'Analytics', icon: BarChart3 },
-  { section: 'templates', label: 'Templates', icon: MessageSquare },
+  { section: 'templates', label: 'Templates', icon: Settings },
   { section: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { section: 'customers', label: 'Customers', icon: Users },
   { section: 'site', label: 'Site', icon: Settings },
@@ -76,7 +76,27 @@ export default function AdminDashboard({ open, onClose, editingDesign }: Props) 
 
   useEffect(() => { const iv = setInterval(() => { const s = getAttempts(); if (s.lockedUntil) { const r = s.lockedUntil - Date.now(); if (r <= 0) { setAttempts({ count: 0, lockedUntil: null }); setLockoutRemaining(0); setError(null); } else { setLockoutRemaining(r); } } else { setLockoutRemaining(0); } }, 1000); return () => clearInterval(iv); }, []);
 
-  const tryPasscode = (e: React.FormEvent) => { e.preventDefault(); const s = getAttempts(); if (s.lockedUntil && s.lockedUntil > Date.now()) { setError('Too many attempts. Wait 5 minutes.'); return; } if (passcode.trim() === LOCAL_PASSCODE) { setLocalUnlocked(true); setError(null); setAttempts({ count: 0, lockedUntil: null }); } else { const nc = s.count + 1; if (nc >= MAX_ATTEMPTS) { setAttempts({ count: nc, lockedUntil: Date.now() + LOCKOUT_MS }); setError('Too many attempts. Locked for 5 minutes.'); } else { setAttempts({ count: nc, lockedUntil: null }); setError(`Incorrect. ${MAX_ATTEMPTS - nc} attempt${MAX_ATTEMPTS - nc === 1 ? '' : 's'} left.`); } } };
+  const tryPasscode = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // ── Security guard: reject immediately if no passcode is configured.
+    // When VITE_ADMIN_PASSCODE is not set, LOCAL_PASSCODE = '' and the
+    // naive check '' === '' would grant access to a blank submission.
+    if (LOCAL_PASSCODE.length === 0) {
+      setError('No admin passcode is configured. Add VITE_ADMIN_PASSCODE in your Netlify environment variables, then redeploy.');
+      return;
+    }
+
+    const s = getAttempts();
+    if (s.lockedUntil && s.lockedUntil > Date.now()) { setError('Too many attempts. Wait 5 minutes.'); return; }
+    if (passcode.trim() === LOCAL_PASSCODE) {
+      setLocalUnlocked(true); setError(null); setAttempts({ count: 0, lockedUntil: null });
+    } else {
+      const nc = s.count + 1;
+      if (nc >= MAX_ATTEMPTS) { setAttempts({ count: nc, lockedUntil: Date.now() + LOCKOUT_MS }); setError('Too many attempts. Locked for 5 minutes.'); }
+      else { setAttempts({ count: nc, lockedUntil: null }); setError(`Incorrect. ${MAX_ATTEMPTS - nc} attempt${MAX_ATTEMPTS - nc === 1 ? '' : 's'} left.`); }
+    }
+  };
 
   const onAuthSubmit = async (e: React.FormEvent) => { e.preventDefault(); setError(null); setInfo(null); setAuthBusy(true); try { if (authMode === 'signin') { await auth.signIn(authEmail, authPassword); } else { const { needsConfirmation } = await auth.signUp(authEmail, authPassword); if (needsConfirmation) setInfo('Check email for confirmation link.'); } } catch (err) { setError((err as Error).message); } finally { setAuthBusy(false); setAuthPassword(''); } };
 
