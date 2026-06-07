@@ -13,7 +13,12 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://images.pexels.com https://*.supabase.co; connect-src 'self' https://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://api.netlify.com; upgrade-insecure-requests"
+    # wss://*.supabase.co added alongside https://*.supabase.co:
+    # The CSP spec treats https:// and wss:// as separate schemes —
+    # allowing https:// does NOT cover WebSocket (wss://) connections.
+    # Supabase Realtime uses wss://, so without this the live-sync feature
+    # is silently blocked by the browser on every Netlify deployment.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://images.pexels.com https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://api.netlify.com; upgrade-insecure-requests"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     X-XSS-Protection = "0"
