@@ -123,7 +123,7 @@ export default function Lookbook({
           aria-label="The Lookbook"
         >
           {/* Sticky header */}
-          <header className="sticky top-0 z-10 border-b border-ink-800/10 bg-cream-100/95 backdrop-blur-lg dark:border-cream-100/10 dark:bg-ink-900/95">
+          <header className="sticky top-0 z-10 border-b border-ink-800/10 bg-cream-100/98 dark:border-cream-100/10 dark:bg-ink-900/98">
             <div className="container-luxe flex items-center justify-between gap-4 py-4 md:py-5">
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-bronze-400/20 text-bronze-500">
@@ -314,7 +314,7 @@ function LookbookCard({
               </span>
             )}
             {design.custom && (
-              <span className="rounded-full bg-ink-900/70 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+              <span className="rounded-full bg-ink-900/85 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.2em] text-cream-100">
                 Just In
               </span>
             )}
@@ -337,10 +337,10 @@ function LookbookCard({
                 }
               }}
               aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-              className={`grid h-7 w-7 cursor-pointer place-items-center rounded-full backdrop-blur-md transition-all ${
+              className={`grid h-7 w-7 cursor-pointer place-items-center rounded-full transition-all ${
                 isFavorite
                   ? 'bg-wine-500 text-cream-100'
-                  : 'bg-cream-100/85 text-ink-800 hover:bg-cream-100'
+                  : 'bg-cream-100/95 text-ink-800 hover:bg-cream-100'
               }`}
             >
               <Heart size={12} fill={isFavorite ? 'currentColor' : 'none'} />
@@ -363,7 +363,7 @@ function LookbookCard({
                     }
                   }}
                   aria-label={`Edit ${design.name}`}
-                  className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-bronze-500 text-cream-100 backdrop-blur-md hover:bg-bronze-600"
+                  className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-bronze-500 text-cream-100 hover:bg-bronze-600"
                   title="Edit design"
                 >
                   <Pencil size={11} />
@@ -383,7 +383,7 @@ function LookbookCard({
                     }
                   }}
                   aria-label={`Delete ${design.name}`}
-                  className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-wine-500 text-cream-100 backdrop-blur-md hover:bg-wine-600"
+                  className="grid h-7 w-7 cursor-pointer place-items-center rounded-full bg-wine-500 text-cream-100 hover:bg-wine-600"
                   title="Delete design"
                 >
                   <Trash2 size={11} />

@@ -91,7 +91,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
         {/* badges (top-left) */}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           {featured && !highlighted && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500/90 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+            <span className="inline-flex items-center gap-1 rounded-full bg-bronze-500/95 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
               <Sparkles size={10} /> Featured
             </span>
           )}
@@ -106,7 +106,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
             </span>
           )}
           {design.custom && (
-            <span className="rounded-full border border-cream-100/40 bg-ink-900/60 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100 backdrop-blur">
+            <span className="rounded-full border border-cream-100/40 bg-ink-900/85 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cream-100">
               Just In
             </span>
           )}
@@ -121,10 +121,10 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
               toggleFavorite(design.id);
             }}
             aria-label={fav ? 'Remove from favorites' : 'Add to favorites'}
-            className={`grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full backdrop-blur-md transition-all ${
+            className={`grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full transition-all ${
               fav
                 ? 'bg-wine-500 text-cream-100'
-                : 'bg-cream-100/85 text-ink-800 hover:bg-cream-100'
+                : 'bg-cream-100/95 text-ink-800 hover:bg-cream-100'
             }`}
           >
             <Heart size={15} fill={fav ? 'currentColor' : 'none'} />
@@ -136,7 +136,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
               onOpen(design);
             }}
             aria-label="View larger"
-            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
+            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/95 text-ink-800 transition-colors hover:bg-cream-100"
           >
             <Maximize2 size={15} />
           </button>
@@ -144,7 +144,7 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
             type="button"
             onClick={onShareClick}
             aria-label="Share this design"
-            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/85 text-ink-800 backdrop-blur-md transition-colors hover:bg-cream-100"
+            className="grid h-11 w-11 sm:h-9 sm:w-9 place-items-center rounded-full bg-cream-100/95 text-ink-800 transition-colors hover:bg-cream-100"
             title={copied ? 'Link copied!' : 'Share'}
           >
             <Share2 size={15} />
