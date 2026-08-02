@@ -33,8 +33,8 @@ export default function Navbar({ onOpenLookbook }: Props) {
   // Transitioning backdrop-filter is not GPU-compositable and was causing a
   // 500ms repaint storm every time the navbar became "scrolled".
   const navBg = scrolled
-    ? 'bg-cream-100/85 backdrop-blur-lg shadow-soft dark:bg-ink-900/85'
-    : 'bg-transparent';
+  ? 'bg-cream-100/95 shadow-soft dark:bg-ink-900/95'
+  : 'bg-transparent';
 
   const navTopStyle = admin ? { top: 'var(--admin-banner-h, 0px)' } : { top: 0 };
 
