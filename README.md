@@ -8,7 +8,7 @@ turns visitors into WhatsApp clients.
 > **New to the site? Read the [OWNER'S MANUAL](./OWNER_MANUAL.md) first.**
 > It is a plain-English, step-by-step guide to running everything from your phone.
 
-🌐 **Live:** https://happythreads.netlify.app
+🌐 **Live:** https://happinessfashion.netlify.app
 
 ---
 
