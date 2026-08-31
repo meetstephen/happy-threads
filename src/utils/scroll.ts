@@ -1,67 +1,111 @@
 import { useEffect, useState } from 'react';
 
-// ─── Singleton scroll listener (RAF-throttled) ─────────────────────────────
-// ONE global passive listener feeds every hook consumer via a subscriber set.
-// No matter how many components call useScrollY / useNearBottom, the browser
-// fires exactly one scroll listener and one rAF callback per animation frame.
-//
-// Before this change: 5 separate window.scroll listeners (Navbar, FloatingWhatsApp ×2,
-// ScrollToTop, Chatbot via useNearBottom) each called setState on every scroll event,
-// causing a waterfall of React re-renders that manifested as visual instability.
+// ─── Shared scroll signal ───────────────────────────────────────────────────
+// Keep one passive, RAF-throttled browser listener. Consumers that only need a
+// threshold must subscribe to a boolean condition rather than raw scrollY: a
+// finger scroll can generate dozens of frames, while a threshold changes only
+// once in either direction.
 
 type ScrollFn = (y: number) => void;
-const _subs = new Set<ScrollFn>();
-let _y = typeof window !== 'undefined' ? window.scrollY : 0;
-let _pending = false;
+const subscribers = new Set<ScrollFn>();
+let currentY = typeof window !== 'undefined' ? window.scrollY : 0;
+let framePending = false;
 
-function _tick() {
-  _pending = false;
-  _y = window.scrollY;
-  // React 18 automatic batching: all setState calls inside a rAF callback
-  // are batched into ONE render cycle, so N components = 1 render pass.
-  _subs.forEach((fn) => fn(_y));
+function publishScrollPosition() {
+  framePending = false;
+  currentY = window.scrollY;
+  subscribers.forEach((subscriber) => subscriber(currentY));
 }
 
 if (typeof window !== 'undefined') {
   window.addEventListener(
     'scroll',
     () => {
-      if (_pending) return;
-      _pending = true;
-      requestAnimationFrame(_tick);
+      if (framePending) return;
+      framePending = true;
+      requestAnimationFrame(publishScrollPosition);
     },
     { passive: true }
   );
 }
 
-// ─── Hooks ─────────────────────────────────────────────────────────────────
-
-/**
- * Returns window.scrollY, updated at most once per animation frame via the
- * shared singleton listener. All scroll-dependent components must use this
- * instead of their own window.scroll event listeners.
- */
-export function useScrollY(): number {
-  const [y, setY] = useState(_y);
-
-  useEffect(() => {
-    // Sync immediately in case a scroll happened before this component mounted.
-    setY(window.scrollY);
-    _subs.add(setY);
-    return () => {
-      _subs.delete(setY);
-    };
-  }, []);
-
-  return y;
+function isNearDocumentBottom(y: number, threshold: number): boolean {
+  if (typeof window === 'undefined') return false;
+  return y + window.innerHeight >= document.documentElement.scrollHeight - threshold;
 }
 
 /**
- * Returns true when the user has scrolled within `threshold` px of the
- * document's bottom. Used to auto-hide floating buttons near the footer.
+ * Returns whether the page has passed a fixed vertical threshold. The component
+ * rerenders only when that boolean changes, not on every scroll frame.
+ */
+export function useScrolledPast(threshold: number): boolean {
+  const [past, setPast] = useState(() => currentY > threshold);
+
+  useEffect(() => {
+    let previous = window.scrollY > threshold;
+    setPast(previous);
+
+    const update = (y: number) => {
+      const next = y > threshold;
+      if (next === previous) return;
+      previous = next;
+      setPast(next);
+    };
+
+    subscribers.add(update);
+    return () => subscribers.delete(update);
+  }, [threshold]);
+
+  return past;
+}
+
+/**
+ * Returns true when the visitor is within `threshold` pixels of the document
+ * bottom. It updates only when the answer changes, and also responds to a
+ * viewport resize.
  */
 export function useNearBottom(threshold = 180): boolean {
-  const y = useScrollY();
-  if (typeof window === 'undefined') return false;
-  return y + window.innerHeight >= document.documentElement.scrollHeight - threshold;
+  const [nearBottom, setNearBottom] = useState(() =>
+    isNearDocumentBottom(currentY, threshold)
+  );
+
+  useEffect(() => {
+    let previous = isNearDocumentBottom(window.scrollY, threshold);
+    setNearBottom(previous);
+
+    const update = (y: number) => {
+      const next = isNearDocumentBottom(y, threshold);
+      if (next === previous) return;
+      previous = next;
+      setNearBottom(next);
+    };
+
+    const onResize = () => update(window.scrollY);
+    subscribers.add(update);
+    window.addEventListener('resize', onResize, { passive: true });
+
+    return () => {
+      subscribers.delete(update);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [threshold]);
+
+  return nearBottom;
+}
+
+/**
+ * Raw scroll position is retained for future consumers that genuinely need it.
+ * Prefer useScrolledPast/useNearBottom for UI visibility so scrolling does not
+ * schedule React renders every frame.
+ */
+export function useScrollY(): number {
+  const [y, setY] = useState(currentY);
+
+  useEffect(() => {
+    setY(window.scrollY);
+    subscribers.add(setY);
+    return () => subscribers.delete(setY);
+  }, []);
+
+  return y;
 }
