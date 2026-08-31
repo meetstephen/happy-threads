@@ -1,15 +1,14 @@
 import { MessageCircle } from 'lucide-react';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
-import { useScrollY, useNearBottom } from '../utils/scroll';
+import { useNearBottom, useScrolledPast } from '../utils/scroll';
 
 export default function FloatingWhatsApp() {
-  // Both hooks share the same singleton scroll listener — no extra listeners added.
-  const scrollY = useScrollY();
+  const pastLaunchPoint = useScrolledPast(600);
   const nearBottom = useNearBottom();
 
   // Only visible after scrolling 600 px down, and hidden near the footer
   // so the button never covers the contact section or footer links.
-  const visible = scrollY > 600 && !nearBottom;
+  const visible = pastLaunchPoint && !nearBottom;
 
   const handleClick = () => {
     const url = buildWhatsAppUrl(generalEnquiryMessage());

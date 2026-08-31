@@ -183,3 +183,21 @@
   0%, 100% { transform: scale(1) translateZ(0); }
   50%       { transform: scale(2.5) translateZ(0); }
 }
+
+
+/* Honor system motion preferences and avoid extra compositing work on devices
+   that request reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

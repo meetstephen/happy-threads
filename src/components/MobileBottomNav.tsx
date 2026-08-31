@@ -77,7 +77,7 @@ export default function MobileBottomNav({ onOpenLookbook }: Props) {
       </AnimatePresence>
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center justify-around border-t border-ink-800/10 bg-cream-100/95 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] backdrop-blur-lg md:hidden dark:border-cream-100/10 dark:bg-ink-900/95"
+        className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center justify-around border-t border-ink-800/10 bg-cream-100 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] md:hidden dark:border-cream-100/10 dark:bg-ink-900"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {navItems.map((item) => {
