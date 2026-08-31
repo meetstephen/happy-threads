@@ -53,7 +53,9 @@ export function useScrolledPast(threshold: number): boolean {
     };
 
     subscribers.add(update);
-    return () => subscribers.delete(update);
+    return () => {
+      subscribers.delete(update);
+    };
   }, [threshold]);
 
   return past;
@@ -104,7 +106,9 @@ export function useScrollY(): number {
   useEffect(() => {
     setY(window.scrollY);
     subscribers.add(setY);
-    return () => subscribers.delete(setY);
+    return () => {
+      subscribers.delete(setY);
+    };
   }, []);
 
   return y;
