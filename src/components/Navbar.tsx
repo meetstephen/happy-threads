@@ -3,7 +3,7 @@ import { BookOpen, Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAdminAuth } from '../lib/auth';
-import { useScrollY } from '../utils/scroll';
+import { useScrolledPast } from '../utils/scroll';
 import Logo from './Logo';
 
 const links = [
@@ -20,9 +20,8 @@ interface Props {
 }
 
 export default function Navbar({ onOpenLookbook }: Props) {
-  // Derive scroll state from the singleton listener — no local scroll handler needed.
-  const scrollY = useScrollY();
-  const scrolled = scrollY > 24;
+  // This changes only when the page crosses 24px; it does not rerender during every scroll frame.
+  const scrolled = useScrolledPast(24);
 
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -33,7 +32,7 @@ export default function Navbar({ onOpenLookbook }: Props) {
   // Transitioning backdrop-filter is not GPU-compositable and was causing a
   // 500ms repaint storm every time the navbar became "scrolled".
   const navBg = scrolled
-  ? 'bg-cream-100/95 shadow-soft dark:bg-ink-900/95'
+  ? 'bg-cream-100 shadow-soft dark:bg-ink-900'
   : 'bg-transparent';
 
   const navTopStyle = admin ? { top: 'var(--admin-banner-h, 0px)' } : { top: 0 };
