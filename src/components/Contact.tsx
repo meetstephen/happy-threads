@@ -15,10 +15,6 @@ export default function Contact() {
         <div className="overflow-hidden rounded-[2rem] bg-ink-800 px-8 py-16 text-cream-100 shadow-luxe md:px-16 md:py-20 dark:bg-cream-100 dark:text-ink-900">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
             >
               <p className="eyebrow text-bronze-400">Let's create together</p>
               <h2 className="display-2 mt-4 text-cream-100 dark:text-ink-900">
@@ -48,10 +44,6 @@ export default function Contact() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.15 }}
               className="space-y-5"
             >
               <ContactRow

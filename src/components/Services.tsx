@@ -46,13 +46,9 @@ export default function Services() {
         </div>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map(({ icon: Icon, title, desc }, i) => (
+          {services.map(({ icon: Icon, title, desc }) => (
             <motion.div
               key={title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.07 }}
               className="card-glow group relative overflow-hidden rounded-2xl border border-ink-800/10 bg-cream-50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-bronze-500 dark:border-cream-100/10 dark:bg-ink-800"
             >
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-bronze-400/15 transition-transform duration-700 group-hover:scale-150" />

@@ -46,7 +46,9 @@ export function useScrolledPast(threshold: number): boolean {
     setPast(previous);
 
     const update = (y: number) => {
-      const next = y > threshold;
+      // Prevent rapid background switching when touch-scroll bounce sits on
+      // the navbar threshold.
+      const next = previous ? y > threshold - 8 : y > threshold + 8;
       if (next === previous) return;
       previous = next;
       setPast(next);
@@ -76,7 +78,11 @@ export function useNearBottom(threshold = 180): boolean {
     setNearBottom(previous);
 
     const update = (y: number) => {
-      const next = isNearDocumentBottom(y, threshold);
+      const distance = document.documentElement.scrollHeight - (y + window.innerHeight);
+      // Keep floating controls from flashing at the footer boundary.
+      const next = previous
+        ? distance <= threshold + 32
+        : distance <= Math.max(0, threshold - 16);
       if (next === previous) return;
       previous = next;
       setNearBottom(next);

@@ -48,10 +48,6 @@ export default function Craftsmanship() {
             {steps.map(({ icon: Icon, title, desc }, i) => (
               <motion.div
                 key={title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.12 }}
                 className="relative flex w-1/5 flex-col items-center text-center"
               >
                 {/* Icon circle */}
@@ -76,13 +72,9 @@ export default function Craftsmanship() {
         {/* Mobile vertical timeline */}
         <div className="mt-14 md:hidden">
           <div className="relative border-l-2 border-bronze-400/30 pl-8">
-            {steps.map(({ icon: Icon, title, desc }, i) => (
+            {steps.map(({ icon: Icon, title, desc }) => (
               <motion.div
                 key={title}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="relative mb-10 last:mb-0"
               >
                 {/* Dot on the line */}

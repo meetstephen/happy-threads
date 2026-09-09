@@ -35,10 +35,6 @@ export default function About() {
     <section id="about" className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
           className="md:col-span-5"
         >
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-luxe">
@@ -52,10 +48,6 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
           className="md:col-span-7"
         >
           <p className="eyebrow">About the Designer</p>

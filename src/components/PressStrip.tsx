@@ -34,11 +34,7 @@ export default function PressStrip() {
           {DEFAULT_OUTLETS.map((outlet, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 0.7, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
-              className="text-center"
+              className="text-center opacity-70"
             >
               <EditableText
                 contentKey={`press.outlet.${i}`}

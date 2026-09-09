@@ -54,11 +54,6 @@ export default function DesignCard({ design, onOpen, highlighted, featured }: Pr
   return (
     <motion.article
       data-design-id={design.id}
-      layout
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={`group relative overflow-hidden rounded-2xl bg-cream-50 shadow-soft transition-all duration-500 hover:shadow-luxe hover:-translate-y-1 dark:bg-ink-800 ${
         highlighted ? 'ring-2 ring-bronze-500 ring-offset-4 ring-offset-cream-100 dark:ring-offset-ink-900' : ''
       } ${featured ? 'border-t-2 border-t-bronze-500' : ''}`}

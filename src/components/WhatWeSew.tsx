@@ -55,15 +55,11 @@ export default function WhatWeSew() {
 
         {/* Grid */}
         <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {garmentTypes.map(({ icon: Icon, name, desc }, i) => {
+          {garmentTypes.map(({ icon: Icon, name, desc }) => {
             const isHighlighted = name === 'Bring Your Own Style';
             return (
               <motion.div
                 key={name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.04 }}
                 className={`card-glow group relative overflow-hidden rounded-2xl border p-5 transition-all duration-500 hover:-translate-y-1 ${
                   isHighlighted
                     ? 'border-bronze-500/60 bg-gradient-to-br from-bronze-400/10 via-cream-50 to-bronze-500/5 dark:from-bronze-500/10 dark:via-ink-800 dark:to-bronze-400/5'
@@ -90,10 +86,6 @@ export default function WhatWeSew() {
 
         {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
           className="mx-auto mt-14 max-w-2xl rounded-3xl border border-bronze-500/40 bg-gradient-to-r from-bronze-400/5 via-cream-50 to-bronze-400/5 p-8 text-center shadow-luxe dark:from-bronze-500/5 dark:via-ink-800 dark:to-bronze-500/5"
         >
           <Pen className="mx-auto text-bronze-500" size={32} />

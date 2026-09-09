@@ -54,13 +54,9 @@ export default function Testimonials() {
         </div>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2">
-          {testimonials.map((t, i) => (
+          {testimonials.map((t) => (
             <motion.figure
               key={t.key}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
               className="relative overflow-hidden rounded-3xl border border-ink-800/10 border-l-4 border-l-bronze-500 bg-cream-50 p-8 shadow-soft gold-glow dark:border-cream-100/10 dark:border-l-bronze-400 dark:bg-ink-800"
             >
               <Quote className="absolute right-6 top-6 text-bronze-400/40" size={48} />
