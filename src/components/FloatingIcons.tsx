@@ -11,19 +11,13 @@ const icons = [
 
 export default function FloatingIcons() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 hidden overflow-hidden lg:block">
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 hidden h-screen overflow-hidden lg:block">
       {icons.map(({ Icon, className, delay, size }, i) => (
         <Icon
           key={i}
           size={size}
           className={`absolute animate-float ${className}`}
-          style={{
-            animationDelay: delay,
-            // Promote each animated SVG to its own GPU compositor layer.
-            // Without this, the browser repaints the entire fixed container
-            // (and everything behind it) on every animation frame.
-            willChange: 'transform',
-          }}
+          style={{ animationDelay: delay }}
         />
       ))}
     </div>

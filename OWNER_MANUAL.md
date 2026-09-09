@@ -41,8 +41,10 @@ Your website has two faces:
 - **Your admin dashboard** — your private control room. Only you can reach it.
   From here you add clothes, change photos, edit words, track orders, and more.
 
-Everything saves to the cloud, so the moment you tap **Save**, your customers see
-the change — whether they're in Lagos, London, or right there in Abakaliki.
+Public content, photos, testimonials, and lookbook changes save to the cloud, so
+customers see them everywhere. Bookings, customer measurements, and WhatsApp
+templates stay private on your current phone/browser; use **Site -> Download
+backup** regularly and before changing phones.
 
 ---
 
@@ -51,9 +53,9 @@ the change — whether they're in Lagos, London, or right there in Abakaliki.
 There are **two ways** in. Both are invisible to visitors.
 
 **Way 1 — the web address (easiest):**
-1. Open your site: `https://happythreads.netlify.app`
+1. Open your site: `https://happinessfashion.netlify.app`
 2. Add `/#admin` to the end so it reads
-   `https://happythreads.netlify.app/#admin`
+   `https://happinessfashion.netlify.app/#admin`
 3. Press Go.
 
 > 💡 **Tip:** Bookmark that `/#admin` address to your phone's home screen. Then
@@ -73,9 +75,9 @@ Nobody watching the site would ever guess this — it looks like ordinary text.
 
 When the admin area opens, it asks you to prove it's really you.
 
-- **If your site is connected to the cloud (recommended):** enter your **email**
-  and **password**. The first time only, tap "Create account" to set your
-  password. After that, your phone remembers you — you go straight in.
+- **If your site is connected to the cloud (recommended):** enter the owner
+  **email** and **password** supplied during handover. After that, your phone
+  remembers you. Use **Forgot password?** if you ever lose it.
 - **If the cloud isn't set up yet:** you'll see a simple **passcode** box instead.
   Enter the passcode your developer set for you.
 
@@ -107,7 +109,7 @@ Here's what each does, in plain words:
 | **Templates** | Save WhatsApp replies you use often |
 | **Bookings** | Keep track of fittings and deliveries |
 | **Customers** | Save client names and measurements |
-| **Site** | Your stats and your printable QR code |
+| **Site** | Your stats, phone-data backup, and printable QR code |
 
 ---
 
@@ -132,14 +134,21 @@ automatically so your site stays fast.
 
 ### Put your strongest designs first
 
-1. Tap **Lookbook**, then **Arrange**.
+1. Tap **Lookbook**, then **Curate**.
 2. Find a design by name or category if needed.
 3. Use the first button to move it straight to the top, or the arrow buttons to
    move it one place at a time.
+4. Tap the **camera** to replace any design photo, including the original
+   collection. Tap the **eye** to hide or restore a design.
 
 The order saves immediately and syncs to every visitor. The homepage presents
 the first nine looks as an edited selection, then lets visitors tap
 **Discover more** instead of loading the entire catalogue at once.
+
+Hidden designs are not deleted. They disappear from the homepage, Lookbook,
+style finder, favourites, and direct design links, but remain in **Curate** so
+you can restore them later. Only designs you personally uploaded show a trash
+button for permanent deletion.
 
 ---
 
@@ -152,10 +161,16 @@ the first nine looks as an edited selection, then lets visitors tap
 4. Change anything — name, category, description, tags, or the photo.
 5. Tap **Save changes**.
 
-**To remove:**
-1. In that same grid, tap the **trash can** on the design.
-2. Confirm "Delete" when asked.
-3. It's gone from your site immediately.
+**To hide safely:**
+1. Tap **Lookbook**, then **Curate**.
+2. Tap the **eye** beside any original or uploaded design.
+3. Tap it again whenever you want to restore the design.
+
+**To delete permanently:**
+1. Open **Curate** or the uploaded-design grid.
+2. Tap the **trash can** on a design you uploaded.
+3. Confirm "Delete" when asked. Original collection designs use hide/restore
+   instead, so they can never be lost by accident.
 
 > 🗑️ Removing asks you to confirm first, so you can't delete by accident.
 
@@ -187,8 +202,10 @@ photo, design photos, all of it.
 
 **The on-the-spot way:**
 1. While signed in, just browse your site normally.
-2. Any editable photo shows a small **camera** button. Tap it, choose a new
-   image, done.
+2. Any editable site portrait shows **Change** and **Hide** controls. Use
+   **Reset** to restore the original photo.
+3. For collection photos, open **Lookbook → Curate**. The camera works for
+   every design, including the original twenty.
 
 ---
 
@@ -309,6 +326,13 @@ Use this to learn what your customers want, then give them more of it.
 
 Anyone who scans it lands straight on your site. Brilliant for owambe and markets.
 
+### Back up your private phone data
+
+Bookings, customer measurements, and WhatsApp templates stay in the browser on
+your current phone. In **Site**, tap **Download backup** and keep the JSON file
+somewhere safe. On a replacement phone, open the same panel, tap **Restore
+backup**, choose that file, and confirm. Public website content remains in the cloud.
+
 ---
 
 ## 18. Joy, your AI assistant
@@ -330,7 +354,8 @@ Pull down to refresh the page. If you're editing, make sure you tapped **Save**.
 
 **"I'm locked out of admin."**
 Wait 5 minutes (the lock resets), then try again. If you forgot your password,
-ask your developer to reset it from the Supabase dashboard.
+tap **Forgot password?** on the sign-in screen and follow the email link. Your
+developer can still send a recovery email from Supabase if needed.
 
 **"A photo won't upload."**
 Use a normal photo (JPG or PNG) under 10MB. Very large or unusual files are

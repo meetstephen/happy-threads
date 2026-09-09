@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, RotateCcw, Loader2, Shirt, X as XIcon } from 'lucide-react';
+import { Camera, Eye, EyeOff, RotateCcw, Loader2, Shirt, X as XIcon } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useAdminAuth } from '../lib/auth';
 import { resizeImageFile } from '../utils/imageResize';
@@ -16,7 +16,11 @@ interface Props {
   alt: string;
   /** Extra classes for the <img> element. */
   className?: string;
+  /** Whether this image can be hidden independently of its surrounding content. */
+  allowHide?: boolean;
 }
+
+export const HIDDEN_IMAGE_VALUE = '__HFW_HIDDEN_IMAGE__';
 
 /**
  * Wraps any image on the site and makes it swappable for the admin.
@@ -36,7 +40,7 @@ interface Props {
  *   3. The visible "Change photo" button is large enough for a comfortable
  *      tap target (44x44 minimum on mobile).
  */
-export default function EditableImage({ contentKey, defaultSrc, alt, className = '' }: Props) {
+export default function EditableImage({ contentKey, defaultSrc, alt, className = '', allowHide = true }: Props) {
   const { get, set, reset, hasOverride } = useSiteContent();
   const { admin } = useAdminAuth();
   const [uploading, setUploading] = useState(false);
@@ -45,6 +49,7 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
   const fileRef = useRef<HTMLInputElement>(null);
 
   const currentSrc = get(contentKey, defaultSrc);
+  const hidden = currentSrc === HIDDEN_IMAGE_VALUE;
 
   // Reset the broken-image flag whenever the source changes (e.g. the admin
   // swaps in a new photo, or an override loads from the cloud).
@@ -98,8 +103,22 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
 
   const dismissError = () => setValidationError(null);
 
+  const hide = async () => {
+    if (!window.confirm(`Hide ${alt}? You can restore it at any time in Edit Mode.`)) return;
+    setValidationError(null);
+    setUploading(true);
+    try {
+      await set(contentKey, HIDDEN_IMAGE_VALUE);
+    } catch (err) {
+      setValidationError((err as Error).message ?? 'Could not hide this image.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Visitors - plain image, with a graceful fallback if the photo fails to load
   if (!admin) {
+    if (hidden) return null;
     if (imgError) {
       return (
         <span
@@ -123,8 +142,16 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
 
   // Admin - image with always-visible swap controls
   return (
-    <span className="group/img relative inline-block h-full w-full">
-      <img src={currentSrc} alt={alt} className={className} />
+    <span className="group/img relative inline-block h-full min-h-28 w-full">
+      {hidden ? (
+        <span className={`flex h-full min-h-28 w-full items-center justify-center border border-dashed border-bronze-500/40 bg-bronze-400/10 text-bronze-600 dark:text-bronze-400 ${className}`}>
+          <span className="flex flex-col items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em]">
+            <EyeOff size={22} /> Hidden from visitors
+          </span>
+        </span>
+      ) : (
+        <img src={currentSrc} alt={alt} className={className} />
+      )}
 
       {/* ALWAYS-VISIBLE corner action chips */}
       <span className="pointer-events-none absolute right-2 top-2 z-10 flex flex-col items-end gap-1.5 sm:right-3 sm:top-3">
@@ -143,7 +170,35 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
           {uploading ? <Loader2 size={12} className="animate-spin" /> : <Camera size={12} />}
           <span>{uploading ? 'Uploading' : 'Change'}</span>
         </button>
-        {hasOverride(contentKey) && !uploading && (
+        {hidden && !uploading ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              void revert();
+            }}
+            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-bronze-500/95 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-cream-100 shadow-soft backdrop-blur-md active:scale-95"
+            aria-label={`Show ${alt} image`}
+          >
+            <Eye size={11} /> Show
+          </button>
+        ) : allowHide ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              void hide();
+            }}
+            disabled={uploading}
+            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-wine-500/95 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-cream-100 shadow-soft backdrop-blur-md active:scale-95 disabled:opacity-50"
+            aria-label={`Hide ${alt} image`}
+          >
+            <EyeOff size={11} /> Hide
+          </button>
+        ) : null}
+        {hasOverride(contentKey) && !hidden && !uploading && (
           <button
             type="button"
             onClick={(e) => {
@@ -151,7 +206,7 @@ export default function EditableImage({ contentKey, defaultSrc, alt, className =
               e.stopPropagation();
               revert();
             }}
-            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-wine-500/95 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-cream-100 shadow-soft backdrop-blur-md transition-colors hover:bg-wine-600 active:scale-95"
+            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full bg-ink-900/90 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.15em] text-cream-100 shadow-soft backdrop-blur-md transition-colors hover:bg-ink-800 active:scale-95"
             title="Revert to original"
             aria-label="Reset to original image"
           >

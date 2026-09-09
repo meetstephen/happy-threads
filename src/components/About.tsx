@@ -4,7 +4,7 @@ import { pexels } from '../utils/images';
 import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
-const ABOUT_IMG = pexels(3852974, 1000, 1250);
+export const ABOUT_IMG = pexels(3852974, 1000, 1250);
 
 const DEFAULT_ABOUT_P1 =
   'I started Happiness Fashion World seven years ago in a small studio in Abakaliki with one second-hand sewing machine and a notebook full of sketches. Today, the atelier dresses brides, executives, and women who simply want to feel extraordinary on a regular Tuesday.';
@@ -35,10 +35,6 @@ export default function About() {
     <section id="about" className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe grid items-center gap-14 md:grid-cols-12">
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
           className="md:col-span-5"
         >
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-luxe">
@@ -52,10 +48,6 @@ export default function About() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
           className="md:col-span-7"
         >
           <p className="eyebrow">About the Designer</p>

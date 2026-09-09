@@ -12,7 +12,7 @@ export default function ScrollProgress() {
   return (
     <motion.div
       aria-hidden
-      style={{ scaleX: scrollYProgress }}
+      style={{ scaleX: scrollYProgress, willChange: 'transform' }}
       className="pointer-events-none fixed inset-x-0 top-0 z-[65] h-[3px] origin-left bg-gradient-to-r from-bronze-600 via-gold-500 to-bronze-400"
     />
   );

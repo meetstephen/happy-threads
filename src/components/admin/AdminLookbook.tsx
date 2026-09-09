@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowDown, ArrowUp, Camera, GripVertical, Layers, Pencil, Plus, RotateCcw, Search, Star, Tag, Trash2, Upload, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Camera, Eye, EyeOff, GripVertical, Layers, Pencil, Plus, RotateCcw, Search, Star, Tag, Trash2, Upload, X } from 'lucide-react';
 import { useCustomDesigns } from '../../context/CustomDesignsContext';
 import { useSiteContent } from '../../context/SiteContentContext';
-import { categories, type Design, type DesignCategory } from '../../data/designs';
+import { categories, designs as staticDesigns, type Design, type DesignCategory } from '../../data/designs';
 import { resizeImageFile } from '../../utils/imageResize';
 import { validateImageFile } from '../../utils/sanitize';
 import { uploadDesignImage } from '../../services/designsService';
-import { applyDesignOrder, LOOKBOOK_ORDER_KEY } from '../../utils/designOrder';
+import {
+  applyDesignOrder,
+  LOOKBOOK_HIDDEN_KEY,
+  LOOKBOOK_ORDER_KEY,
+  parseDesignOrder,
+  parseHiddenDesigns,
+} from '../../utils/designOrder';
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -44,10 +50,25 @@ export default function AdminLookbook({ editingDesign }: Props) {
   const [batchBusy, setBatchBusy] = useState(false);
   const [arrangeSearch, setArrangeSearch] = useState('');
   const [arrangeBusy, setArrangeBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState<string | null>(null);
+  const designPhotoRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
+  const allManagedDesigns = useMemo(
+    () => [...customDesigns, ...staticDesigns],
+    [customDesigns]
+  );
   const orderedDesigns = useMemo(
-    () => applyDesignOrder(customDesigns, get(LOOKBOOK_ORDER_KEY, '')),
-    [customDesigns, get]
+    () => applyDesignOrder(allManagedDesigns, get(LOOKBOOK_ORDER_KEY, '')),
+    [allManagedDesigns, get]
+  );
+  const hiddenDesignIds = useMemo(
+    () => parseHiddenDesigns(get(LOOKBOOK_HIDDEN_KEY, '')),
+    [get]
+  );
+  const hiddenDesignSet = useMemo(() => new Set(hiddenDesignIds), [hiddenDesignIds]);
+  const hiddenManagedCount = useMemo(
+    () => orderedDesigns.filter((design) => hiddenDesignSet.has(design.id)).length,
+    [hiddenDesignSet, orderedDesigns]
   );
   const arrangedResults = useMemo(() => {
     const query = arrangeSearch.trim().toLowerCase();
@@ -76,9 +97,9 @@ export default function AdminLookbook({ editingDesign }: Props) {
 
   const onFileChosen = async (files: FileList | null) => { if (!files || !files.length) return; const file = files[0]; setBusy(true); setError(null); try { const v = await validateImageFile(file); if (!v.valid) { setError(v.error || 'Invalid image'); setBusy(false); return; } const resized = await resizeImageFile(file, 900, 0.82); setPendingFile(resized); if (pendingPreview) URL.revokeObjectURL(pendingPreview); setPendingPreview(URL.createObjectURL(resized)); setKeepExistingImage(''); } catch { setError('Could not read that image.'); } finally { setBusy(false); } };
 
-  const submit = async (e: React.FormEvent) => { e.preventDefault(); setError(null); if (!name.trim()) { setError('Please enter a name.'); return; } const isEditing = Boolean(editingId); if (!isEditing && !pendingFile) { setError('Please choose a photo.'); return; } setBusy(true); try { let imageUrl = keepExistingImage; if (pendingFile) { imageUrl = cloudEnabled ? await uploadDesignImage(pendingFile) : await fileToBase64(pendingFile); } if (isEditing && editingId) { await updateDesign(editingId, { name: name.trim(), category, description: description.trim() || `A ${category} piece by Happiness.`, image: imageUrl, tags: tags.split(',').map(t => t.trim()).filter(Boolean), featured }); setInfo('Design updated.'); } else { await addDesign({ name: name.trim(), category, description: description.trim() || `A new ${category} piece by Happiness.`, image: imageUrl, tags: tags.split(',').map(t => t.trim()).filter(Boolean), occasions: ['party'], vibes: ['classic'], colorMood: 'neutral', featured }); setInfo('Design published.'); } resetForm(); setTimeout(() => setInfo(null), 2200); } catch (err) { setError((err as Error).message || 'Could not save.'); } finally { setBusy(false); } };
+  const submit = async (e: React.FormEvent) => { e.preventDefault(); setError(null); if (!name.trim()) { setError('Please enter a name.'); return; } const isEditing = Boolean(editingId); if (!pendingFile && !keepExistingImage) { setError(isEditing ? 'Choose a replacement photo, or hide the full design from Curate.' : 'Please choose a photo.'); return; } setBusy(true); try { let imageUrl = keepExistingImage; if (pendingFile) { imageUrl = cloudEnabled ? await uploadDesignImage(pendingFile) : await fileToBase64(pendingFile); } if (isEditing && editingId) { await updateDesign(editingId, { name: name.trim(), category, description: description.trim() || `A ${category} piece by Happiness.`, image: imageUrl, tags: tags.split(',').map(t => t.trim()).filter(Boolean), featured }); setInfo('Design updated.'); } else { await addDesign({ name: name.trim(), category, description: description.trim() || `A new ${category} piece by Happiness.`, image: imageUrl, tags: tags.split(',').map(t => t.trim()).filter(Boolean), occasions: ['party'], vibes: ['classic'], colorMood: 'neutral', featured }); setInfo('Design published.'); } resetForm(); setTimeout(() => setInfo(null), 2200); } catch (err) { setError((err as Error).message || 'Could not save.'); } finally { setBusy(false); } };
 
-  const handleRemove = async (id: string, label: string) => { if (!window.confirm(`Delete "${label}"? This cannot be undone.`)) return; try { await removeDesign(id); setInfo('Design removed.'); setTimeout(() => setInfo(null), 2000); } catch (err) { setError((err as Error).message || 'Could not remove.'); } };
+  const handleRemove = async (id: string, label: string) => { if (!window.confirm(`Delete "${label}"? This cannot be undone.`)) return; try { await removeDesign(id); const nextOrder = parseDesignOrder(get(LOOKBOOK_ORDER_KEY, '')).filter((savedId) => savedId !== id); const nextHidden = parseHiddenDesigns(get(LOOKBOOK_HIDDEN_KEY, '')).filter((savedId) => savedId !== id); if (nextOrder.length > 0) await set(LOOKBOOK_ORDER_KEY, JSON.stringify(nextOrder)); else if (hasOverride(LOOKBOOK_ORDER_KEY)) await reset(LOOKBOOK_ORDER_KEY); if (nextHidden.length > 0) await set(LOOKBOOK_HIDDEN_KEY, JSON.stringify(nextHidden)); else if (hasOverride(LOOKBOOK_HIDDEN_KEY)) await reset(LOOKBOOK_HIDDEN_KEY); setInfo('Design removed.'); setTimeout(() => setInfo(null), 2000); } catch (err) { setError((err as Error).message || 'Could not remove.'); } };
 
   const startEdit = (d: Design) => { setEditingId(d.id); setName(d.name); setCategory(d.category); setDescription(d.description); setTags(d.tags.join(', ')); setFeatured(Boolean(d.featured)); setKeepExistingImage(d.image); setPendingFile(null); if (pendingPreview) URL.revokeObjectURL(pendingPreview); setPendingPreview(''); setTab('add'); };
 
@@ -132,6 +153,55 @@ export default function AdminLookbook({ editingDesign }: Props) {
     void saveOrder(next);
   };
 
+  const toggleDesignVisibility = async (design: Design) => {
+    const currentlyHidden = hiddenDesignSet.has(design.id);
+    const visibleCount = orderedDesigns.length - hiddenManagedCount;
+    if (!currentlyHidden && visibleCount <= 1) {
+      setError('Keep at least one design visible in the collection.');
+      return;
+    }
+    setArrangeBusy(true);
+    setError(null);
+    try {
+      const next = currentlyHidden
+        ? hiddenDesignIds.filter((id) => id !== design.id)
+        : [...hiddenDesignIds, design.id];
+      if (next.length === 0) await reset(LOOKBOOK_HIDDEN_KEY);
+      else await set(LOOKBOOK_HIDDEN_KEY, JSON.stringify(next));
+      setInfo(currentlyHidden ? `${design.name} is live again.` : `${design.name} is hidden from visitors.`);
+      setTimeout(() => setInfo(null), 1800);
+    } catch (err) {
+      setError((err as Error).message || 'Could not update visibility.');
+    } finally {
+      setArrangeBusy(false);
+    }
+  };
+
+  const replaceDesignPhoto = async (design: Design, files: FileList | null) => {
+    if (!files?.length) return;
+    const input = designPhotoRefs.current[design.id];
+    setPhotoBusy(design.id);
+    setError(null);
+    try {
+      const validation = await validateImageFile(files[0]);
+      if (!validation.valid) throw new Error(validation.error || 'Invalid image');
+      const resized = await resizeImageFile(files[0], 900, 0.82);
+      const url = cloudEnabled ? await uploadDesignImage(resized) : await fileToBase64(resized);
+      if (design.custom) {
+        await updateDesign(design.id, { image: url });
+      } else {
+        await set(`design.image.${design.id}`, url);
+      }
+      setInfo(`${design.name} photo updated.`);
+      setTimeout(() => setInfo(null), 1800);
+    } catch (err) {
+      setError((err as Error).message || 'Could not replace that photo.');
+    } finally {
+      if (input) input.value = '';
+      setPhotoBusy(null);
+    }
+  };
+
   const previewSrc = pendingPreview || keepExistingImage;
   const isEditing = Boolean(editingId);
 
@@ -148,7 +218,7 @@ export default function AdminLookbook({ editingDesign }: Props) {
       <div className="mt-4 flex gap-1 overflow-x-auto border-b border-ink-800/10 pb-px dark:border-cream-100/10">
         <button type="button" onClick={() => setTab('add')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'add' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Plus size={13} /> {isEditing ? 'Edit' : 'Add'}</button>
         <button type="button" onClick={() => setTab('batch')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'batch' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Layers size={13} /> Batch{batchFiles.length > 0 && <span className="ml-1 rounded-full bg-bronze-500 px-1.5 py-0.5 text-[9px] text-cream-100">{batchFiles.length}</span>}</button>
-        <button type="button" onClick={() => setTab('arrange')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'arrange' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><GripVertical size={13} /> Arrange</button>
+        <button type="button" onClick={() => setTab('arrange')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'arrange' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><GripVertical size={13} /> Curate</button>
         <button type="button" onClick={() => setTab('categories')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'categories' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Tag size={13} /> Labels</button>
       </div>
 
@@ -223,8 +293,12 @@ export default function AdminLookbook({ editingDesign }: Props) {
           <div className="rounded-2xl border border-bronze-500/20 bg-bronze-400/5 p-4">
             <p className="font-display text-lg">Curate the first impression</p>
             <p className="mt-1 text-sm leading-relaxed text-ink-800/65 dark:text-cream-100/65">
-              Move your strongest looks to the top. The first nine are the edited selection visitors see before they choose to discover more.
+              Manage every look, including the original collection. Reorder the first nine, replace any photo, or hide a piece without deleting it.
             </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-medium uppercase tracking-[0.16em]">
+              <span className="rounded-full bg-bronze-500/10 px-2.5 py-1 text-bronze-600 dark:text-bronze-400">{orderedDesigns.length - hiddenManagedCount} live</span>
+              {hiddenManagedCount > 0 && <span className="rounded-full bg-ink-800/10 px-2.5 py-1 text-ink-800/60 dark:bg-cream-100/10 dark:text-cream-100/60">{hiddenManagedCount} hidden</span>}
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <label className="relative min-w-0 flex-1">
@@ -237,18 +311,32 @@ export default function AdminLookbook({ editingDesign }: Props) {
             {arrangedResults.map((design) => {
               const position = orderedDesigns.findIndex((item) => item.id === design.id);
               return (
-                <div key={design.id} className="flex items-center gap-3 rounded-2xl border border-ink-800/10 bg-cream-50 p-2.5 dark:border-cream-100/10 dark:bg-ink-900">
+                <div key={design.id} className={`flex items-center gap-3 rounded-2xl border p-2.5 transition-opacity ${hiddenDesignSet.has(design.id) ? 'border-dashed border-ink-800/15 bg-cream-200/60 opacity-70 dark:border-cream-100/15 dark:bg-ink-800/60' : 'border-ink-800/10 bg-cream-50 dark:border-cream-100/10 dark:bg-ink-900'}`}>
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-bronze-500/10 text-[11px] font-semibold text-bronze-600 dark:text-bronze-400">{position + 1}</span>
-                  <img src={design.image} alt="" className="h-16 w-12 shrink-0 rounded-xl object-cover" />
+                  <div className="relative shrink-0">
+                    <img src={get(`design.image.${design.id}`, design.image)} alt="" className="h-16 w-12 rounded-xl object-cover" />
+                    {hiddenDesignSet.has(design.id) && <span className="absolute inset-0 grid place-items-center rounded-xl bg-ink-900/55 text-cream-100"><EyeOff size={15} /></span>}
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{design.name}</p>
                     <p className="truncate text-[9px] uppercase tracking-[0.16em] text-ink-800/50 dark:text-cream-100/50">{design.category}</p>
+                    <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-bronze-600 dark:text-bronze-400">{design.custom ? 'Uploaded' : 'Original collection'}</p>
                   </div>
                   <div className="grid grid-cols-3 gap-1">
                     <button type="button" onClick={() => moveDesign(design.id, 'top')} disabled={position === 0 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} to top`}><GripVertical size={15} /></button>
                     <button type="button" onClick={() => moveDesign(design.id, 'up')} disabled={position === 0 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} up`}><ArrowUp size={15} /></button>
                     <button type="button" onClick={() => moveDesign(design.id, 'down')} disabled={position === orderedDesigns.length - 1 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} down`}><ArrowDown size={15} /></button>
+                    <button type="button" onClick={() => designPhotoRefs.current[design.id]?.click()} disabled={photoBusy === design.id} className="grid h-10 w-10 place-items-center rounded-xl bg-bronze-500 text-cream-100 active:scale-90 disabled:opacity-50" aria-label={`Replace ${design.name} photo`} title="Replace photo"><Camera size={15} /></button>
+                    <button type="button" onClick={() => void toggleDesignVisibility(design)} disabled={arrangeBusy} className={`grid h-10 w-10 place-items-center rounded-xl text-cream-100 active:scale-90 disabled:opacity-50 ${hiddenDesignSet.has(design.id) ? 'bg-[#238636]' : 'bg-wine-500'}`} aria-label={hiddenDesignSet.has(design.id) ? `Show ${design.name}` : `Hide ${design.name}`} title={hiddenDesignSet.has(design.id) ? 'Show on site' : 'Hide from site'}>{hiddenDesignSet.has(design.id) ? <Eye size={15} /> : <EyeOff size={15} />}</button>
+                    {design.custom ? (
+                      <button type="button" onClick={() => void handleRemove(design.id, design.name)} className="grid h-10 w-10 place-items-center rounded-xl border border-wine-500/30 text-wine-500 active:scale-90" aria-label={`Delete ${design.name}`} title="Delete permanently"><Trash2 size={15} /></button>
+                    ) : hasOverride(`design.image.${design.id}`) ? (
+                      <button type="button" onClick={() => void reset(`design.image.${design.id}`)} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Restore original ${design.name} photo`} title="Restore original photo"><RotateCcw size={15} /></button>
+                    ) : (
+                      <span className="h-10 w-10" aria-hidden="true" />
+                    )}
                   </div>
+                  <input ref={(el) => { designPhotoRefs.current[design.id] = el; }} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="hidden" onChange={(event) => void replaceDesignPhoto(design, event.target.files)} />
                 </div>
               );
             })}

@@ -42,7 +42,7 @@ export default function AdminTemplates() {
     <div>
       <p className="eyebrow">WhatsApp</p>
       <h3 className="mt-2 font-display text-2xl">Message Templates</h3>
-      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Quick-copy templates for WhatsApp replies.</p>
+      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Quick-copy templates stored on this device. Back them up from Site settings.</p>
 
       {info && <p className="mt-4 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 p-3 text-sm text-[#1da851]">{info}</p>}
 

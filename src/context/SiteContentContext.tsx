@@ -56,23 +56,30 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   // Load from Supabase on mount (if configured)
   useEffect(() => {
-    if (!supabase) {
+    const client = supabase;
+    if (!client) {
       setLoading(false);
       return;
     }
-    supabase
-      .from(SUPABASE_TABLE)
-      .select('key, value')
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const map: ContentMap = {};
-          for (const row of data as { key: string; value: string }[]) {
-            map[row.key] = row.value;
-          }
-          setContent((prev) => ({ ...prev, ...map }));
-        }
-        setLoading(false);
-      });
+    const loadRemote = async () => {
+      const { data, error } = await client.from(SUPABASE_TABLE).select('key, value');
+      if (error) {
+        console.warn('[site-content] load error:', error.message);
+      } else {
+        const map: ContentMap = {};
+        for (const row of data ?? []) map[row.key] = row.value;
+        setContent(map);
+      }
+      setLoading(false);
+    };
+
+    void loadRemote();
+    const channel = client
+      .channel('site-content-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: SUPABASE_TABLE }, () => { void loadRemote(); })
+      .subscribe();
+
+    return () => { void client.removeChannel(channel); };
   }, []);
 
   // Persist locally
@@ -88,26 +95,23 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const hasOverride = useCallback((key: string) => key in content, [content]);
 
   const set = useCallback(async (key: string, value: string) => {
-    setContent((prev) => ({ ...prev, [key]: value }));
     if (supabase) {
-      await supabase
-        .from(SUPABASE_TABLE)
-        .upsert({ key, value }, { onConflict: 'key' })
-        .then(({ error }) => {
-          if (error) console.warn('[site-content] upsert error:', error.message);
-        });
+      const { error } = await supabase.from(SUPABASE_TABLE).upsert({ key, value }, { onConflict: 'key' });
+      if (error) throw new Error(`Could not save this change: ${error.message}`);
     }
+    setContent((prev) => ({ ...prev, [key]: value }));
   }, []);
 
   const reset = useCallback(async (key: string) => {
+    if (supabase) {
+      const { error } = await supabase.from(SUPABASE_TABLE).delete().eq('key', key);
+      if (error) throw new Error(`Could not reset this change: ${error.message}`);
+    }
     setContent((prev) => {
       const next = { ...prev };
       delete next[key];
       return next;
     });
-    if (supabase) {
-      await supabase.from(SUPABASE_TABLE).delete().eq('key', key);
-    }
   }, []);
 
   return (

@@ -6,6 +6,9 @@ import { resizeImageFile } from '../../utils/imageResize';
 import { validateImageFile } from '../../utils/sanitize';
 import { uploadDesignImage } from '../../services/designsService';
 import { isSupabaseEnabled } from '../../lib/supabase';
+import { designs as staticDesigns, type Design } from '../../data/designs';
+import { HERO_IMAGE } from '../Hero';
+import { HIDDEN_IMAGE_VALUE } from '../EditableImage';
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -24,7 +27,12 @@ export default function AdminFeatured() {
   const [info, setInfo] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const heroImage = get('hero.image', '');
+  const heroImage = get('hero.image', HERO_IMAGE);
+  const allDesigns = [...customDesigns, ...staticDesigns].map(d => ({
+    ...d,
+    image: get(`design.image.${d.id}`, d.image),
+    featured: get(`design.featured.${d.id}`, String(Boolean(d.featured))) === 'true',
+  }));
 
   const handleHeroReplace = async (files: FileList | null) => {
     if (!files || !files.length) return;
@@ -40,8 +48,18 @@ export default function AdminFeatured() {
     finally { setBusy(false); }
   };
 
-  const toggleFeatured = async (id: string, current: boolean) => {
-    try { await updateDesign(id, { featured: !current }); } catch (err) { setError((err as Error).message); }
+  const toggleFeatured = async (design: Design) => {
+    setError(null);
+    try {
+      if (design.custom) await updateDesign(design.id, { featured: !design.featured });
+      else await set(`design.featured.${design.id}`, String(!design.featured));
+    } catch (err) { setError((err as Error).message); }
+  };
+
+  const resetHero = async () => {
+    setError(null);
+    try { await reset('hero.image'); }
+    catch (err) { setError((err as Error).message); }
   };
 
   return (
@@ -56,26 +74,26 @@ export default function AdminFeatured() {
       <div className="mt-6">
         <h4 className="mb-3 font-display text-lg">Hero Image</h4>
         <div className="relative overflow-hidden rounded-2xl border border-ink-800/10 dark:border-cream-100/10">
-          {heroImage ? <img src={heroImage} alt="Hero" className="aspect-video w-full object-cover" /> : <div className="grid aspect-video w-full place-items-center bg-cream-200 text-ink-800/30 dark:bg-ink-900">No hero image set</div>}
+          {heroImage !== HIDDEN_IMAGE_VALUE ? <img src={heroImage} alt="Hero" className="aspect-video w-full object-cover" /> : <div className="grid aspect-video w-full place-items-center bg-cream-200 text-ink-800/45 dark:bg-ink-900">Hero image is hidden</div>}
           <div className="absolute right-2 top-2 flex gap-2">
             <button type="button" onClick={() => fileRef.current?.click()} disabled={busy} className="inline-flex items-center gap-1.5 rounded-full bg-cream-100/95 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-800 shadow-soft active:scale-95 disabled:opacity-50"><Camera size={12} /> Replace</button>
-            {hasOverride('hero.image') && <button type="button" onClick={() => reset('hero.image')} className="inline-flex items-center gap-1.5 rounded-full bg-wine-500/95 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-cream-100 shadow-soft active:scale-95"><Trash2 size={12} /> Reset</button>}
+            {hasOverride('hero.image') && <button type="button" onClick={() => void resetHero()} className="inline-flex items-center gap-1.5 rounded-full bg-wine-500/95 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-cream-100 shadow-soft active:scale-95"><Trash2 size={12} /> Reset</button>}
           </div>
         </div>
         <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="hidden" onChange={e => handleHeroReplace(e.target.files)} />
       </div>
 
-      {customDesigns.length > 0 && (
+      {allDesigns.length > 0 && (
         <div className="mt-8">
           <h4 className="mb-3 font-display text-lg">Toggle Featured</h4>
           <div className="space-y-2">
-            {customDesigns.map(d => (
+            {allDesigns.map(d => (
               <div key={d.id} className="flex items-center justify-between gap-3 rounded-2xl border border-ink-800/10 p-3 dark:border-cream-100/10">
                 <div className="flex items-center gap-3 min-w-0">
-                  <img src={d.image} alt={d.name} className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+                  {d.image !== HIDDEN_IMAGE_VALUE ? <img src={d.image} alt={d.name} className="h-10 w-10 shrink-0 rounded-lg object-cover" /> : <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-cream-200 text-[9px] text-ink-800/45 dark:bg-ink-900">Hidden</div>}
                   <span className="truncate text-sm font-medium">{d.name}</span>
                 </div>
-                <button type="button" onClick={() => toggleFeatured(d.id, Boolean(d.featured))} className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${d.featured ? 'bg-bronze-500 text-cream-100' : 'border border-ink-800/15 text-ink-800/40 hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/40'}`}><Star size={14} fill={d.featured ? 'currentColor' : 'none'} /></button>
+                <button type="button" aria-label={`${d.featured ? 'Remove' : 'Add'} ${d.name} ${d.featured ? 'from' : 'to'} featured designs`} onClick={() => toggleFeatured(d)} className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${d.featured ? 'bg-bronze-500 text-cream-100' : 'border border-ink-800/15 text-ink-800/40 hover:border-bronze-500 hover:text-bronze-500 dark:border-cream-100/20 dark:text-cream-100/40'}`}><Star size={14} fill={d.featured ? 'currentColor' : 'none'} /></button>
               </div>
             ))}
           </div>

@@ -25,7 +25,9 @@ export const supabase: SupabaseClient | null = isSupabaseEnabled
         // signs in once on her phone.
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: false,
+        // Required for Supabase password-recovery links to establish the
+        // temporary session used by the in-app "Choose a new password" screen.
+        detectSessionInUrl: true,
       },
     })
   : null;

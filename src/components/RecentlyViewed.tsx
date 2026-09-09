@@ -116,10 +116,6 @@ function RecentCard({
     <motion.button
       type="button"
       onClick={onOpen}
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
       aria-label={`View ${design.name}`}
       className="group block w-40 shrink-0 snap-start text-left sm:w-48"
     >

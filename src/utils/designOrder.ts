@@ -1,6 +1,7 @@
 import type { Design } from '../data/designs';
 
 export const LOOKBOOK_ORDER_KEY = 'lookbook.customOrder';
+export const LOOKBOOK_HIDDEN_KEY = 'lookbook.hiddenDesigns';
 
 export function parseDesignOrder(value: string): string[] {
   try {
@@ -29,4 +30,13 @@ export function applyDesignOrder(designs: Design[], value: string): Design[] {
       return a.originalIndex - b.originalIndex;
     })
     .map(({ design }) => design);
+}
+
+export function parseHiddenDesigns(value: string): string[] {
+  return parseDesignOrder(value);
+}
+
+export function applyDesignVisibility(designs: Design[], value: string): Design[] {
+  const hidden = new Set(parseHiddenDesigns(value));
+  return hidden.size === 0 ? designs : designs.filter((design) => !hidden.has(design.id));
 }

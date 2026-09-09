@@ -49,9 +49,9 @@ footer 5 times quickly). It is organised into 12 sections:
 | Section | What it manages |
 |---|---|
 | **Home** | Welcome screen + quick links to every tool |
-| **Images** | Upload / replace / remove any image across the site |
+| **Images** | Replace, hide, restore, or reset the hero and designer portraits |
 | **Site Copy** | Edit headlines, taglines, the About story, and section text |
-| **Lookbook** | Take/upload photos, batch-publish, arrange display order, edit designs, and rename categories |
+| **Lookbook** | Take/upload photos, batch-publish, curate all designs, replace any catalogue photo, hide/restore pieces, and rename categories |
 | **Featured** | Set the homepage hero image and choose featured designs |
 | **Announcements** | Toggle and edit the top announcement bar |
 | **Testimonials** | Add, edit, and curate customer testimonials |
@@ -59,7 +59,7 @@ footer 5 times quickly). It is organised into 12 sections:
 | **Templates** | Reusable WhatsApp message snippets (copy in one tap) |
 | **Bookings** | Track fittings, consultations, and deliveries |
 | **Customers** | Client profiles, measurements, and preferences |
-| **Site** | Brand stats + printable QR-code generator |
+| **Site** | Brand stats, private phone-data backup/restore, and printable QR-code generator |
 
 Navigation is a sidebar on desktop and a bottom tab bar (+ a "More" sheet) on
 mobile. A prominent **"Back to site"** button returns to the public site.

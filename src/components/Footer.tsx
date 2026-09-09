@@ -49,7 +49,7 @@ export default function Footer() {
             <span className="break-all">{FAITH_EMAIL}</span>
           </a>
           <a
-            href="https://instagram.com"
+            href="https://instagram.com/happiness.fashion"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"

@@ -23,10 +23,6 @@ export default function BookingCTA() {
 
       <div className="container-luxe relative">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
           className="mx-auto max-w-3xl text-center"
         >
           <p className="eyebrow text-bronze-400">Your Journey Starts Here</p>
@@ -64,10 +60,6 @@ export default function BookingCTA() {
 
         {/* Trust indicators */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-14 flex flex-wrap items-center justify-center gap-8 text-center text-cream-200/60 sm:gap-12"
         >
           <div className="flex items-center gap-2">
