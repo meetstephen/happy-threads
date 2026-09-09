@@ -51,7 +51,7 @@ footer 5 times quickly). It is organised into 12 sections:
 | **Home** | Welcome screen + quick links to every tool |
 | **Images** | Upload / replace / remove any image across the site |
 | **Site Copy** | Edit headlines, taglines, the About story, and section text |
-| **Lookbook** | Add, edit, batch-upload, and remove designs; rename categories |
+| **Lookbook** | Take/upload photos, batch-publish, arrange display order, edit designs, and rename categories |
 | **Featured** | Set the homepage hero image and choose featured designs |
 | **Announcements** | Toggle and edit the top announcement bar |
 | **Testimonials** | Add, edit, and curate customer testimonials |

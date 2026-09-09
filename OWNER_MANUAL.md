@@ -99,7 +99,7 @@ Here's what each does, in plain words:
 | **Home** | Your welcome page with shortcuts to everything |
 | **Images** | Change any picture on the site |
 | **Site Copy** | Change any words/writing on the site |
-| **Lookbook** | Add, edit, or remove your clothes |
+| **Lookbook** | Add, edit, arrange, or remove your clothes |
 | **Featured** | Choose the big photo on your homepage |
 | **Announcements** | Show a message bar at the top (e.g. "Christmas sale!") |
 | **Testimonials** | Add nice things customers said about you |
@@ -116,8 +116,9 @@ Here's what each does, in plain words:
 This is the thing you'll do most often. It takes under a minute.
 
 1. Open the admin area and tap **Lookbook**.
-2. You'll be on the **Add** tab. Tap **"Tap to upload"**.
-3. Your phone offers your camera or gallery. **Take a fresh photo** or pick one.
+2. You'll be on the **Add** tab. Tap **"Take photo"** to open your rear camera,
+   or **"Choose photo"** to use your gallery.
+3. Take a fresh photo or pick one already on your phone.
 4. Fill in:
    - **Name** — e.g. "Emerald Aso-Ebi Set"
    - **Category** — pick from the list (Bridal, Ankara, Aso-Ebi & Owambe, etc.)
@@ -128,6 +129,17 @@ This is the thing you'll do most often. It takes under a minute.
 
 Done! It appears on your site for everyone, instantly. The photo is shrunk
 automatically so your site stays fast.
+
+### Put your strongest designs first
+
+1. Tap **Lookbook**, then **Arrange**.
+2. Find a design by name or category if needed.
+3. Use the first button to move it straight to the top, or the arrow buttons to
+   move it one place at a time.
+
+The order saves immediately and syncs to every visitor. The homepage presents
+the first nine looks as an edited selection, then lets visitors tap
+**Discover more** instead of loading the entire catalogue at once.
 
 ---
 

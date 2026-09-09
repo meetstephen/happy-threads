@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { ArrowUpRight, BookOpen, Heart, Sparkles } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowDown, ArrowUpRight, BookOpen, Heart, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DesignCard from './DesignCard';
 import { categories, type Design, type DesignCategory } from '../data/designs';
@@ -17,6 +17,7 @@ type Filter = 'All' | 'New Arrivals' | DesignCategory | 'Favorites';
 
 export default function Collections({ designs, highlightIds, onOpen, onOpenLookbook }: Props) {
   const [filter, setFilter] = useState<Filter>('All');
+  const [visibleCount, setVisibleCount] = useState(9);
   const { favorites } = useFavorites();
   const labelFor = useCategoryLabel();
 
@@ -45,6 +46,11 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
   }, [designs, filter, favorites, highlightIds]);
 
   const allFilters: Filter[] = ['All', 'New Arrivals', ...categories, 'Favorites'];
+  const displayed = visible.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(9);
+  }, [filter, highlightIds]);
 
   return (
     <section id="collections" className="py-20 md:py-32 luxury-gradient">
@@ -101,7 +107,7 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
 
         {/* grid */}
         <motion.div layout className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((d) => (
+          {displayed.map((d) => (
             <DesignCard
               key={d.id}
               design={d}
@@ -111,6 +117,21 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
             />
           ))}
         </motion.div>
+
+        {visible.length > displayed.length && (
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <p className="text-xs uppercase tracking-[0.22em] text-ink-800/50 dark:text-cream-100/50">
+              Showing {displayed.length} of {visible.length} pieces
+            </p>
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => Math.min(count + 9, visible.length))}
+              className="btn-ghost min-h-12"
+            >
+              Discover more <ArrowDown size={15} />
+            </button>
+          </div>
+        )}
 
         {visible.length === 0 && (
           <div className="mt-16 rounded-2xl border border-dashed border-ink-800/20 p-12 text-center text-ink-800/60 dark:border-cream-100/20 dark:text-cream-100/60">
