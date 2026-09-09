@@ -1,18 +1,17 @@
 import { useRef, useState } from 'react';
-import { Camera, Trash2, Upload } from 'lucide-react';
+import { Camera, Eye, EyeOff, RotateCcw, Upload } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { resizeImageFile } from '../../utils/imageResize';
 import { validateImageFile } from '../../utils/sanitize';
 import { uploadDesignImage } from '../../services/designsService';
 import { isSupabaseEnabled } from '../../lib/supabase';
+import { HIDDEN_IMAGE_VALUE } from '../EditableImage';
+import { HERO_IMAGE } from '../Hero';
+import { ABOUT_IMG } from '../About';
 
-const IMAGE_KEYS: { key: string; label: string; section: string }[] = [
-  { key: 'hero.image', label: 'Hero Background', section: 'Hero' },
-  { key: 'about.image', label: 'About the Designer', section: 'About' },
-  { key: 'collections.header', label: 'Collections Header', section: 'Collections' },
-  { key: 'craftsmanship.image', label: 'Craftsmanship', section: 'Craftsmanship' },
-  { key: 'services.image', label: 'Services Background', section: 'Services' },
-  { key: 'booking.image', label: 'Booking CTA', section: 'Booking' },
+const IMAGE_KEYS: { key: string; label: string; section: string; defaultSrc: string }[] = [
+  { key: 'hero.image', label: 'Hero Fashion Portrait', section: 'Hero', defaultSrc: HERO_IMAGE },
+  { key: 'about.image', label: 'About the Designer', section: 'About', defaultSrc: ABOUT_IMG },
 ];
 
 function fileToBase64(file: File): Promise<string> {
@@ -57,9 +56,9 @@ export default function AdminImages() {
     }
   };
 
-  const handleRemove = async (key: string) => {
-    if (!window.confirm('Remove this image override? It will revert to the default.')) return;
-    await reset(key);
+  const handleHide = async (key: string, label: string) => {
+    if (!window.confirm(`Hide ${label} from the public site? You can restore it here.`)) return;
+    await set(key, HIDDEN_IMAGE_VALUE);
   };
 
   return (
@@ -67,7 +66,7 @@ export default function AdminImages() {
       <p className="eyebrow">Site Images</p>
       <h3 className="mt-2 font-display text-2xl">Image Manager</h3>
       <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">
-        Replace or remove site images. Changes appear instantly for all visitors.
+        Replace, hide, or restore the site portraits. Lookbook photography is managed from the Curate tab.
       </p>
 
       {error && (
@@ -77,15 +76,16 @@ export default function AdminImages() {
       )}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {IMAGE_KEYS.map(({ key, label, section }) => {
-          const currentUrl = get(key, '');
+        {IMAGE_KEYS.map(({ key, label, section, defaultSrc }) => {
+          const currentUrl = get(key, defaultSrc);
           const overridden = hasOverride(key);
+          const hidden = currentUrl === HIDDEN_IMAGE_VALUE;
           return (
             <div
               key={key}
               className="overflow-hidden rounded-2xl border border-ink-800/10 dark:border-cream-100/10"
             >
-              {currentUrl ? (
+              {currentUrl && !hidden ? (
                 <img
                   src={currentUrl}
                   alt={label}
@@ -93,7 +93,7 @@ export default function AdminImages() {
                 />
               ) : (
                 <div className="grid aspect-video w-full place-items-center bg-cream-200 text-ink-800/30 dark:bg-ink-900 dark:text-cream-100/30">
-                  <Upload size={24} />
+                  {hidden ? <EyeOff size={24} /> : <Upload size={24} />}
                 </div>
               )}
               <div className="flex items-center justify-between gap-2 p-3">
@@ -101,7 +101,7 @@ export default function AdminImages() {
                   <div className="text-sm font-medium">{label}</div>
                   <div className="text-[10px] uppercase tracking-[0.2em] text-ink-800/50 dark:text-cream-100/50">
                     {section}
-                    {overridden && ' \u2022 Custom'}
+                    {hidden ? ' \u2022 Hidden' : overridden ? ' \u2022 Custom' : ' \u2022 Original'}
                   </div>
                 </div>
                 <div className="flex shrink-0 gap-1.5">
@@ -111,17 +111,41 @@ export default function AdminImages() {
                     disabled={busy === key}
                     className="grid h-9 w-9 place-items-center rounded-full bg-bronze-500 text-cream-100 transition-transform hover:bg-bronze-600 active:scale-90 disabled:opacity-50"
                     title="Replace"
+                    aria-label={`Replace ${label}`}
                   >
                     <Camera size={14} />
                   </button>
-                  {overridden && (
+                  {!hidden && (
                     <button
                       type="button"
-                      onClick={() => handleRemove(key)}
+                      onClick={() => handleHide(key, label)}
                       className="grid h-9 w-9 place-items-center rounded-full bg-wine-500 text-cream-100 transition-transform hover:bg-wine-600 active:scale-90"
-                      title="Remove override"
+                      title="Hide from site"
+                      aria-label={`Hide ${label} from site`}
                     >
-                      <Trash2 size={14} />
+                      <EyeOff size={14} />
+                    </button>
+                  )}
+                  {hidden && (
+                    <button
+                      type="button"
+                      onClick={() => reset(key)}
+                      className="grid h-9 w-9 place-items-center rounded-full bg-bronze-500 text-cream-100 transition-transform hover:bg-bronze-600 active:scale-90"
+                      title="Show original image"
+                      aria-label={`Show ${label}`}
+                    >
+                      <Eye size={14} />
+                    </button>
+                  )}
+                  {overridden && !hidden && (
+                    <button
+                      type="button"
+                      onClick={() => reset(key)}
+                      className="grid h-9 w-9 place-items-center rounded-full border border-ink-800/15 text-ink-800/60 transition-transform active:scale-90 dark:border-cream-100/20 dark:text-cream-100/60"
+                      title="Restore original image"
+                      aria-label={`Restore original ${label}`}
+                    >
+                      <RotateCcw size={14} />
                     </button>
                   )}
                 </div>

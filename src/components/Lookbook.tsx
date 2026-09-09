@@ -54,6 +54,10 @@ export default function Lookbook({
     () => designs.filter((d) => d.isNew || d.custom).length,
     [designs]
   );
+  const favoriteCount = useMemo(
+    () => designs.filter((d) => favorites.includes(d.id)).length,
+    [designs, favorites]
+  );
 
   const visible = useMemo(() => {
     let list = designs;
@@ -209,9 +213,9 @@ export default function Lookbook({
                       {isFav && <Heart size={10} fill={active ? 'currentColor' : 'none'} />}
                       {isNew && <Sparkles size={10} />}
                       {display}
-                      {isFav && favorites.length > 0 && (
+                      {isFav && favoriteCount > 0 && (
                         <span className="rounded-full bg-bronze-500 px-1.5 text-[9px] text-cream-100">
-                          {favorites.length}
+                          {favoriteCount}
                         </span>
                       )}
                       {isNew && newCount > 0 && (

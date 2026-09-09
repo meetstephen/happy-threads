@@ -132,14 +132,21 @@ automatically so your site stays fast.
 
 ### Put your strongest designs first
 
-1. Tap **Lookbook**, then **Arrange**.
+1. Tap **Lookbook**, then **Curate**.
 2. Find a design by name or category if needed.
 3. Use the first button to move it straight to the top, or the arrow buttons to
    move it one place at a time.
+4. Tap the **camera** to replace any design photo, including the original
+   collection. Tap the **eye** to hide or restore a design.
 
 The order saves immediately and syncs to every visitor. The homepage presents
 the first nine looks as an edited selection, then lets visitors tap
 **Discover more** instead of loading the entire catalogue at once.
+
+Hidden designs are not deleted. They disappear from the homepage, Lookbook,
+style finder, favourites, and direct design links, but remain in **Curate** so
+you can restore them later. Only designs you personally uploaded show a trash
+button for permanent deletion.
 
 ---
 
@@ -152,10 +159,16 @@ the first nine looks as an edited selection, then lets visitors tap
 4. Change anything — name, category, description, tags, or the photo.
 5. Tap **Save changes**.
 
-**To remove:**
-1. In that same grid, tap the **trash can** on the design.
-2. Confirm "Delete" when asked.
-3. It's gone from your site immediately.
+**To hide safely:**
+1. Tap **Lookbook**, then **Curate**.
+2. Tap the **eye** beside any original or uploaded design.
+3. Tap it again whenever you want to restore the design.
+
+**To delete permanently:**
+1. Open **Curate** or the uploaded-design grid.
+2. Tap the **trash can** on a design you uploaded.
+3. Confirm "Delete" when asked. Original collection designs use hide/restore
+   instead, so they can never be lost by accident.
 
 > 🗑️ Removing asks you to confirm first, so you can't delete by accident.
 
@@ -187,8 +200,10 @@ photo, design photos, all of it.
 
 **The on-the-spot way:**
 1. While signed in, just browse your site normally.
-2. Any editable photo shows a small **camera** button. Tap it, choose a new
-   image, done.
+2. Any editable site portrait shows **Change** and **Hide** controls. Use
+   **Reset** to restore the original photo.
+3. For collection photos, open **Lookbook → Curate**. The camera works for
+   every design, including the original twenty.
 
 ---
 

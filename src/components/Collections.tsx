@@ -25,6 +25,10 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
     () => designs.filter((d) => d.isNew || d.custom).length,
     [designs]
   );
+  const favoriteCount = useMemo(
+    () => designs.filter((d) => favorites.includes(d.id)).length,
+    [designs, favorites]
+  );
 
   const visible = useMemo(() => {
     let list = designs;
@@ -90,9 +94,9 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
                 {isFav && <Heart size={12} fill={active ? 'currentColor' : 'none'} />}
                 {isNew && <Sparkles size={12} />}
                 {display}
-                {isFav && favorites.length > 0 && (
+                {isFav && favoriteCount > 0 && (
                   <span className="ml-1 rounded-full bg-bronze-500 px-1.5 text-[9px] text-cream-100">
-                    {favorites.length}
+                    {favoriteCount}
                   </span>
                 )}
                 {isNew && newCount > 0 && (

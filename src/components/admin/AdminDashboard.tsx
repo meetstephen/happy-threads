@@ -18,7 +18,7 @@ import AdminBookings from './AdminBookings';
 import AdminCustomers from './AdminCustomers';
 import AdminSite from './AdminSite';
 
-interface Props { open: boolean; onClose: () => void; editingDesign?: Design | null; }
+interface Props { open: boolean; onClose: () => void; editingDesign?: Design | null; startInLookbook?: boolean; }
 
 type Section = 'home' | 'images' | 'sitecopy' | 'lookbook' | 'featured' | 'announcements' | 'testimonials' | 'analytics' | 'templates' | 'bookings' | 'customers' | 'site';
 
@@ -49,7 +49,7 @@ const SIDEBAR_ITEMS: { section: Section; label: string; icon: typeof Home }[] = 
 const BOTTOM_TABS: Section[] = ['home', 'images', 'lookbook', 'analytics'];
 const MORE_SECTIONS: Section[] = ['sitecopy', 'featured', 'announcements', 'testimonials', 'templates', 'bookings', 'customers', 'site'];
 
-export default function AdminDashboard({ open, onClose, editingDesign }: Props) {
+export default function AdminDashboard({ open, onClose, editingDesign, startInLookbook = false }: Props) {
   const { cloudEnabled, loading } = useCustomDesigns();
   const auth = useAdminAuth();
   const [section, setSection] = useState<Section>('home');
@@ -68,7 +68,7 @@ export default function AdminDashboard({ open, onClose, editingDesign }: Props) 
   const cloudReady = isSupabaseEnabled && hasAdminConfigured();
   const unlocked = cloudReady ? auth.admin !== null : localUnlocked;
 
-  useEffect(() => { if (open && editingDesign) { setSection('lookbook'); } }, [open, editingDesign]);
+  useEffect(() => { if (open && (editingDesign || startInLookbook)) { setSection('lookbook'); } }, [open, editingDesign, startInLookbook]);
 
   useEffect(() => { if (!open) { setLocalUnlocked(false); setPasscode(''); setError(null); setInfo(null); setMoreOpen(false); } }, [open]);
 

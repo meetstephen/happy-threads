@@ -34,7 +34,12 @@ import { useAdminAuth } from './lib/auth';
 import { initAnalytics, trackPageView, trackDesignView, trackDesignLike, trackSectionTime } from './services/analytics';
 import { useFavorites } from './context/FavoritesContext';
 import { useSiteContent } from './context/SiteContentContext';
-import { applyDesignOrder, LOOKBOOK_ORDER_KEY } from './utils/designOrder';
+import {
+  applyDesignOrder,
+  applyDesignVisibility,
+  LOOKBOOK_HIDDEN_KEY,
+  LOOKBOOK_ORDER_KEY,
+} from './utils/designOrder';
 
 // Admin panel is only opened via the hidden /#admin URL — load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
@@ -45,6 +50,7 @@ export default function App() {
   const [lightboxDesign, setLightboxDesign] = useState<Design | null>(null);
   const [quizFilter, setQuizFilter] = useState<string[] | null>(null);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [adminLookbookRequested, setAdminLookbookRequested] = useState(false);
   const [editingDesign, setEditingDesign] = useState<Design | null>(null);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [lookbookOpen, setLookbookOpen] = useState(false);
@@ -57,9 +63,16 @@ export default function App() {
   const bannerRef = useRef<HTMLDivElement>(null);
 
   const customOrder = getSiteContent(LOOKBOOK_ORDER_KEY, '');
+  const hiddenDesigns = getSiteContent(LOOKBOOK_HIDDEN_KEY, '');
   const allDesigns = useMemo(
-    () => [...applyDesignOrder(customDesigns, customOrder), ...staticDesigns],
-    [customDesigns, customOrder]
+    () => applyDesignVisibility(
+      applyDesignOrder([...customDesigns, ...staticDesigns], customOrder),
+      hiddenDesigns
+    ).map((design) => ({
+      ...design,
+      image: getSiteContent(`design.image.${design.id}`, design.image),
+    })),
+    [customDesigns, customOrder, hiddenDesigns, getSiteContent]
   );
 
   /**
@@ -200,6 +213,7 @@ export default function App() {
   // From Lookbook: admin clicks "Add design" — close lookbook, open admin panel
   const openAdminAddNew = () => {
     setEditingDesign(null);
+    setAdminLookbookRequested(true);
     setLookbookOpen(false);
     setAdminOpen(true);
   };
@@ -207,6 +221,7 @@ export default function App() {
   // From Lookbook: admin clicks edit on one of her custom designs
   const openAdminEdit = (d: Design) => {
     setEditingDesign(d);
+    setAdminLookbookRequested(true);
     setLookbookOpen(false);
     setAdminOpen(true);
   };
@@ -234,6 +249,7 @@ export default function App() {
             type="button"
             onClick={() => {
               setEditingDesign(null);
+              setAdminLookbookRequested(true);
               setAdminOpen(true);
             }}
             className="rounded-full border border-cream-100/40 px-2.5 py-0.5 text-[9px] transition-colors hover:bg-cream-100 hover:text-bronze-600 sm:py-0.5"
@@ -323,9 +339,11 @@ export default function App() {
         <AdminDashboard
           open={adminOpen}
           editingDesign={editingDesign}
+          startInLookbook={adminLookbookRequested}
           onClose={() => {
             setAdminOpen(false);
             setEditingDesign(null);
+            setAdminLookbookRequested(false);
             if (window.location.hash === '#admin') {
               history.replaceState(null, '', window.location.pathname + window.location.search);
             }

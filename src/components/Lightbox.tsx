@@ -136,6 +136,7 @@ export default function Lightbox({ design, onClose }: Props) {
                   contentKey={`design.image.${design.id}`}
                   defaultSrc={design.image}
                   alt={design.name}
+                  allowHide={false}
                   className="h-full w-full object-cover"
                 />
               )}
