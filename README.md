@@ -1,41 +1,41 @@
-# Happiness Fashion World â€” Luxury Bespoke Couture
+# Happiness Fashion World — Luxury Bespoke Couture
 
 A luxury fashion-portfolio website for **Happiness Fashion World**, an
 Abakaliki-based Nigerian fashion designer. It showcases her bespoke aso-ebi,
-owambe sets, bridal couture, Ankara tailoring, kaftans, and men's agbada â€” and
+owambe sets, bridal couture, Ankara tailoring, kaftans, and men's agbada — and
 turns visitors into WhatsApp clients.
 
 > **New to the site? Read the [OWNER'S MANUAL](./OWNER_MANUAL.md) first.**
 > It is a plain-English, step-by-step guide to running everything from your phone.
 
-ðŸŒ **Live:** https://happinessfashion.netlify.app
+🌐 **Live:** https://happinessfashion.netlify.app
 
 ---
 
 ## What the site does
 
-- **Magazine-grade luxury design** â€” Playfair Display + Inter, cream/bronze/wine
+- **Magazine-grade luxury design** — Playfair Display + Inter, cream/bronze/wine
   palette, smooth Framer Motion animations, light + dark mode.
-- **Authentic Nigerian collection** â€” Aso-Ebi, Ankara, Kaftan & Boubou, Bridal,
+- **Authentic Nigerian collection** — Aso-Ebi, Ankara, Kaftan & Boubou, Bridal,
   Corporate, and Men's Tailoring, all featuring African models.
-- **ðŸ¤– AI stylist "Joy"** â€” a warm, human chatbot (powered by Google Gemini 2.5
+- **🤖 AI stylist "Joy"** — a warm, human chatbot (powered by Google Gemini 2.5
   Flash) that answers pricing, lead-time, location, fabric, and ordering
   questions, recommends specific designs, and hands off to WhatsApp.
-- **ðŸª„ AI Style Finder** â€” a 3-question quiz that recommends pieces from the
+- **🪄 AI Style Finder** — a 3-question quiz that recommends pieces from the
   collection (includes the owner's own uploaded designs too).
-- **ðŸ› ï¸ Full admin dashboard** â€” a mobile-first control centre with 12 sections
+- **🛠️ Full admin dashboard** — a mobile-first control centre with 12 sections
   (see below). The owner runs the entire site from her phone.
-- **â˜ï¸ Real-time cloud sync** â€” when [Supabase is configured](./SUPABASE_SETUP.md),
+- **☁️ Real-time cloud sync** — when [Supabase is configured](./SUPABASE_SETUP.md),
   edits and new designs appear live on every visitor's device instantly.
-- **ðŸ”— Shareable design links**, **ðŸ“² installable PWA**, **ðŸ“§ newsletter capture**,
-  **ðŸ“± QR-code generator**, **â“ FAQ accordion**, **filterable gallery**, and a
+- **🔗 Shareable design links**, **📲 installable PWA**, **📧 newsletter capture**,
+  **📱 QR-code generator**, **❓ FAQ accordion**, **filterable gallery**, and a
   keyboard/swipe-friendly **lightbox**.
 - **WhatsApp deep-linking** on every CTA, pre-filling polite messages to
   **+234 906 509 2129**.
-- **Security-hardened** â€” the Gemini API key is proxied server-side via a Netlify
+- **Security-hardened** — the Gemini API key is proxied server-side via a Netlify
   Edge Function (never exposed in the browser), strict Content-Security-Policy and
   other headers, input sanitisation, image validation, and admin rate-limiting.
-- **Mobile-first** everywhere â€” bottom navigation bar, large touch targets,
+- **Mobile-first** everywhere — bottom navigation bar, large touch targets,
   scroll-to-top, and an in-page announcement bar.
 
 ---
@@ -97,16 +97,16 @@ npm run preview  # preview the production build locally
 
 ## Environment variables
 
-Set these in **Netlify â†’ Site configuration â†’ Environment variables**. The site
+Set these in **Netlify → Site configuration → Environment variables**. The site
 works without them (falling back to local-only storage and the pattern-matching
 chatbot), but all the cloud features need them.
 
 | Variable | Required? | What it does |
 |---|---|---|
-| `VITE_SUPABASE_URL` | recommended | Supabase project URL â€” enables cloud sync |
+| `VITE_SUPABASE_URL` | recommended | Supabase project URL — enables cloud sync |
 | `VITE_SUPABASE_ANON_KEY` | recommended | Supabase anon public key |
 | `VITE_ADMIN_EMAIL` | recommended | The single email allowed to sign in as admin |
-| `GEMINI_API_KEY` | optional | Google Gemini key for the "Joy" AI stylist. **No `VITE_` prefix** â€” it stays server-side in the Edge Function and is never sent to the browser |
+| `GEMINI_API_KEY` | optional | Google Gemini key for the "Joy" AI stylist. **No `VITE_` prefix** — it stays server-side in the Edge Function and is never sent to the browser |
 | `VITE_ADMIN_PASSCODE` | optional | Fallback passcode for admin access when Supabase auth is not configured |
 | `VITE_CONTACT_EMAIL` | optional | Public contact email shown on the site |
 
@@ -122,80 +122,80 @@ See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for the full 12-minute cloud se
 
 ```
 src/
-â”œâ”€â”€ App.tsx                       app shell + routing of modals/admin
-â”œâ”€â”€ main.tsx                      providers (theme, favorites, designs, content)
-â”œâ”€â”€ index.css
-â”œâ”€â”€ components/
-â”‚   â”œâ”€â”€ admin/                    ðŸ‘ˆ the admin dashboard (12 sections)
-â”‚   â”‚   â”œâ”€â”€ AdminDashboard.tsx     shell: auth gate + sidebar/bottom-nav
-â”‚   â”‚   â”œâ”€â”€ AdminHome.tsx          welcome + quick links
-â”‚   â”‚   â”œâ”€â”€ AdminImages.tsx        site image manager
-â”‚   â”‚   â”œâ”€â”€ AdminSiteCopy.tsx      text content editor
-â”‚   â”‚   â”œâ”€â”€ AdminLookbook.tsx      design add / edit / batch / remove
-â”‚   â”‚   â”œâ”€â”€ AdminFeatured.tsx      hero + featured designs
-â”‚   â”‚   â”œâ”€â”€ AdminAnnouncements.tsx top announcement bar
-â”‚   â”‚   â”œâ”€â”€ AdminTestimonials.tsx  testimonials manager
-â”‚   â”‚   â”œâ”€â”€ AdminAnalytics.tsx     visitor insights
-â”‚   â”‚   â”œâ”€â”€ AdminTemplates.tsx     WhatsApp message templates
-â”‚   â”‚   â”œâ”€â”€ AdminBookings.tsx      bookings tracker
-â”‚   â”‚   â”œâ”€â”€ AdminCustomers.tsx     customer directory
-â”‚   â”‚   â”œâ”€â”€ AdminSite.tsx          brand stats + QR generator
-â”‚   â”‚   â””â”€â”€ AnnouncementBar.tsx    public-facing announcement bar
-â”‚   â”œâ”€â”€ About.tsx                 the designer's story
-â”‚   â”œâ”€â”€ BookingCTA.tsx            "Begin your bespoke journey" CTA
-â”‚   â”œâ”€â”€ Chatbot.tsx               AI assistant "Joy"
-â”‚   â”œâ”€â”€ Collections.tsx           filterable gallery
-â”‚   â”œâ”€â”€ Contact.tsx
-â”‚   â”œâ”€â”€ Craftsmanship.tsx         atelier process timeline
-â”‚   â”œâ”€â”€ DesignCard.tsx            editable design tile
-â”‚   â”œâ”€â”€ EditableImage.tsx         inline image swap (admin only)
-â”‚   â”œâ”€â”€ EditableText.tsx          inline text editing (admin only)
-â”‚   â”œâ”€â”€ Faq.tsx
-â”‚   â”œâ”€â”€ FloatingWhatsApp.tsx
-â”‚   â”œâ”€â”€ Footer.tsx                holds the secret 5-tap admin gesture
-â”‚   â”œâ”€â”€ Hero.tsx
-â”‚   â”œâ”€â”€ Lightbox.tsx              deep-link + swipe aware
-â”‚   â”œâ”€â”€ Logo.tsx                  brand monogram
-â”‚   â”œâ”€â”€ Marquee.tsx
-â”‚   â”œâ”€â”€ MobileBottomNav.tsx       mobile bottom navigation
-â”‚   â”œâ”€â”€ Navbar.tsx
-â”‚   â”œâ”€â”€ Newsletter.tsx            Supabase + mailto fallback signup
-â”‚   â”œâ”€â”€ QrPanel.tsx               QR code generator (used by AdminSite)
-â”‚   â”œâ”€â”€ ScrollToTop.tsx
-â”‚   â”œâ”€â”€ Services.tsx
-â”‚   â”œâ”€â”€ SizeGuide.tsx
-â”‚   â”œâ”€â”€ StyleQuiz.tsx
-â”‚   â”œâ”€â”€ Testimonials.tsx
-â”‚   â””â”€â”€ WhatWeSew.tsx
-â”œâ”€â”€ context/
-â”‚   â”œâ”€â”€ CustomDesignsContext.tsx  cloud + local design storage
-â”‚   â”œâ”€â”€ FavoritesContext.tsx
-â”‚   â”œâ”€â”€ SiteContentContext.tsx    editable site text/images storage
-â”‚   â””â”€â”€ ThemeContext.tsx
-â”œâ”€â”€ data/designs.ts               static catalog (curated pieces)
-â”œâ”€â”€ lib/
-â”‚   â”œâ”€â”€ auth.ts                   admin auth hook (Supabase gated)
-â”‚   â””â”€â”€ supabase.ts               cloud client (active when env vars set)
-â”œâ”€â”€ services/
-â”‚   â”œâ”€â”€ designsService.ts         cloud read/write/upload + realtime
-â”‚   â”œâ”€â”€ newsletterService.ts      newsletter signup + mailto fallback
-â”‚   â””â”€â”€ geminiChat.ts             AI chatbot service (calls /api/gemini)
-â””â”€â”€ utils/
-    â”œâ”€â”€ categoryLabel.ts          category label overrides
-    â”œâ”€â”€ chatbot.ts                pattern-matching fallback bot
-    â”œâ”€â”€ constants.ts              shared constants
-    â”œâ”€â”€ images.ts                 Pexels URL helper
-    â”œâ”€â”€ imageResize.ts            client-side photo resizer
-    â”œâ”€â”€ sanitize.ts               input sanitisation + image validation
-    â”œâ”€â”€ scroll.ts                 smooth scroll utilities
-    â””â”€â”€ whatsapp.ts               phone + message builders
+├── App.tsx                       app shell + routing of modals/admin
+├── main.tsx                      providers (theme, favorites, designs, content)
+├── index.css
+├── components/
+│   ├── admin/                    👈 the admin dashboard (12 sections)
+│   │   ├── AdminDashboard.tsx     shell: auth gate + sidebar/bottom-nav
+│   │   ├── AdminHome.tsx          welcome + quick links
+│   │   ├── AdminImages.tsx        site image manager
+│   │   ├── AdminSiteCopy.tsx      text content editor
+│   │   ├── AdminLookbook.tsx      design add / edit / batch / remove
+│   │   ├── AdminFeatured.tsx      hero + featured designs
+│   │   ├── AdminAnnouncements.tsx top announcement bar
+│   │   ├── AdminTestimonials.tsx  testimonials manager
+│   │   ├── AdminAnalytics.tsx     visitor insights
+│   │   ├── AdminTemplates.tsx     WhatsApp message templates
+│   │   ├── AdminBookings.tsx      bookings tracker
+│   │   ├── AdminCustomers.tsx     customer directory
+│   │   ├── AdminSite.tsx          brand stats + QR generator
+│   │   └── AnnouncementBar.tsx    public-facing announcement bar
+│   ├── About.tsx                 the designer's story
+│   ├── BookingCTA.tsx            "Begin your bespoke journey" CTA
+│   ├── Chatbot.tsx               AI assistant "Joy"
+│   ├── Collections.tsx           filterable gallery
+│   ├── Contact.tsx
+│   ├── Craftsmanship.tsx         atelier process timeline
+│   ├── DesignCard.tsx            editable design tile
+│   ├── EditableImage.tsx         inline image swap (admin only)
+│   ├── EditableText.tsx          inline text editing (admin only)
+│   ├── Faq.tsx
+│   ├── FloatingWhatsApp.tsx
+│   ├── Footer.tsx                holds the secret 5-tap admin gesture
+│   ├── Hero.tsx
+│   ├── Lightbox.tsx              deep-link + swipe aware
+│   ├── Logo.tsx                  brand monogram
+│   ├── Marquee.tsx
+│   ├── MobileBottomNav.tsx       mobile bottom navigation
+│   ├── Navbar.tsx
+│   ├── Newsletter.tsx            Supabase + mailto fallback signup
+│   ├── QrPanel.tsx               QR code generator (used by AdminSite)
+│   ├── ScrollToTop.tsx
+│   ├── Services.tsx
+│   ├── SizeGuide.tsx
+│   ├── StyleQuiz.tsx
+│   ├── Testimonials.tsx
+│   └── WhatWeSew.tsx
+├── context/
+│   ├── CustomDesignsContext.tsx  cloud + local design storage
+│   ├── FavoritesContext.tsx
+│   ├── SiteContentContext.tsx    editable site text/images storage
+│   └── ThemeContext.tsx
+├── data/designs.ts               static catalog (curated pieces)
+├── lib/
+│   ├── auth.ts                   admin auth hook (Supabase gated)
+│   └── supabase.ts               cloud client (active when env vars set)
+├── services/
+│   ├── designsService.ts         cloud read/write/upload + realtime
+│   ├── newsletterService.ts      newsletter signup + mailto fallback
+│   └── geminiChat.ts             AI chatbot service (calls /api/gemini)
+└── utils/
+    ├── categoryLabel.ts          category label overrides
+    ├── chatbot.ts                pattern-matching fallback bot
+    ├── constants.ts              shared constants
+    ├── images.ts                 Pexels URL helper
+    ├── imageResize.ts            client-side photo resizer
+    ├── sanitize.ts               input sanitisation + image validation
+    ├── scroll.ts                 smooth scroll utilities
+    └── whatsapp.ts               phone + message builders
 netlify/
-â””â”€â”€ edge-functions/
-    â””â”€â”€ gemini-proxy.ts           server-side Gemini key proxy (/api/gemini)
+└── edge-functions/
+    └── gemini-proxy.ts           server-side Gemini key proxy (/api/gemini)
 public/
-â”œâ”€â”€ _redirects                    SPA fallback
-â”œâ”€â”€ favicon.svg                   brand mark
-â””â”€â”€ manifest.webmanifest          PWA config
+├── _redirects                    SPA fallback
+├── favicon.svg                   brand mark
+└── manifest.webmanifest          PWA config
 netlify.toml                      Netlify build + security headers
 SUPABASE_SETUP.md                 cloud-sync setup guide
 OWNER_MANUAL.md                   plain-English guide for the owner
@@ -204,4 +204,3 @@ OWNER_MANUAL.md                   plain-English guide for the owner
 ---
 
 Built with care for **Happiness Fashion World**, Abakaliki, Nigeria.
-

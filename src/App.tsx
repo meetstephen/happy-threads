@@ -36,7 +36,7 @@ import { useFavorites } from './context/FavoritesContext';
 import { useSiteContent } from './context/SiteContentContext';
 import { applyDesignOrder, LOOKBOOK_ORDER_KEY } from './utils/designOrder';
 
-// Admin panel is only opened via the hidden /#admin URL â€” load on demand
+// Admin panel is only opened via the hidden /#admin URL — load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
 import AnnouncementBar from './components/admin/AnnouncementBar';
@@ -197,7 +197,7 @@ export default function App() {
     }
   };
 
-  // From Lookbook: admin clicks "Add design" â€” close lookbook, open admin panel
+  // From Lookbook: admin clicks "Add design" — close lookbook, open admin panel
   const openAdminAddNew = () => {
     setEditingDesign(null);
     setLookbookOpen(false);
@@ -336,4 +336,3 @@ export default function App() {
     </ErrorBoundary>
   );
 }
-

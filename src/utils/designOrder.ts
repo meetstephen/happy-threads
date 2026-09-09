@@ -30,4 +30,3 @@ export function applyDesignOrder(designs: Design[], value: string): Design[] {
     })
     .map(({ design }) => design);
 }
-

@@ -60,12 +60,12 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
           <h2 className="display-2 mt-4">Crafted for the moments that matter.</h2>
           <div className="gold-divider mt-8" />
           <p className="mt-6 text-ink-800/70 dark:text-cream-100/70">
-            Browse a curated selection â€” every piece is made-to-measure and finished by
+            Browse a curated selection — every piece is made-to-measure and finished by
             hand. Tap any design to view it larger or send it straight to WhatsApp.
           </p>
         </div>
 
-        {/* filter chips â€” horizontal scroll on mobile, wrap on tablet+ */}
+        {/* filter chips — horizontal scroll on mobile, wrap on tablet+ */}
         <div
           id="favorites"
           className="mt-10 -mx-5 flex snap-x snap-mandatory items-center gap-2.5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 md:mt-12 md:gap-3"
@@ -136,14 +136,14 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
         {visible.length === 0 && (
           <div className="mt-16 rounded-2xl border border-dashed border-ink-800/20 p-12 text-center text-ink-800/60 dark:border-cream-100/20 dark:text-cream-100/60">
             {filter === 'Favorites'
-              ? 'No favorites yet â€” tap the heart on any design to save it for later.'
+              ? 'No favorites yet — tap the heart on any design to save it for later.'
               : filter === 'New Arrivals'
               ? 'No new arrivals at the moment. Check back soon!'
               : 'No pieces in this category yet.'}
           </div>
         )}
 
-        {/* Lookbook CTA â€” opens full catalog overlay */}
+        {/* Lookbook CTA — opens full catalog overlay */}
         <div className="mt-14 flex justify-center md:mt-20">
           <button
             type="button"
@@ -162,4 +162,3 @@ export default function Collections({ designs, highlightIds, onOpen, onOpenLookb
     </section>
   );
 }
-

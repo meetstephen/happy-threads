@@ -294,4 +294,3 @@ export default function AdminLookbook({ editingDesign }: Props) {
     </div>
   );
 }
-

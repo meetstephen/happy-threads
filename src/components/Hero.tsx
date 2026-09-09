@@ -10,7 +10,7 @@ const HERO_IMAGE = pexels(28988327, 1200, 1500);
 
 const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
 const DEFAULT_SUBTEXT =
-  "I'm Happiness â€” an Abakaliki-based fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my atelier and made-to-measure for you.";
+  "I'm Happiness — an Abakaliki-based fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my atelier and made-to-measure for you.";
 
 export default function Hero() {
   return (
@@ -222,4 +222,3 @@ export default function Hero() {
     </section>
   );
 }
-
