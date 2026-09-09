@@ -10,7 +10,7 @@ const HERO_IMAGE = pexels(28988327, 1200, 1500);
 
 const DEFAULT_HEADLINE = 'Naija couture stitched with love.';
 const DEFAULT_SUBTEXT =
-  "I'm Happiness — an Abakaliki-based fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my atelier and made-to-measure for you.";
+  "I'm Happiness â€” an Abakaliki-based fashion designer crafting bespoke aso-ebi, owambe sets, bridal couture, Ankara co-ords, kaftans, and sharp men's tailoring. Every piece is hand-finished in my atelier and made-to-measure for you.";
 
 export default function Hero() {
   return (
@@ -102,6 +102,31 @@ export default function Hero() {
             className="mt-6 h-px w-24 origin-center bg-gradient-to-r from-transparent via-bronze-500 to-transparent"
           />
 
+          {/* On phones, lead with the garment before the long-form atelier story. */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative mt-7 aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-luxe md:hidden"
+          >
+            <EditableImage
+              contentKey="hero.image"
+              defaultSrc={HERO_IMAGE}
+              alt="A model wearing a Happiness Fashion design"
+              className="luxe-image h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink-900/75 via-transparent to-transparent" />
+            <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 text-cream-100">
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.3em] text-bronze-400">Atelier selection</div>
+                <div className="mt-1 font-display text-lg">Igbo Bridal Blouse &amp; Wrapper</div>
+              </div>
+              <a href="#collections" className="shrink-0 rounded-full bg-cream-100 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-900">
+                View look
+              </a>
+            </div>
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -160,7 +185,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <div className="md:col-span-5">
+        <div className="hidden md:col-span-5 md:block">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -197,3 +222,4 @@ export default function Hero() {
     </section>
   );
 }
+

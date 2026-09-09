@@ -33,8 +33,10 @@ import { useCustomDesigns } from './context/CustomDesignsContext';
 import { useAdminAuth } from './lib/auth';
 import { initAnalytics, trackPageView, trackDesignView, trackDesignLike, trackSectionTime } from './services/analytics';
 import { useFavorites } from './context/FavoritesContext';
+import { useSiteContent } from './context/SiteContentContext';
+import { applyDesignOrder, LOOKBOOK_ORDER_KEY } from './utils/designOrder';
 
-// Admin panel is only opened via the hidden /#admin URL — load on demand
+// Admin panel is only opened via the hidden /#admin URL â€” load on demand
 // so the bundle stays small for the 99% of visitors who never see it.
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
 import AnnouncementBar from './components/admin/AnnouncementBar';
@@ -50,12 +52,14 @@ export default function App() {
   const { customDesigns } = useCustomDesigns();
   const { admin } = useAdminAuth();
   const { favorites } = useFavorites();
+  const { get: getSiteContent } = useSiteContent();
   const prevFavoritesRef = useRef<string[]>(favorites);
   const bannerRef = useRef<HTMLDivElement>(null);
 
+  const customOrder = getSiteContent(LOOKBOOK_ORDER_KEY, '');
   const allDesigns = useMemo(
-    () => [...customDesigns, ...staticDesigns],
-    [customDesigns]
+    () => [...applyDesignOrder(customDesigns, customOrder), ...staticDesigns],
+    [customDesigns, customOrder]
   );
 
   /**
@@ -193,7 +197,7 @@ export default function App() {
     }
   };
 
-  // From Lookbook: admin clicks "Add design" — close lookbook, open admin panel
+  // From Lookbook: admin clicks "Add design" â€” close lookbook, open admin panel
   const openAdminAddNew = () => {
     setEditingDesign(null);
     setLookbookOpen(false);
@@ -332,3 +336,4 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+

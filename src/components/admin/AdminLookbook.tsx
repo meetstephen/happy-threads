@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { Camera, Layers, Pencil, Plus, Star, Tag, Trash2, Upload, X } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowDown, ArrowUp, Camera, GripVertical, Layers, Pencil, Plus, RotateCcw, Search, Star, Tag, Trash2, Upload, X } from 'lucide-react';
 import { useCustomDesigns } from '../../context/CustomDesignsContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { categories, type Design, type DesignCategory } from '../../data/designs';
 import { resizeImageFile } from '../../utils/imageResize';
 import { validateImageFile } from '../../utils/sanitize';
 import { uploadDesignImage } from '../../services/designsService';
+import { applyDesignOrder, LOOKBOOK_ORDER_KEY } from '../../utils/designOrder';
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -16,7 +17,7 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-type LookbookTab = 'add' | 'batch' | 'categories';
+type LookbookTab = 'add' | 'batch' | 'arrange' | 'categories';
 
 interface Props { editingDesign?: Design | null; }
 
@@ -37,9 +38,24 @@ export default function AdminLookbook({ editingDesign }: Props) {
   const [keepExistingImage, setKeepExistingImage] = useState('');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
   const batchFileRef = useRef<HTMLInputElement>(null);
   const [batchFiles, setBatchFiles] = useState<{id:string;file:File;preview:string;name:string;category:DesignCategory}[]>([]);
   const [batchBusy, setBatchBusy] = useState(false);
+  const [arrangeSearch, setArrangeSearch] = useState('');
+  const [arrangeBusy, setArrangeBusy] = useState(false);
+
+  const orderedDesigns = useMemo(
+    () => applyDesignOrder(customDesigns, get(LOOKBOOK_ORDER_KEY, '')),
+    [customDesigns, get]
+  );
+  const arrangedResults = useMemo(() => {
+    const query = arrangeSearch.trim().toLowerCase();
+    if (!query) return orderedDesigns;
+    return orderedDesigns.filter((design) =>
+      `${design.name} ${design.category} ${design.id}`.toLowerCase().includes(query)
+    );
+  }, [arrangeSearch, orderedDesigns]);
 
   useEffect(() => {
     if (editingDesign) {
@@ -66,9 +82,55 @@ export default function AdminLookbook({ editingDesign }: Props) {
 
   const startEdit = (d: Design) => { setEditingId(d.id); setName(d.name); setCategory(d.category); setDescription(d.description); setTags(d.tags.join(', ')); setFeatured(Boolean(d.featured)); setKeepExistingImage(d.image); setPendingFile(null); if (pendingPreview) URL.revokeObjectURL(pendingPreview); setPendingPreview(''); setTab('add'); };
 
-  const onBatchFiles = async (files: FileList | null) => { if (!files || !files.length) return; const items: typeof batchFiles = []; for (let i = 0; i < files.length; i++) { const f = files[i]; try { const v = await validateImageFile(f); if (!v.valid) continue; const resized = await resizeImageFile(f, 900, 0.82); items.push({ id: `${Date.now()}-${i}`, file: resized, preview: URL.createObjectURL(resized), name: `New piece ${batchFiles.length + i + 1}`, category }); } catch {} } setBatchFiles(prev => [...prev, ...items]); if (batchFileRef.current) batchFileRef.current.value = ''; };
+  const onBatchFiles = async (files: FileList | null) => { if (!files || !files.length) return; const items: typeof batchFiles = []; for (let i = 0; i < files.length; i++) { const f = files[i]; try { const v = await validateImageFile(f); if (!v.valid) continue; const resized = await resizeImageFile(f, 900, 0.82); items.push({ id: `${Date.now()}-${i}`, file: resized, preview: URL.createObjectURL(resized), name: '', category }); } catch {} } setBatchFiles(prev => [...prev, ...items]); if (batchFileRef.current) batchFileRef.current.value = ''; };
 
-  const publishBatch = async () => { if (!batchFiles.length) return; setBatchBusy(true); setError(null); let ok = 0; for (const item of batchFiles) { try { const url = cloudEnabled ? await uploadDesignImage(item.file) : await fileToBase64(item.file); await addDesign({ name: item.name.trim() || `New piece`, category: item.category, description: `A new ${item.category} piece by Happiness.`, image: url, tags: [], occasions: ['party'], vibes: ['classic'], colorMood: 'neutral' }); ok++; } catch {} } setBatchFiles([]); setBatchBusy(false); setInfo(`Published ${ok} design${ok === 1 ? '' : 's'}.`); setTimeout(() => setInfo(null), 3000); };
+  const publishBatch = async () => {
+    if (!batchFiles.length) return;
+    if (batchFiles.some((item) => !item.name.trim())) {
+      setError('Name every look before publishing. Strong names make the collection feel considered and premium.');
+      return;
+    }
+    setBatchBusy(true);
+    setError(null);
+    let ok = 0;
+    for (const item of batchFiles) {
+      try {
+        const url = cloudEnabled ? await uploadDesignImage(item.file) : await fileToBase64(item.file);
+        await addDesign({ name: item.name.trim(), category: item.category, description: `A new ${item.category} piece by Happiness.`, image: url, tags: [], occasions: ['party'], vibes: ['classic'], colorMood: 'neutral' });
+        ok++;
+      } catch {}
+    }
+    setBatchFiles([]);
+    setBatchBusy(false);
+    setInfo(`Published ${ok} design${ok === 1 ? '' : 's'}.`);
+    setTimeout(() => setInfo(null), 3000);
+  };
+
+  const saveOrder = async (next: Design[]) => {
+    setArrangeBusy(true);
+    setError(null);
+    try {
+      await set(LOOKBOOK_ORDER_KEY, JSON.stringify(next.map((design) => design.id)));
+      setInfo('Lookbook order updated live.');
+      setTimeout(() => setInfo(null), 1800);
+    } catch (err) {
+      setError((err as Error).message || 'Could not update the order.');
+    } finally {
+      setArrangeBusy(false);
+    }
+  };
+
+  const moveDesign = (id: string, direction: 'up' | 'down' | 'top') => {
+    const next = [...orderedDesigns];
+    const index = next.findIndex((design) => design.id === id);
+    if (index < 0) return;
+    const [design] = next.splice(index, 1);
+    const target = direction === 'top'
+      ? 0
+      : Math.max(0, Math.min(next.length, index + (direction === 'up' ? -1 : 1)));
+    next.splice(target, 0, design);
+    void saveOrder(next);
+  };
 
   const previewSrc = pendingPreview || keepExistingImage;
   const isEditing = Boolean(editingId);
@@ -86,6 +148,7 @@ export default function AdminLookbook({ editingDesign }: Props) {
       <div className="mt-4 flex gap-1 overflow-x-auto border-b border-ink-800/10 pb-px dark:border-cream-100/10">
         <button type="button" onClick={() => setTab('add')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'add' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Plus size={13} /> {isEditing ? 'Edit' : 'Add'}</button>
         <button type="button" onClick={() => setTab('batch')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'batch' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Layers size={13} /> Batch{batchFiles.length > 0 && <span className="ml-1 rounded-full bg-bronze-500 px-1.5 py-0.5 text-[9px] text-cream-100">{batchFiles.length}</span>}</button>
+        <button type="button" onClick={() => setTab('arrange')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'arrange' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><GripVertical size={13} /> Arrange</button>
         <button type="button" onClick={() => setTab('categories')} className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium uppercase tracking-[0.18em] transition-colors ${tab === 'categories' ? 'border-b-2 border-bronze-500 text-bronze-500' : 'text-ink-800/60 hover:text-bronze-500 dark:text-cream-100/60'}`}><Tag size={13} /> Labels</button>
       </div>
 
@@ -105,9 +168,13 @@ export default function AdminLookbook({ editingDesign }: Props) {
                 </div>
               </div>
             ) : (
-              <button type="button" onClick={() => fileRef.current?.click()} className="grid w-full place-items-center gap-2 rounded-2xl border-2 border-dashed border-ink-800/20 px-6 py-10 text-sm text-ink-800/70 transition-colors hover:border-bronze-500 active:scale-[0.99] dark:border-cream-100/20 dark:text-cream-100/70"><Upload size={26} /><span className="font-medium">{busy ? 'Resizing...' : 'Tap to upload'}</span></button>
+              <div className="grid grid-cols-2 gap-3">
+                <button type="button" onClick={() => cameraRef.current?.click()} disabled={busy} className="grid min-h-32 place-items-center content-center gap-2 rounded-2xl border-2 border-dashed border-bronze-500/35 bg-bronze-400/5 px-4 py-6 text-sm text-bronze-600 transition-colors hover:border-bronze-500 active:scale-[0.99] disabled:opacity-50 dark:text-bronze-400"><Camera size={25} /><span className="font-medium">Take photo</span><span className="text-[10px] uppercase tracking-[0.15em] opacity-70">Use camera</span></button>
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={busy} className="grid min-h-32 place-items-center content-center gap-2 rounded-2xl border-2 border-dashed border-ink-800/20 px-4 py-6 text-sm text-ink-800/70 transition-colors hover:border-bronze-500 active:scale-[0.99] disabled:opacity-50 dark:border-cream-100/20 dark:text-cream-100/70"><Upload size={25} /><span className="font-medium">{busy ? 'Preparing...' : 'Choose photo'}</span><span className="text-[10px] uppercase tracking-[0.15em] opacity-70">From phone</span></button>
+              </div>
             )}
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="hidden" onChange={e => onFileChosen(e.target.files)} />
+            <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={e => onFileChosen(e.target.files)} />
           </div>
           <div><label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">Name</label><input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Sapphire Aso-Ebi" className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" /></div>
           <div><label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">Category</label><select value={category} onChange={e => setCategory(e.target.value as DesignCategory)} className="w-full appearance-none rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900">{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
@@ -135,19 +202,57 @@ export default function AdminLookbook({ editingDesign }: Props) {
                   <div key={item.id} className="flex gap-3 rounded-2xl border border-ink-800/10 bg-cream-50 p-3 dark:border-cream-100/10 dark:bg-ink-900">
                     <img src={item.preview} alt="" className="h-20 w-16 shrink-0 rounded-xl object-cover" />
                     <div className="flex min-w-0 flex-1 flex-col gap-2">
-                      <input type="text" value={item.name} onChange={e => setBatchFiles(prev => prev.map(b => b.id === item.id ? {...b, name: e.target.value} : b))} className="w-full rounded-xl border border-ink-800/10 bg-cream-100 px-3 py-2 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/10 dark:bg-ink-800" />
+                      <input type="text" value={item.name} onChange={e => setBatchFiles(prev => prev.map(b => b.id === item.id ? {...b, name: e.target.value} : b))} placeholder="Name this look" aria-label="Design name" className="w-full rounded-xl border border-ink-800/10 bg-cream-100 px-3 py-2 text-sm focus:border-bronze-500 focus:outline-none dark:border-cream-100/10 dark:bg-ink-800" />
                       <select value={item.category} onChange={e => setBatchFiles(prev => prev.map(b => b.id === item.id ? {...b, category: e.target.value as DesignCategory} : b))} className="w-full rounded-xl border border-ink-800/10 bg-cream-100 px-3 py-2 text-sm dark:border-cream-100/10 dark:bg-ink-800">{categories.map(c => <option key={c} value={c}>{c}</option>)}</select>
                     </div>
                     <button type="button" onClick={() => { const item2 = batchFiles.find(b => b.id === item.id); if (item2) URL.revokeObjectURL(item2.preview); setBatchFiles(prev => prev.filter(b => b.id !== item.id)); }} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ink-800/50 hover:text-wine-500 dark:text-cream-100/50"><X size={14} /></button>
                   </div>
                 ))}
               </div>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => { batchFiles.forEach(b => URL.revokeObjectURL(b.preview)); setBatchFiles([]); }} className="btn-ghost">Clear</button>
-                <button type="button" onClick={publishBatch} disabled={batchBusy} className="btn-primary disabled:opacity-50"><Plus size={14} /> {batchBusy ? 'Publishing...' : `Publish all ${batchFiles.length}`}</button>
+              <div className="sticky bottom-20 z-10 flex gap-2 rounded-2xl bg-cream-100/95 p-2 shadow-soft backdrop-blur sm:static sm:bg-transparent sm:p-0 sm:shadow-none dark:bg-ink-800/95 sm:dark:bg-transparent">
+                <button type="button" onClick={() => { batchFiles.forEach(b => URL.revokeObjectURL(b.preview)); setBatchFiles([]); }} className="btn-ghost flex-1 px-4">Clear</button>
+                <button type="button" onClick={publishBatch} disabled={batchBusy || batchFiles.some(item => !item.name.trim())} className="btn-primary flex-[2] px-4 disabled:opacity-50"><Plus size={14} /> {batchBusy ? 'Publishing...' : `Publish all ${batchFiles.length}`}</button>
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {tab === 'arrange' && (
+        <div className="mt-6">
+          <div className="rounded-2xl border border-bronze-500/20 bg-bronze-400/5 p-4">
+            <p className="font-display text-lg">Curate the first impression</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink-800/65 dark:text-cream-100/65">
+              Move your strongest looks to the top. The first nine are the edited selection visitors see before they choose to discover more.
+            </p>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <label className="relative min-w-0 flex-1">
+              <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-800/40 dark:text-cream-100/40" />
+              <input value={arrangeSearch} onChange={(event) => setArrangeSearch(event.target.value)} placeholder="Find a look" className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 py-3 pl-10 pr-4 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" />
+            </label>
+            <button type="button" disabled={!hasOverride(LOOKBOOK_ORDER_KEY) || arrangeBusy} onClick={() => void reset(LOOKBOOK_ORDER_KEY)} className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-ink-800/15 text-ink-800/60 disabled:opacity-30 dark:border-cream-100/20 dark:text-cream-100/60" aria-label="Reset lookbook order" title="Reset order"><RotateCcw size={16} /></button>
+          </div>
+          <div className="mt-4 space-y-2">
+            {arrangedResults.map((design) => {
+              const position = orderedDesigns.findIndex((item) => item.id === design.id);
+              return (
+                <div key={design.id} className="flex items-center gap-3 rounded-2xl border border-ink-800/10 bg-cream-50 p-2.5 dark:border-cream-100/10 dark:bg-ink-900">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-bronze-500/10 text-[11px] font-semibold text-bronze-600 dark:text-bronze-400">{position + 1}</span>
+                  <img src={design.image} alt="" className="h-16 w-12 shrink-0 rounded-xl object-cover" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{design.name}</p>
+                    <p className="truncate text-[9px] uppercase tracking-[0.16em] text-ink-800/50 dark:text-cream-100/50">{design.category}</p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1">
+                    <button type="button" onClick={() => moveDesign(design.id, 'top')} disabled={position === 0 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} to top`}><GripVertical size={15} /></button>
+                    <button type="button" onClick={() => moveDesign(design.id, 'up')} disabled={position === 0 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} up`}><ArrowUp size={15} /></button>
+                    <button type="button" onClick={() => moveDesign(design.id, 'down')} disabled={position === orderedDesigns.length - 1 || arrangeBusy} className="grid h-10 w-10 place-items-center rounded-xl border border-ink-800/10 text-ink-800/60 active:scale-90 disabled:opacity-25 dark:border-cream-100/10 dark:text-cream-100/60" aria-label={`Move ${design.name} down`}><ArrowDown size={15} /></button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -171,7 +276,7 @@ export default function AdminLookbook({ editingDesign }: Props) {
         <div className="mt-10">
           <div className="mb-3 flex items-center justify-between"><p className="eyebrow">{cloudEnabled ? 'Live on site' : 'Saved locally'} ({customDesigns.length})</p></div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {customDesigns.map(d => (
+            {orderedDesigns.map(d => (
               <div key={d.id} className="group relative overflow-hidden rounded-xl bg-ink-900 shadow-soft">
                 <img src={d.image} alt={d.name} className="aspect-[3/4] w-full object-cover transition-transform group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/30 to-ink-900/0" />
@@ -189,3 +294,4 @@ export default function AdminLookbook({ editingDesign }: Props) {
     </div>
   );
 }
+

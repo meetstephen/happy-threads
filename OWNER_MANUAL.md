@@ -1,6 +1,6 @@
-# Owner's Manual — Happiness Fashion World
+# Owner's Manual â€” Happiness Fashion World
 
-Welcome, Happiness! 💛 This is your complete, plain-English guide to running your
+Welcome, Happiness! ðŸ’› This is your complete, plain-English guide to running your
 website **entirely from your phone**. No computer, no coding, no stress.
 
 Take your time. Read it once, keep it bookmarked, and refer back whenever you need.
@@ -36,13 +36,13 @@ Take your time. Read it once, keep it bookmarked, and refer back whenever you ne
 
 Your website has two faces:
 
-- **The public site** — what your customers see. Beautiful, calm, and built to
+- **The public site** â€” what your customers see. Beautiful, calm, and built to
   turn lookers into buyers.
-- **Your admin dashboard** — your private control room. Only you can reach it.
+- **Your admin dashboard** â€” your private control room. Only you can reach it.
   From here you add clothes, change photos, edit words, track orders, and more.
 
 Everything saves to the cloud, so the moment you tap **Save**, your customers see
-the change — whether they're in Lagos, London, or right there in Abakaliki.
+the change â€” whether they're in Lagos, London, or right there in Abakaliki.
 
 ---
 
@@ -50,22 +50,22 @@ the change — whether they're in Lagos, London, or right there in Abakaliki.
 
 There are **two ways** in. Both are invisible to visitors.
 
-**Way 1 — the web address (easiest):**
+**Way 1 â€” the web address (easiest):**
 1. Open your site: `https://happythreads.netlify.app`
 2. Add `/#admin` to the end so it reads
    `https://happythreads.netlify.app/#admin`
 3. Press Go.
 
-> 💡 **Tip:** Bookmark that `/#admin` address to your phone's home screen. Then
+> ðŸ’¡ **Tip:** Bookmark that `/#admin` address to your phone's home screen. Then
 > it's one tap, like opening an app.
 
-**Way 2 — the secret tap (no typing):**
+**Way 2 â€” the secret tap (no typing):**
 1. Scroll to the very bottom of your site (the footer).
-2. Find the small line that says "© 2026 Happiness Fashion World…".
+2. Find the small line that says "Â© 2026 Happiness Fashion Worldâ€¦".
 3. **Tap it 5 times quickly** (within about 3 seconds).
 4. The admin area opens.
 
-Nobody watching the site would ever guess this — it looks like ordinary text.
+Nobody watching the site would ever guess this â€” it looks like ordinary text.
 
 ---
 
@@ -75,11 +75,11 @@ When the admin area opens, it asks you to prove it's really you.
 
 - **If your site is connected to the cloud (recommended):** enter your **email**
   and **password**. The first time only, tap "Create account" to set your
-  password. After that, your phone remembers you — you go straight in.
+  password. After that, your phone remembers you â€” you go straight in.
 - **If the cloud isn't set up yet:** you'll see a simple **passcode** box instead.
   Enter the passcode your developer set for you.
 
-> 🔒 For your safety, after 5 wrong tries the login locks for 5 minutes. This
+> ðŸ”’ For your safety, after 5 wrong tries the login locks for 5 minutes. This
 > stops strangers from guessing their way in.
 
 To **leave** the admin area at any time, tap **"Back to site"** at the top.
@@ -99,7 +99,7 @@ Here's what each does, in plain words:
 | **Home** | Your welcome page with shortcuts to everything |
 | **Images** | Change any picture on the site |
 | **Site Copy** | Change any words/writing on the site |
-| **Lookbook** | Add, edit, or remove your clothes |
+| **Lookbook** | Add, edit, arrange, or remove your clothes |
 | **Featured** | Choose the big photo on your homepage |
 | **Announcements** | Show a message bar at the top (e.g. "Christmas sale!") |
 | **Testimonials** | Add nice things customers said about you |
@@ -116,18 +116,30 @@ Here's what each does, in plain words:
 This is the thing you'll do most often. It takes under a minute.
 
 1. Open the admin area and tap **Lookbook**.
-2. You'll be on the **Add** tab. Tap **"Tap to upload"**.
-3. Your phone offers your camera or gallery. **Take a fresh photo** or pick one.
+2. You'll be on the **Add** tab. Tap **"Take photo"** to open your rear camera,
+   or **"Choose photo"** to use your gallery.
+3. Take a fresh photo or pick one already on your phone.
 4. Fill in:
-   - **Name** — e.g. "Emerald Aso-Ebi Set"
-   - **Category** — pick from the list (Bridal, Ankara, Aso-Ebi & Owambe, etc.)
-   - **Description** *(optional)* — one or two lovely sentences.
-   - **Tags** *(optional)* — words separated by commas, e.g. `lace, green, wedding`.
+   - **Name** â€” e.g. "Emerald Aso-Ebi Set"
+   - **Category** â€” pick from the list (Bridal, Ankara, Aso-Ebi & Owambe, etc.)
+   - **Description** *(optional)* â€” one or two lovely sentences.
+   - **Tags** *(optional)* â€” words separated by commas, e.g. `lace, green, wedding`.
 5. Want it on the homepage spotlight? Flip the **Featured** switch on.
 6. Tap **Publish**.
 
 Done! It appears on your site for everyone, instantly. The photo is shrunk
 automatically so your site stays fast.
+
+### Put your strongest designs first
+
+1. Tap **Lookbook**, then **Arrange**.
+2. Find a design by name or category if needed.
+3. Use the first button to move it straight to the top, or the arrow buttons to
+   move it one place at a time.
+
+The order saves immediately and syncs to every visitor. The homepage presents
+the first nine looks as an edited selection, then lets visitors tap
+**Discover more** instead of loading the entire catalogue at once.
 
 ---
 
@@ -137,7 +149,7 @@ automatically so your site stays fast.
 1. Tap **Lookbook**.
 2. Scroll to the grid of your designs at the bottom.
 3. Tap the **pencil** on the design you want to change.
-4. Change anything — name, category, description, tags, or the photo.
+4. Change anything â€” name, category, description, tags, or the photo.
 5. Tap **Save changes**.
 
 **To remove:**
@@ -145,7 +157,7 @@ automatically so your site stays fast.
 2. Confirm "Delete" when asked.
 3. It's gone from your site immediately.
 
-> 🗑️ Removing asks you to confirm first, so you can't delete by accident.
+> ðŸ—‘ï¸ Removing asks you to confirm first, so you can't delete by accident.
 
 ---
 
@@ -155,7 +167,7 @@ Got a whole photoshoot to add? Don't do them one by one.
 
 1. Tap **Lookbook**, then the **Batch** tab.
 2. Tap **"Pick photos"** and select several at once from your gallery.
-3. Each photo gets a row — give it a quick **name** and pick a **category**.
+3. Each photo gets a row â€” give it a quick **name** and pick a **category**.
 4. Tap **"Publish all"**.
 
 All of them go live together. Perfect after a busy weekend of new pieces.
@@ -164,7 +176,7 @@ All of them go live together. Perfect after a busy weekend of new pieces.
 
 ## 8. Changing photos anywhere on the site
 
-Any picture on your site can be swapped — the big homepage photo, the "About"
+Any picture on your site can be swapped â€” the big homepage photo, the "About"
 photo, design photos, all of it.
 
 **The easy way (Images tab):**
@@ -214,7 +226,7 @@ wedding season, etc.) to keep the site feeling fresh.
 
 ## 11. The announcement bar
 
-This is the thin coloured strip that can appear at the very top of your site —
+This is the thin coloured strip that can appear at the very top of your site â€”
 great for sales, holiday hours, or "Now booking December weddings!".
 
 1. Tap **Announcements**.
@@ -235,7 +247,7 @@ Happy customers are your best salespeople.
    they're from.
 3. Edit or remove any existing ones.
 
-Keep 4–6 of your warmest reviews showing. They build trust with new visitors.
+Keep 4â€“6 of your warmest reviews showing. They build trust with new visitors.
 
 ---
 
@@ -244,7 +256,7 @@ Keep 4–6 of your warmest reviews showing. They build trust with new visitors.
 You probably type the same replies again and again. Save them here.
 
 1. Tap **Templates**.
-2. Create a snippet — e.g. a price list, your account details, or a "thank you
+2. Create a snippet â€” e.g. a price list, your account details, or a "thank you
    for ordering" note.
 3. When you need it, tap **Copy** and paste it straight into WhatsApp.
 
@@ -259,7 +271,7 @@ A simple diary for your commissions, so nothing slips.
 1. Tap **Bookings**.
 2. Add a booking: customer **name**, **date**, **type** (fitting, consultation,
    delivery), and a **status**.
-3. Update the status as things move (Pending → In progress → Done).
+3. Update the status as things move (Pending â†’ In progress â†’ Done).
 4. Filter by status to see what needs attention today.
 
 ---
@@ -273,7 +285,7 @@ Keep your regulars' details in one safe place.
    their style or preferences.
 3. Search to find anyone quickly.
 
-Next time they order, their measurements are right there — no re-measuring.
+Next time they order, their measurements are right there â€” no re-measuring.
 
 ---
 
@@ -281,9 +293,9 @@ Next time they order, their measurements are right there — no re-measuring.
 
 1. Tap **Analytics**.
 2. You'll see:
-   - **Visitors per day** — how busy your site is.
-   - **Most-viewed designs** — what people love most (make more of those!).
-   - **Section engagement** — which parts of the site hold attention.
+   - **Visitors per day** â€” how busy your site is.
+   - **Most-viewed designs** â€” what people love most (make more of those!).
+   - **Section engagement** â€” which parts of the site hold attention.
 
 Use this to learn what your customers want, then give them more of it.
 
@@ -303,7 +315,7 @@ Anyone who scans it lands straight on your site. Brilliant for owambe and market
 
 "Joy" is the chat bubble your customers tap on the public site. She answers
 questions about pricing, fabrics, timelines, and location, recommends designs,
-and gently guides people to message you on WhatsApp — **24 hours a day, even
+and gently guides people to message you on WhatsApp â€” **24 hours a day, even
 while you sleep.**
 
 You don't have to do anything to run her. She's always working for you. If a
@@ -329,7 +341,7 @@ She still works with built-in answers even if the AI key isn't set. To switch on
 the smart AI, your developer adds the `GEMINI_API_KEY` in Netlify.
 
 **"The site looks broken for a second."**
-If anything ever fails to load, the site shows a friendly "Refresh" button — just
+If anything ever fails to load, the site shows a friendly "Refresh" button â€” just
 tap it.
 
 ---
@@ -347,7 +359,8 @@ tap it.
 
 ---
 
-Made with love for you, Happiness. Now go and show the world your craft. 💛
+Made with love for you, Happiness. Now go and show the world your craft. ðŸ’›
 
 *For technical setup (cloud, AI, email), see [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
 and the [README](./README.md).*
+
