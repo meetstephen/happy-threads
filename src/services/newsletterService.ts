@@ -48,7 +48,7 @@ export function buildNewsletterMailto({ email, name }: NewsletterSignup): string
     `Name: ${name?.trim() || '(not provided)'}`,
     `Email: ${email.trim()}`,
     '',
-    'Sent from happythreads.netlify.app',
+    'Sent from happinessfashion.netlify.app',
   ].join('\n');
   const params = new URLSearchParams({ subject, body });
   return `mailto:${FAITH_EMAIL}?${params.toString().replace(/\+/g, '%20')}`;

@@ -59,9 +59,11 @@ export default function AdminDashboard({ open, onClose, editingDesign, startInLo
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [lockoutRemaining, setLockoutRemaining] = useState(0);
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [authEmail, setAuthEmail] = useState(ADMIN_EMAIL ?? '');
   const [authPassword, setAuthPassword] = useState('');
+  const [recoveryPassword, setRecoveryPassword] = useState('');
+  const [confirmRecoveryPassword, setConfirmRecoveryPassword] = useState('');
+  const [recoveryMode, setRecoveryMode] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('admin') === 'recovery');
   const [authBusy, setAuthBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
@@ -69,6 +71,10 @@ export default function AdminDashboard({ open, onClose, editingDesign, startInLo
   const unlocked = cloudReady ? auth.admin !== null : localUnlocked;
 
   useEffect(() => { if (open && (editingDesign || startInLookbook)) { setSection('lookbook'); } }, [open, editingDesign, startInLookbook]);
+
+  useEffect(() => {
+    if (open && new URLSearchParams(window.location.search).get('admin') === 'recovery') setRecoveryMode(true);
+  }, [open]);
 
   useEffect(() => { if (!open) { setLocalUnlocked(false); setPasscode(''); setError(null); setInfo(null); setMoreOpen(false); } }, [open]);
 
@@ -98,11 +104,52 @@ export default function AdminDashboard({ open, onClose, editingDesign, startInLo
     }
   };
 
-  const onAuthSubmit = async (e: React.FormEvent) => { e.preventDefault(); setError(null); setInfo(null); setAuthBusy(true); try { if (authMode === 'signin') { await auth.signIn(authEmail, authPassword); } else { const { needsConfirmation } = await auth.signUp(authEmail, authPassword); if (needsConfirmation) setInfo('Check email for confirmation link.'); } } catch (err) { setError((err as Error).message); } finally { setAuthBusy(false); setAuthPassword(''); } };
+  const onAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); setError(null); setInfo(null); setAuthBusy(true);
+    try { await auth.signIn(authEmail, authPassword); }
+    catch (err) { setError((err as Error).message); }
+    finally { setAuthBusy(false); setAuthPassword(''); }
+  };
+
+  const requestPasswordReset = async () => {
+    setError(null); setInfo(null);
+    if (!authEmail.trim()) { setError('Enter the owner email first.'); return; }
+    setAuthBusy(true);
+    try {
+      await auth.resetPassword(authEmail);
+      setInfo('Password reset link sent. Check the owner email inbox.');
+    } catch (err) { setError((err as Error).message); }
+    finally { setAuthBusy(false); }
+  };
+
+  const completePasswordRecovery = async (e: React.FormEvent) => {
+    e.preventDefault(); setError(null); setInfo(null);
+    if (recoveryPassword.length < 10) { setError('Use at least 10 characters.'); return; }
+    if (recoveryPassword !== confirmRecoveryPassword) { setError('Passwords do not match.'); return; }
+    setAuthBusy(true);
+    try {
+      await auth.updatePassword(recoveryPassword);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('admin');
+      url.hash = 'admin';
+      history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+      setRecoveryMode(false);
+      setRecoveryPassword('');
+      setConfirmRecoveryPassword('');
+      setInfo('Password updated. Your atelier is ready.');
+    } catch (err) { setError((err as Error).message); }
+    finally { setAuthBusy(false); }
+  };
 
   const navigate = (s: Section) => { setSection(s); setMoreOpen(false); };
 
-  const handleClose = () => { onClose(); if (window.location.hash === '#admin') { history.replaceState(null, '', window.location.pathname + window.location.search); } };
+  const handleClose = () => {
+    onClose();
+    const url = new URL(window.location.href);
+    url.searchParams.delete('admin');
+    url.hash = '';
+    history.replaceState(null, '', `${url.pathname}${url.search}`);
+  };
 
   return (
     <AnimatePresence>
@@ -116,16 +163,16 @@ export default function AdminDashboard({ open, onClose, editingDesign, startInLo
               /* AUTH SCREEN */
               <div className="flex h-full flex-col overflow-y-auto p-6 pt-[max(env(safe-area-inset-top,0),2rem)] sm:p-10">
                 <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500"><ShieldCheck size={20} /></div>
-                <h3 className="mt-5 font-display text-2xl leading-tight sm:text-4xl">{cloudReady ? (authMode === 'signin' ? 'Atelier sign in' : 'Create account') : 'Enter passcode'}</h3>
+                <h3 className="mt-5 font-display text-2xl leading-tight sm:text-4xl">{cloudReady ? 'Atelier sign in' : 'Enter passcode'}</h3>
                 <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">{cloudReady ? 'Sign in with the admin email.' : 'Enter your admin passcode to continue.'}</p>
                 {error && <p className="mt-4 rounded-2xl border border-wine-500/30 bg-wine-500/10 p-3 text-sm text-wine-500">{error}</p>}
                 {info && <p className="mt-4 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 p-3 text-sm text-[#1da851]">{info}</p>}
                 {cloudReady ? (
                   <form onSubmit={onAuthSubmit} className="mt-6 space-y-3">
                     <div><label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">Email</label><input type="email" autoFocus value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" required /></div>
-                    <div><label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">Password</label><div className="relative"><input type={showPw ? 'text' : 'password'} value={authPassword} onChange={e => setAuthPassword(e.target.value)} className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 pr-12 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" required minLength={6} /><button type="button" onClick={() => setShowPw(s => !s)} className="absolute right-1.5 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-ink-800/55 hover:text-bronze-500 dark:text-cream-100/55">{showPw ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></div>
-                    <button type="submit" disabled={authBusy || auth.loading} className="btn-primary w-full disabled:opacity-50">{authBusy ? 'Please wait...' : authMode === 'signin' ? 'Sign in' : 'Create account'}</button>
-                    <button type="button" onClick={() => { setAuthMode(m => m === 'signin' ? 'signup' : 'signin'); setError(null); }} className="text-xs text-bronze-500 hover:underline">{authMode === 'signin' ? 'Need an account? Sign up' : 'Already have one? Sign in'}</button>
+                    <div><label className="mb-2 block text-xs font-medium uppercase tracking-[0.22em] text-ink-800/70 dark:text-cream-100/70">Password</label><div className="relative"><input type={showPw ? 'text' : 'password'} value={authPassword} onChange={e => setAuthPassword(e.target.value)} className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 pr-12 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" required minLength={6} /><button type="button" aria-label={showPw ? 'Hide password' : 'Show password'} onClick={() => setShowPw(s => !s)} className="absolute right-1.5 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-ink-800/55 hover:text-bronze-500 dark:text-cream-100/55">{showPw ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></div>
+                    <button type="submit" disabled={authBusy || auth.loading} className="btn-primary w-full disabled:opacity-50">{authBusy ? 'Please wait...' : 'Sign in'}</button>
+                    <button type="button" disabled={authBusy} onClick={requestPasswordReset} className="text-xs text-bronze-500 hover:underline disabled:opacity-50">Forgot password?</button>
                   </form>
                 ) : (
                   <form onSubmit={tryPasscode} className="mt-6 space-y-3">
@@ -133,6 +180,19 @@ export default function AdminDashboard({ open, onClose, editingDesign, startInLo
                     <button type="submit" disabled={lockoutRemaining > 0} className="btn-primary w-full disabled:opacity-50">{lockoutRemaining > 0 ? `Locked (${Math.ceil(lockoutRemaining / 1000)}s)` : 'Unlock'}</button>
                   </form>
                 )}
+              </div>
+            ) : recoveryMode ? (
+              /* PASSWORD RECOVERY */
+              <div className="flex h-full flex-col overflow-y-auto p-6 pt-[max(env(safe-area-inset-top,0),2rem)] sm:p-10">
+                <div className="grid h-12 w-12 place-items-center rounded-full bg-bronze-400/20 text-bronze-500"><ShieldCheck size={20} /></div>
+                <h3 className="mt-5 font-display text-2xl leading-tight sm:text-4xl">Choose a new password</h3>
+                <p className="mt-2 max-w-md text-sm text-ink-800/65 dark:text-cream-100/65">Use a unique password with at least 10 characters for the owner account.</p>
+                {error && <p className="mt-4 rounded-2xl border border-wine-500/30 bg-wine-500/10 p-3 text-sm text-wine-500">{error}</p>}
+                <form onSubmit={completePasswordRecovery} className="mt-6 max-w-md space-y-3">
+                  <input type="password" autoFocus value={recoveryPassword} onChange={e => setRecoveryPassword(e.target.value)} placeholder="New password" className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" required minLength={10} />
+                  <input type="password" value={confirmRecoveryPassword} onChange={e => setConfirmRecoveryPassword(e.target.value)} placeholder="Confirm new password" className="w-full rounded-2xl border border-ink-800/15 bg-cream-50 px-4 py-3.5 text-base focus:border-bronze-500 focus:outline-none dark:border-cream-100/20 dark:bg-ink-900" required minLength={10} />
+                  <button type="submit" disabled={authBusy} className="btn-primary w-full disabled:opacity-50">{authBusy ? 'Updating...' : 'Update password'}</button>
+                </form>
               </div>
             ) : (
               /* MAIN DASHBOARD */

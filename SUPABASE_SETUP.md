@@ -247,9 +247,8 @@ The admin email (`chukwufaithhappiness1@gmail.com`) is already set in the SQL ab
 
 1. Click **Authentication** in the left sidebar then **Providers** then **Email**.
 2. Make sure **"Email provider"** is enabled (it is by default).
-3. **Recommended for ease of use:** scroll down to "Confirm email" and
-   **disable** it. This way Happiness can sign up and immediately use the
-   account without clicking a confirmation link. (You can re-enable later.)
+3. Keep **"Confirm email" enabled**. The owner account will be created securely
+   from the Supabase dashboard in Step 7; the public website never offers sign-up.
 4. Save.
 
 ---
@@ -285,21 +284,21 @@ In ~90 seconds, your site is connected to the cloud with admin auth.
 
 ---
 
-## Step 7 -- Sign Happiness up as the admin
+## Step 7 -- Create the owner account securely
 
-1. On Happiness's phone (or any device), open
-   **https://happythreads.netlify.app/#admin**
-   *(notice the `/#admin` at the end -- this is the hidden admin URL)*
-2. The Atelier sign-in screen appears. Tap **"Create your atelier account"**.
-3. Enter her admin email (the same one you put in `VITE_ADMIN_EMAIL`) and choose a
-   strong password. **This becomes her permanent admin password.**
-   - Suggested initial password: something she can remember, e.g. `Happiness2026!`
-   - She can change it any time from the Supabase dashboard (see "Resetting password" below)
-4. Tap **"Create account"**.
-5. **Tell her to bookmark `https://happythreads.netlify.app/#admin` on her
+1. In Supabase, open **Authentication -> Users -> Add user -> Create new user**.
+2. Enter the exact email used for `VITE_ADMIN_EMAIL`, choose a unique temporary
+   password of at least 10 characters, and select **Auto Confirm User**.
+3. If Supabase shows an **Allow new users to sign up** setting, turn it off after
+   creating this account. This prevents unused public accounts from being created.
+4. On Happiness's phone, open **https://happinessfashion.netlify.app/#admin**
+   and sign in with the new owner credentials.
+5. Use **Forgot password?** to let Happiness choose a private password if someone
+   else completed the initial setup.
+6. **Tell her to bookmark `https://happinessfashion.netlify.app/#admin` on her
    phone home screen.** That is the only entry point -- there is no visible
    button anywhere on the public site.
-6. Future visits: the site remembers her login, so she is already signed in. The
+7. Future visits: the site remembers her login, so she is already signed in. The
    admin panel opens straight to "Add design" mode.
 
 > **Switching from passcode mode to cloud admin:**
@@ -317,12 +316,10 @@ In ~90 seconds, your site is connected to the cloud with admin auth.
    - "Signed in as happiness@..."
 2. Add a test design with a photo.
 3. On a different device (your computer, a different browser, or a friend's
-   phone), open https://happythreads.netlify.app -- the new design should
+   phone), open https://happinessfashion.netlify.app -- the new design should
    appear automatically, even without refreshing.
 4. **Test that random visitors cannot add anything:** open `/#admin` in a
-   private/incognito browser -> it should show the sign-in form, but signing
-   up with any email other than Happiness's will be rejected with
-   "This email is not registered as the atelier admin."
+   private/incognito browser. It should show sign-in only, with no account-creation option.
 5. Test inline content editing: while signed in as admin, go to the main site
    -- you should see a gold "Edit Mode" banner at the top. Tap any text
    or image with a pencil/camera icon to edit it. Changes appear for all
@@ -340,10 +337,10 @@ If she ever forgets her password:
 3. She gets an email with a reset link.
 4. Or: click the three-dot menu -> **"Update user"** -> type a new password directly.
 
-**Option B -- She can do it herself (if email confirmation is enabled):**
-1. On the `/#admin` sign-in screen, she can request a password reset email
-   (if you add that flow in future -- currently password reset must be done
-   via the Supabase dashboard by the developer).
+**Option B -- She can do it herself:**
+1. Open `/#admin`, enter the owner email, and tap **Forgot password?**.
+2. Open the recovery email on the same device.
+3. The site opens a **Choose a new password** screen. Enter it twice and save.
 
 ---
 
@@ -379,8 +376,8 @@ policies. Run the site_content SQL block from Step 2 again if needed.
 
 **She wants to use a different email later.**
 Update `VITE_ADMIN_EMAIL` in Netlify, redeploy, and re-run the SQL policies
-from Steps 2 and 3 with the new email. (She will need to sign up the new
-account on `/#admin` first.)
+from Steps 2 and 3 with the new email, then create the replacement owner account
+from **Authentication -> Users** as described in Step 7.
 
 ---
 

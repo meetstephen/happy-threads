@@ -7,6 +7,8 @@ import { useCustomDesigns } from '../context/CustomDesignsContext';
 import { designs as staticDesigns } from '../data/designs';
 import { useNearBottom } from '../utils/scroll';
 import { buildWhatsAppUrl, generalEnquiryMessage } from '../utils/whatsapp';
+import { useSiteContent } from '../context/SiteContentContext';
+import { applyDesignOrder, applyDesignVisibility, LOOKBOOK_HIDDEN_KEY, LOOKBOOK_ORDER_KEY } from '../utils/designOrder';
 
 function makeId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -29,6 +31,7 @@ export default function Chatbot() {
   const [unread, setUnread] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { customDesigns } = useCustomDesigns();
+  const { get } = useSiteContent();
   const nearBottom = useNearBottom();
   const launcherVisible = open || !nearBottom;
 
@@ -52,8 +55,15 @@ export default function Chatbot() {
   }, []);
 
   const allDesigns = useMemo(
-    () => [...customDesigns, ...staticDesigns],
-    [customDesigns]
+    () => applyDesignVisibility(
+      applyDesignOrder([...customDesigns, ...staticDesigns], get(LOOKBOOK_ORDER_KEY, '')),
+      get(LOOKBOOK_HIDDEN_KEY, '')
+    ).map(design => ({
+      ...design,
+      image: get(`design.image.${design.id}`, design.image),
+      featured: get(`design.featured.${design.id}`, String(Boolean(design.featured))) === 'true',
+    })),
+    [customDesigns, get]
   );
 
   // Persist messages to sessionStorage (cap at 50)

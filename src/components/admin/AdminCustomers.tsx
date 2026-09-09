@@ -36,7 +36,7 @@ export default function AdminCustomers() {
     <div>
       <p className="eyebrow">Operations</p>
       <h3 className="mt-2 font-display text-2xl">Customers</h3>
-      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Client directory with measurements and notes.</p>
+      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Private client directory stored on this device. Back it up from Site settings.</p>
 
       {/* Form */}
       <div className="mt-6 space-y-3 rounded-2xl border border-ink-800/10 p-4 dark:border-cream-100/10">

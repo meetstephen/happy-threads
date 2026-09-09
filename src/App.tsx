@@ -71,6 +71,7 @@ export default function App() {
     ).map((design) => ({
       ...design,
       image: getSiteContent(`design.image.${design.id}`, design.image),
+      featured: getSiteContent(`design.featured.${design.id}`, String(Boolean(design.featured))) === 'true',
     })),
     [customDesigns, customOrder, hiddenDesigns, getSiteContent]
   );
@@ -109,6 +110,9 @@ export default function App() {
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') setAdminOpen(true);
+      if (new URLSearchParams(window.location.search).get('admin') === 'recovery') {
+        setAdminOpen(true);
+      }
       if (window.location.hash === '#size-guide') setSizeGuideOpen(true);
       if (window.location.hash === '#lookbook') setLookbookOpen(true);
     };

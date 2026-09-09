@@ -4,6 +4,8 @@ import { ArrowRight, MessageCircle, RefreshCw, Sparkles } from 'lucide-react';
 import { designs as staticDesigns, type ColorMood, type Design, type Occasion, type Vibe } from '../data/designs';
 import { buildWhatsAppUrl, styleConsultMessage } from '../utils/whatsapp';
 import { useCustomDesigns } from '../context/CustomDesignsContext';
+import { useSiteContent } from '../context/SiteContentContext';
+import { applyDesignOrder, applyDesignVisibility, LOOKBOOK_HIDDEN_KEY, LOOKBOOK_ORDER_KEY } from '../utils/designOrder';
 
 interface Props {
   onResult: (designIds: string[] | null) => void;
@@ -84,7 +86,15 @@ export default function StyleQuiz({ onResult }: Props) {
   const [answers, setAnswers] = useState<Answers>({});
   const [result, setResult] = useState<{ ids: string[]; styleLabel: string } | null>(null);
   const { customDesigns } = useCustomDesigns();
-  const allDesigns = [...customDesigns, ...staticDesigns];
+  const { get } = useSiteContent();
+  const allDesigns = applyDesignVisibility(
+    applyDesignOrder([...customDesigns, ...staticDesigns], get(LOOKBOOK_ORDER_KEY, '')),
+    get(LOOKBOOK_HIDDEN_KEY, '')
+  ).map(design => ({
+    ...design,
+    image: get(`design.image.${design.id}`, design.image),
+    featured: get(`design.featured.${design.id}`, String(Boolean(design.featured))) === 'true',
+  }));
 
   const total = questions.length;
   const isDone = result !== null;

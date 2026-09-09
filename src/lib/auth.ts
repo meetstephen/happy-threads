@@ -24,16 +24,17 @@ interface AuthState {
  */
 export function useAdminAuth(): AuthState & {
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<{ needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
   /**
    * Sends a password-reset email to the admin via Supabase Auth.
    * The email contains a magic link that, when clicked, lands the user
-   * back on `/#admin` with a temporary session that lets them set a new
+   * back on `?admin=recovery` with a temporary session that lets them set a new
    * password from the dashboard. Throws if `email` does not match the
    * configured ADMIN_EMAIL.
    */
   resetPassword: (email: string) => Promise<void>;
+  /** Set a new password while signed in, including from a recovery link. */
+  updatePassword: (password: string) => Promise<void>;
 } {
   const [state, setState] = useState<AuthState>({ loading: true, admin: null });
 
@@ -81,17 +82,6 @@ export function useAdminAuth(): AuthState & {
     if (error) throw new Error(error.message);
   };
 
-  const signUp = async (email: string, password: string) => {
-    if (!supabase) throw new Error('Cloud sync is not configured.');
-    const trimmed = email.trim().toLowerCase();
-    if (ADMIN_EMAIL && trimmed !== ADMIN_EMAIL) {
-      throw new Error('Only the atelier admin email can register.');
-    }
-    const { data, error } = await supabase.auth.signUp({ email: trimmed, password });
-    if (error) throw new Error(error.message);
-    return { needsConfirmation: !data.session };
-  };
-
   const signOut = async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
@@ -105,12 +95,21 @@ export function useAdminAuth(): AuthState & {
       throw new Error('Password reset is only available for the atelier admin email.');
     }
     const redirectTo =
-      typeof window !== 'undefined' ? `${window.location.origin}/#admin` : undefined;
+      typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}?admin=recovery`
+        : undefined;
     const { error } = await supabase.auth.resetPasswordForEmail(trimmed, { redirectTo });
     if (error) throw new Error(error.message);
   };
 
-  return { ...state, signIn, signUp, signOut, resetPassword };
+  const updatePassword = async (password: string) => {
+    if (!supabase) throw new Error('Cloud sync is not configured.');
+    if (password.length < 10) throw new Error('Use at least 10 characters.');
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw new Error(error.message);
+  };
+
+  return { ...state, signIn, signOut, resetPassword, updatePassword };
 }
 
 /** True when an admin email is configured (cloud + admin both ready). */

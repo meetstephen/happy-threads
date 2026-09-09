@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Quote, Star } from 'lucide-react';
 import EditableText from './EditableText';
+import { useSiteContent } from '../context/SiteContentContext';
+import { CUSTOM_TESTIMONIALS_KEY, parseCustomTestimonials, type Testimonial } from '../data/testimonials';
 
 /**
  * Each testimonial is fully editable in-place by the admin —
@@ -8,7 +10,7 @@ import EditableText from './EditableText';
  * Happiness can replace with her real client testimonials over time.
  */
 
-const testimonials = [
+export const defaultTestimonials: Testimonial[] = [
   {
     key: 't1',
     name: 'Adaeze O.',
@@ -40,6 +42,8 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const { get } = useSiteContent();
+  const testimonials = [...defaultTestimonials, ...parseCustomTestimonials(get(CUSTOM_TESTIMONIALS_KEY, '[]'))];
   return (
     <section id="testimonials" className="bg-cream-200/40 py-20 md:py-32 dark:bg-ink-800/40">
       <div className="container-luxe">
@@ -67,13 +71,13 @@ export default function Testimonials() {
                 ))}
               </div>
               <blockquote className="mt-5 font-display text-xl leading-snug md:text-2xl">
-                "<EditableText
+                &ldquo;{t.custom ? t.quote : <EditableText
                   contentKey={`testimonial.${t.key}.quote`}
                   defaultValue={t.quote}
                   multiline
                 >
                   {(text) => <>{text}</>}
-                </EditableText>"
+                </EditableText>}&rdquo;
               </blockquote>
               <figcaption className="mt-6 flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-bronze-400/20 font-display text-bronze-500">
@@ -81,20 +85,20 @@ export default function Testimonials() {
                 </div>
                 <div>
                   <div className="font-medium">
-                    <EditableText
+                    {t.custom ? t.name : <EditableText
                       contentKey={`testimonial.${t.key}.name`}
                       defaultValue={t.name}
                     >
                       {(text) => <>{text}</>}
-                    </EditableText>
+                    </EditableText>}
                   </div>
                   <div className="text-xs uppercase tracking-[0.22em] text-ink-800/55 dark:text-cream-100/55">
-                    <EditableText
+                    {t.custom ? t.role : <EditableText
                       contentKey={`testimonial.${t.key}.role`}
                       defaultValue={t.role}
                     >
                       {(text) => <>{text}</>}
-                    </EditableText>
+                    </EditableText>}
                   </div>
                 </div>
               </figcaption>

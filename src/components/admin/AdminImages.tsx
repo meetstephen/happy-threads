@@ -58,7 +58,13 @@ export default function AdminImages() {
 
   const handleHide = async (key: string, label: string) => {
     if (!window.confirm(`Hide ${label} from the public site? You can restore it here.`)) return;
-    await set(key, HIDDEN_IMAGE_VALUE);
+    try { await set(key, HIDDEN_IMAGE_VALUE); }
+    catch (err) { setError((err as Error).message); }
+  };
+
+  const handleReset = async (key: string) => {
+    try { await reset(key); }
+    catch (err) { setError((err as Error).message); }
   };
 
   return (
@@ -129,7 +135,7 @@ export default function AdminImages() {
                   {hidden && (
                     <button
                       type="button"
-                      onClick={() => reset(key)}
+                      onClick={() => void handleReset(key)}
                       className="grid h-9 w-9 place-items-center rounded-full bg-bronze-500 text-cream-100 transition-transform hover:bg-bronze-600 active:scale-90"
                       title="Show original image"
                       aria-label={`Show ${label}`}
@@ -140,7 +146,7 @@ export default function AdminImages() {
                   {overridden && !hidden && (
                     <button
                       type="button"
-                      onClick={() => reset(key)}
+                      onClick={() => void handleReset(key)}
                       className="grid h-9 w-9 place-items-center rounded-full border border-ink-800/15 text-ink-800/60 transition-transform active:scale-90 dark:border-cream-100/20 dark:text-cream-100/60"
                       title="Restore original image"
                       aria-label={`Restore original ${label}`}

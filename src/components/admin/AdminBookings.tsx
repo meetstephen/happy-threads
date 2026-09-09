@@ -39,7 +39,7 @@ export default function AdminBookings() {
     <div>
       <p className="eyebrow">Operations</p>
       <h3 className="mt-2 font-display text-2xl">Bookings</h3>
-      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Track fittings, consultations, and deliveries.</p>
+      <p className="mt-2 text-sm text-ink-800/65 dark:text-cream-100/65">Track fittings, consultations, and deliveries on this device. Back them up from Site settings.</p>
 
       {/* Form */}
       <div className="mt-6 space-y-3 rounded-2xl border border-ink-800/10 p-4 dark:border-cream-100/10">

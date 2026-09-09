@@ -60,7 +60,8 @@ async function flush() {
         event_type: e.event_type,
         event_data: e.event_data,
       }));
-      await supabase.from('site_analytics').insert(rows);
+      const { error } = await supabase.from('site_analytics').insert(rows);
+      if (error) throw error;
     } catch {
       // If Supabase insert fails, store locally as fallback
       batch.forEach(pushLocalEvent);

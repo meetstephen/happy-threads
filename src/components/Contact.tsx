@@ -76,7 +76,7 @@ export default function Contact() {
                 icon={Mail}
                 label="Email"
                 value={FAITH_EMAIL}
-                href={`mailto:${FAITH_EMAIL}?subject=${encodeURIComponent('Enquiry from happythreads.netlify.app')}`}
+                href={`mailto:${FAITH_EMAIL}?subject=${encodeURIComponent('Enquiry from happinessfashion.netlify.app')}`}
               />
               <ContactRow
                 icon={MapPin}

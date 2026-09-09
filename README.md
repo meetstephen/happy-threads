@@ -59,7 +59,7 @@ footer 5 times quickly). It is organised into 12 sections:
 | **Templates** | Reusable WhatsApp message snippets (copy in one tap) |
 | **Bookings** | Track fittings, consultations, and deliveries |
 | **Customers** | Client profiles, measurements, and preferences |
-| **Site** | Brand stats + printable QR-code generator |
+| **Site** | Brand stats, private phone-data backup/restore, and printable QR-code generator |
 
 Navigation is a sidebar on desktop and a bottom tab bar (+ a "More" sheet) on
 mobile. A prominent **"Back to site"** button returns to the public site.

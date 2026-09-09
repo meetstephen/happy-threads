@@ -69,7 +69,7 @@ export default function AdminHome({ onNavigate }: Props) {
         <div className="flex items-center gap-2 rounded-2xl border border-ink-800/10 bg-cream-50 px-4 py-2.5 text-sm dark:border-cream-100/10 dark:bg-ink-900">
           <BookOpen size={14} className="text-bronze-500" />
           <span className="font-medium">{customDesigns.length}</span>
-          <span className="text-ink-800/60 dark:text-cream-100/60">designs</span>
+          <span className="text-ink-800/60 dark:text-cream-100/60">uploaded designs</span>
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-ink-800/10 bg-cream-50 px-4 py-2.5 text-sm dark:border-cream-100/10 dark:bg-ink-900">
           <Settings size={14} className={cloudEnabled ? 'text-[#25D366]' : 'text-ink-800/40 dark:text-cream-100/40'} />
